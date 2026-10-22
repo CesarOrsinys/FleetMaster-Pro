@@ -7,6 +7,7 @@ import { FuelLogSchema } from '../../src/core/domain/FuelLog.js';
 import { JsonVehicleRepository } from '../../src/adapters/infrastructure/repositories/JsonVehicleRepository.js';
 import { RepositoryContainer } from '../../src/adapters/infrastructure/di/RepositoryContainer.js';
 import { getSupabaseClient } from '../../src/adapters/infrastructure/services/SupabaseClient.js';
+import { renderFlagHtml } from '../../src/core/flags.js';
 
 describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
 
@@ -32,6 +33,16 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
           assert.strictEqual(val.trim().length > 0, true, `Translation for [${lang}.${key}] cannot be empty`);
         }
       }
+      assert.strictEqual(vaKeys.includes('loginSubmitBtn'), true);
+      assert.strictEqual(vaKeys.includes('inputUsernameLabel'), true);
+      assert.strictEqual(vaKeys.includes('inputPasswordLabel'), true);
+    });
+
+    it('Should render real Senyera Coronada image asset for Valencià (va) replicating Dine-Done', () => {
+      const valencianFlagHtml = renderFlagHtml('va');
+      assert.strictEqual(valencianFlagHtml.includes('<img'), true, 'Valencian flag must render an <img> element');
+      assert.strictEqual(valencianFlagHtml.includes('lang-flag-img'), true, 'Valencian flag must have lang-flag-img class');
+      assert.strictEqual(valencianFlagHtml.includes('va.png') || valencianFlagHtml.includes('data:image/png;base64'), true, 'Valencian flag must reference va.png or base64 Senyera Coronada');
     });
   });
 

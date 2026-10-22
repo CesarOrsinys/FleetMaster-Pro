@@ -52,6 +52,347 @@
       flex-direction: column;
     }
 
+    /* -------------------------------------------------------------
+       CUSTOM LANGUAGE SELECTOR (Dine-Done Architecture)
+       ------------------------------------------------------------- */
+    .custom-lang-selector {
+      position: relative;
+      display: inline-block;
+      user-select: none;
+    }
+
+    .lang-select-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      background: #FFFFFF;
+      border: 1px solid var(--slate-300);
+      color: var(--slate-700);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 38px;
+    }
+
+    .lang-select-btn:hover,
+    .lang-select-btn:focus-visible {
+      background: var(--slate-50);
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(15, 118, 110, 0.2);
+    }
+
+    .lang-btn-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .lang-flag-img {
+      width: 20px;
+      height: 14px;
+      object-fit: cover;
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.3);
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .lang-flag-emoji {
+      font-size: 1.15rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .lang-btn-code {
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .lang-btn-arrow {
+      font-size: 0.68rem;
+      opacity: 0.7;
+      transition: transform 0.2s ease;
+      margin-left: 1px;
+    }
+
+    .custom-lang-selector.open .lang-btn-arrow {
+      transform: rotate(180deg);
+    }
+
+    .custom-lang-selector.open .lang-select-btn {
+      border-color: var(--primary);
+      box-shadow: 0 0 14px rgba(15, 118, 110, 0.3);
+    }
+
+    .lang-dropdown-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 175px;
+      max-height: 340px;
+      overflow-y: auto;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      padding: 6px;
+      display: none;
+      z-index: 1000;
+      animation: langDropdownFade 0.15s ease-out;
+    }
+
+    @keyframes langDropdownFade {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-lang-selector.open .lang-dropdown-panel {
+      display: block;
+    }
+
+    .lang-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--slate-700);
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .lang-dropdown-item:hover,
+    .lang-dropdown-item.active {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .lang-item-flag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      flex-shrink: 0;
+    }
+
+    .lang-item-name {
+      flex: 1;
+      white-space: nowrap;
+    }
+
+    .lang-item-code {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* -------------------------------------------------------------
+       LOGIN VIEW (MANDATORY INITIAL SCREEN)
+       ------------------------------------------------------------- */
+    #view-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+      background: radial-gradient(circle at 10% 20%, rgba(15, 118, 110, 0.08) 0%, rgba(241, 245, 249, 1) 90%);
+    }
+
+    .login-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 460px;
+      padding: 2.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+    }
+
+    .login-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .login-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+    }
+
+    .login-title-group h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .login-title-group p {
+      font-size: 0.8rem;
+      color: var(--slate-500);
+      margin-top: 2px;
+    }
+
+    .login-error-banner {
+      display: none;
+      background: var(--danger-light);
+      border: 1px solid #FCA5A5;
+      color: #991B1B;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #FFFFFF;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .btn-login-submit {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-login-submit:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-login-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .demo-creds-box {
+      margin-top: 0.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--slate-200);
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .demo-creds-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .demo-creds-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .demo-pill {
+      background: var(--slate-100);
+      border: 1px solid var(--slate-300);
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .demo-pill:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-dark);
+    }
+
+    /* -------------------------------------------------------------
+       APPLICATION SHELL (HIDDEN UNTIL AUTHENTICATED)
+       ------------------------------------------------------------- */
+    #app-shell {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
     /* Top Navigation Bar */
     header.app-header {
       background: #FFFFFF;
@@ -121,6 +462,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     /* Tenant Selector */
@@ -147,70 +489,69 @@
       outline: none;
     }
 
-    /* Language Dropdown with Real Flags */
-    .lang-dropdown-wrapper {
-      position: relative;
-    }
-
-    .lang-btn {
+    /* User Profile Badge */
+    .user-profile-badge {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .user-name {
+      font-weight: 700;
+      color: var(--slate-800);
+      font-size: 0.8rem;
+    }
+
+    .user-role-tag {
+      font-size: 0.65rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    /* Logout Button */
+    .btn-logout {
       background: #FFFFFF;
       border: 1px solid var(--slate-300);
+      color: var(--slate-700);
       padding: 0.4rem 0.75rem;
       border-radius: var(--radius-md);
-      cursor: pointer;
       font-size: 0.82rem;
       font-weight: 600;
-      color: var(--slate-700);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
       transition: all 0.2s ease;
     }
 
-    .lang-btn:hover {
-      border-color: var(--primary);
-      background: var(--slate-50);
-    }
-
-    .lang-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 0.4rem;
-      background: #FFFFFF;
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      display: none;
-      flex-direction: column;
-      min-width: 140px;
-      overflow: hidden;
-      z-index: 100;
-    }
-
-    .lang-menu.open {
-      display: flex;
-    }
-
-    .lang-menu-item {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.6rem 0.85rem;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--slate-700);
-      transition: background 0.15s ease;
-      border: none;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-    }
-
-    .lang-menu-item:hover {
-      background: var(--primary-light);
-      color: var(--primary-dark);
+    .btn-logout:hover {
+      background: var(--danger-light);
+      border-color: #FCA5A5;
+      color: #991B1B;
     }
 
     /* Navigation Bar */
@@ -380,7 +721,7 @@
       transform: translateY(-1px);
     }
 
-    /* Tables & Responsive Cards */
+    /* Tables */
     .table-container {
       background: #FFFFFF;
       border: 1px solid var(--slate-200);
@@ -538,33 +879,6 @@
       gap: 1rem;
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .form-group label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--slate-700);
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--slate-300);
-      border-radius: var(--radius-md);
-      font-size: 0.85rem;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-light);
-    }
-
     .modal-footer {
       padding: 1rem 1.2rem;
       border-top: 1px solid var(--slate-200);
@@ -608,217 +922,304 @@
 </head>
 <body>
 
-  <!-- Top Application Bar -->
-  <header class="app-header">
-    <div class="header-container">
-      <div class="brand-section">
-        <div class="brand-logo-badge">🚐</div>
-        <div class="brand-text">
-          <h1>
-            <span data-i18n="appTitle">FleetMaster-Pro</span>
-            <span class="brand-tag">SaaS 1.0</span>
-          </h1>
-          <p data-i18n="appSubtitle">Gestió Intel·ligent de Flotes i Manteniment</p>
+  <!-- =============================================================
+       1. MANDATORY LOGIN VIEW (VISIBLE INITIALLY BEFORE AUTH)
+       ============================================================= -->
+  <section id="view-login">
+    <div class="login-card">
+      <div class="login-top-bar">
+        <div class="login-brand">
+          <div class="login-badge">🚐</div>
+          <div class="login-title-group">
+            <h1>FleetMaster<span class="brand-tag">SaaS</span></h1>
+            <p data-i18n="appSubtitle">Gestió Intel·ligent de Flotes i Manteniment</p>
+          </div>
+        </div>
+
+        <!-- Custom Language Selector (Matching Dine-Done) -->
+        <div class="custom-lang-selector" id="login-lang-selector">
+          <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Canviar idioma">
+            <span class="lang-btn-flag"></span>
+            <span class="lang-btn-code">VA</span>
+            <span class="lang-btn-arrow">▼</span>
+          </button>
+          <div class="lang-dropdown-panel" role="listbox">
+            <!-- Populated dynamically with Senyera Coronada flag -->
+          </div>
         </div>
       </div>
 
-      <div class="header-actions">
-        <!-- Tenant Switcher -->
-        <div class="tenant-pill">
-          <span>🏢</span>
-          <label style="display:none;" data-i18n="tenantSelectorLabel">Empresa</label>
-          <select class="tenant-select" id="tenant-select">
-            <option value="tenant_valencia">València Transports SL</option>
+      <!-- Login Error Alert -->
+      <div class="login-error-banner" id="login-error">
+        <span>⚠️</span>
+        <span id="login-error-text" data-i18n="loginErrorInvalid">Credencials incorrectes. Si us plau, revisa usuari i contrasenya.</span>
+      </div>
+
+      <!-- Login Form -->
+      <form class="login-form" id="login-form">
+        <div class="form-group">
+          <label for="login-tenant" data-i18n="loginSelectTenant">Empresa / Flota</label>
+          <select id="login-tenant" required>
+            <option value="tenant_valencia">València Transports Logístics SL</option>
             <option value="tenant_med">Mediterrània Fleet SA</option>
           </select>
         </div>
 
-        <!-- Strict i18n Language Dropdown with Real Flags -->
-        <div class="lang-dropdown-wrapper">
-          <button class="lang-btn" id="lang-btn">
-            <span id="current-lang-flag"></span>
-            <span id="current-lang-name">Valencià</span>
-            <span>▾</span>
+        <div class="form-group">
+          <label for="login-username" data-i18n="inputUsernameLabel">Nom d'usuari</label>
+          <input type="text" id="login-username" data-i18n-placeholder="inputUsernamePlaceholder" placeholder="Ex: admin_valencia" value="admin_valencia" required autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="login-password" data-i18n="inputPasswordLabel">Contrasenya</label>
+          <input type="password" id="login-password" data-i18n-placeholder="inputPasswordPlaceholder" placeholder="Introdueix la teua contrasenya" value="Admin2026!" required autocomplete="current-password" />
+        </div>
+
+        <button type="submit" class="btn-login-submit" id="login-submit-btn">
+          <span>🔒</span>
+          <span data-i18n="loginSubmitBtn">Iniciar sessió</span>
+        </button>
+      </form>
+
+      <!-- Quick Fill Demo Credentials -->
+      <div class="demo-creds-box">
+        <span class="demo-creds-title" data-i18n="demoCredentialsTitle">Credencials de prova ràpida:</span>
+        <div class="demo-creds-grid">
+          <button type="button" class="demo-pill" id="pill-admin-val">
+            🏢 <span data-i18n="quickFillVal">València Admin</span>
           </button>
-          <div class="lang-menu" id="lang-menu">
-            <button class="lang-menu-item" data-lang="va">
-              <span id="flag-va"></span>
-              <span>Valencià</span>
-            </button>
-            <button class="lang-menu-item" data-lang="es">
-              <span>🇪🇸</span>
-              <span>Español</span>
-            </button>
-            <button class="lang-menu-item" data-lang="en">
-              <span>🇬🇧</span>
-              <span>English</span>
-            </button>
-          </div>
+          <button type="button" class="demo-pill" id="pill-admin-med">
+            🏢 <span data-i18n="quickFillMed">Mediterrània Admin</span>
+          </button>
+          <button type="button" class="demo-pill" id="pill-driver-joan">
+            🚗 <span data-i18n="quickFillDriver">Conductor Joan</span>
+          </button>
+          <button type="button" class="demo-pill" id="pill-superadmin">
+            👑 <span data-i18n="quickFillSuper">SuperAdmin</span>
+          </button>
         </div>
-
-        <button class="btn-primary" id="btn-login-trigger" style="font-size:0.78rem; padding: 0.4rem 0.8rem;">
-          <span data-i18n="btnLogin">Iniciar sessió</span>
-        </button>
       </div>
     </div>
-  </header>
+  </section>
 
-  <!-- Navigation Bar -->
-  <nav class="app-nav">
-    <div class="nav-container">
-      <button class="nav-tab active" data-tab="dashboard">
-        <span>📊</span> <span data-i18n="tabDashboard">Panell de Control</span>
-      </button>
-      <button class="nav-tab" data-tab="vehicles">
-        <span>🚗</span> <span data-i18n="tabVehicles">Parc de Vehicles</span>
-      </button>
-      <button class="nav-tab" data-tab="maintenance">
-        <span>🔧</span> <span data-i18n="tabMaintenance">ITV i Manteniment</span>
-      </button>
-      <button class="nav-tab" data-tab="fuel">
-        <span>⛽</span> <span data-i18n="tabFuel">Combustible i Quilometratge</span>
-      </button>
-    </div>
-  </nav>
 
-  <!-- Main Content Area -->
-  <main class="app-main">
+  <!-- =============================================================
+       2. APPLICATION SHELL (SHOWN ONLY AFTER AUTHENTICATION)
+       ============================================================= -->
+  <div id="app-shell" style="display: none;">
 
-    <!-- 1. DASHBOARD VIEW -->
-    <section class="tab-content active" id="view-dashboard">
-      <div class="kpi-grid">
-        <div class="kpi-card success">
-          <div class="kpi-card-header">
-            <span class="kpi-title" data-i18n="kpiTotalVehicles">Vehicles Actius</span>
-            <span class="kpi-icon">🚙</span>
+    <!-- Top Application Bar -->
+    <header class="app-header">
+      <div class="header-container">
+        <div class="brand-section">
+          <div class="brand-logo-badge">🚐</div>
+          <div class="brand-text">
+            <h1>
+              <span data-i18n="appTitle">FleetMaster-Pro</span>
+              <span class="brand-tag">SaaS 1.0</span>
+            </h1>
+            <p data-i18n="appSubtitle">Gestió Intel·ligent de Flotes i Manteniment</p>
           </div>
-          <div class="kpi-value" id="kpi-active-vehicles">3</div>
-          <p>Flota operativa asignada</p>
         </div>
 
-        <div class="kpi-card danger">
-          <div class="kpi-card-header">
-            <span class="kpi-title" data-i18n="kpiPendingItv">ITV Pròximes (&lt; 30 dies)</span>
-            <span class="kpi-icon">⚠️</span>
+        <div class="header-actions">
+          <!-- Tenant Switcher -->
+          <div class="tenant-pill">
+            <span>🏢</span>
+            <label style="display:none;" data-i18n="tenantSelectorLabel">Empresa</label>
+            <select class="tenant-select" id="tenant-select">
+              <option value="tenant_valencia">València Transports SL</option>
+              <option value="tenant_med">Mediterrània Fleet SA</option>
+            </select>
           </div>
-          <div class="kpi-value" id="kpi-itv-alerts">2</div>
-          <p>Inspeccions tècniques urgents</p>
-        </div>
 
-        <div class="kpi-card warning">
-          <div class="kpi-card-header">
-            <span class="kpi-title" data-i18n="kpiUpcomingMaintenance">Revisions Pendents</span>
-            <span class="kpi-icon">🛠️</span>
+          <!-- User Badge -->
+          <div class="user-profile-badge" id="header-user-badge">
+            <div class="user-avatar" id="header-user-avatar">AD</div>
+            <div class="user-info">
+              <span class="user-name" id="header-user-name">Yris Orsinys</span>
+              <span class="user-role-tag" id="header-user-role" data-i18n="profileRoleTenantAdmin">Cap de Flota</span>
+            </div>
           </div>
-          <div class="kpi-value" id="kpi-maintenance-alerts">2</div>
-          <p>Oli, frens o filtres programats</p>
-        </div>
 
-        <div class="kpi-card">
-          <div class="kpi-card-header">
-            <span class="kpi-title" data-i18n="kpiFuelConsumption">Despesa en Combustible</span>
-            <span class="kpi-icon">💶</span>
+          <!-- Header Custom Language Selector (Matching Dine-Done) -->
+          <div class="custom-lang-selector" id="header-lang-selector">
+            <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Canviar idioma">
+              <span class="lang-btn-flag"></span>
+              <span class="lang-btn-code">VA</span>
+              <span class="lang-btn-arrow">▼</span>
+            </button>
+            <div class="lang-dropdown-panel" role="listbox">
+              <!-- Populated dynamically with Senyera Coronada flag -->
+            </div>
           </div>
-          <div class="kpi-value" id="kpi-fuel-expense">180,75 €</div>
-          <p>Mes actual (Octubre 2026)</p>
+
+          <!-- Logout Button -->
+          <button class="btn-logout" id="btn-logout" type="button">
+            <span>🚪</span>
+            <span data-i18n="btnLogout">Tancar sessió</span>
+          </button>
         </div>
       </div>
+    </header>
 
-      <div class="section-header">
-        <h2 data-i18n="recentAlertsTitle">Alertes i Venciments Imminents</h2>
-      </div>
-
-      <div class="alerts-container" id="alerts-list">
-        <!-- Rendered dynamically -->
-      </div>
-    </section>
-
-    <!-- 2. VEHICLES VIEW -->
-    <section class="tab-content" id="view-vehicles">
-      <div class="section-header">
-        <h2 data-i18n="tabVehicles">Parc de Vehicles</h2>
-        <button class="btn-primary" id="btn-add-vehicle">
-          <span>+</span> <span data-i18n="btnNewVehicle">Nou Vehicle</span>
+    <!-- Navigation Bar -->
+    <nav class="app-nav">
+      <div class="nav-container">
+        <button class="nav-tab active" data-tab="dashboard">
+          <span>📊</span> <span data-i18n="tabDashboard">Panell de Control</span>
+        </button>
+        <button class="nav-tab" data-tab="vehicles">
+          <span>🚗</span> <span data-i18n="tabVehicles">Parc de Vehicles</span>
+        </button>
+        <button class="nav-tab" data-tab="maintenance">
+          <span>🔧</span> <span data-i18n="tabMaintenance">ITV i Manteniment</span>
+        </button>
+        <button class="nav-tab" data-tab="fuel">
+          <span>⛽</span> <span data-i18n="tabFuel">Combustible i Quilometratge</span>
         </button>
       </div>
+    </nav>
 
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th data-i18n="colLicensePlate">Matrícula</th>
-              <th data-i18n="colVehicle">Vehicle (Marca i Model)</th>
-              <th data-i18n="colFuelType">Combustible</th>
-              <th data-i18n="colOdometer">Quilòmetres (km)</th>
-              <th data-i18n="colItvDate">Venciment ITV</th>
-              <th data-i18n="colNextService">Pròxima Revisió</th>
-              <th data-i18n="colStatus">Estat</th>
-            </tr>
-          </thead>
-          <tbody id="vehicles-table-body">
-            <!-- Rendered dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <!-- Main Content Area -->
+    <main class="app-main">
 
-    <!-- 3. MAINTENANCE VIEW -->
-    <section class="tab-content" id="view-maintenance">
-      <div class="section-header">
-        <h2 data-i18n="tabMaintenance">ITV i Manteniment</h2>
-        <button class="btn-primary" id="btn-add-maintenance">
-          <span>+</span> <span data-i18n="btnNewMaintenance">Programar Manteniment</span>
-        </button>
-      </div>
+      <!-- 1. DASHBOARD VIEW -->
+      <section class="tab-content active" id="view-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi-card success">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiTotalVehicles">Vehicles Actius</span>
+              <span class="kpi-icon">🚙</span>
+            </div>
+            <div class="kpi-value" id="kpi-active-vehicles">0</div>
+            <p>Flota operativa asignada</p>
+          </div>
 
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th data-i18n="colLicensePlate">Matrícula</th>
-              <th data-i18n="colMaintenanceType">Tipus d'Intervenció</th>
-              <th data-i18n="colScheduledDate">Data Programada</th>
-              <th data-i18n="colWorkshop">Taller / Proveïdor</th>
-              <th data-i18n="colCost">Cost (€)</th>
-              <th data-i18n="colMaintenanceStatus">Estat</th>
-            </tr>
-          </thead>
-          <tbody id="maintenance-table-body">
-            <!-- Rendered dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+          <div class="kpi-card danger">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiPendingItv">ITV Pròximes (&lt; 30 dies)</span>
+              <span class="kpi-icon">⚠️</span>
+            </div>
+            <div class="kpi-value" id="kpi-itv-alerts">0</div>
+            <p>Inspeccions tècniques urgents</p>
+          </div>
 
-    <!-- 4. FUEL VIEW -->
-    <section class="tab-content" id="view-fuel">
-      <div class="section-header">
-        <h2 data-i18n="tabFuel">Combustible i Quilometratge</h2>
-        <button class="btn-primary" id="btn-add-fuel">
-          <span>+</span> <span data-i18n="btnNewFuelLog">Registrar Repostatge</span>
-        </button>
-      </div>
+          <div class="kpi-card warning">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiUpcomingMaintenance">Revisions Pendents</span>
+              <span class="kpi-icon">🛠️</span>
+            </div>
+            <div class="kpi-value" id="kpi-maintenance-alerts">0</div>
+            <p>Oli, frens o filtres programats</p>
+          </div>
 
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th data-i18n="colDate">Data</th>
-              <th data-i18n="colLicensePlate">Matrícula</th>
-              <th data-i18n="colOdometer">Lectura km</th>
-              <th data-i18n="colLiters">Litres</th>
-              <th data-i18n="colPriceEur">Total (€)</th>
-              <th data-i18n="colFuelStation">Estació de Servei</th>
-            </tr>
-          </thead>
-          <tbody id="fuel-table-body">
-            <!-- Rendered dynamically -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiFuelConsumption">Despesa en Combustible</span>
+              <span class="kpi-icon">💶</span>
+            </div>
+            <div class="kpi-value" id="kpi-fuel-expense">0,00 €</div>
+            <p>Mes actual (Octubre 2026)</p>
+          </div>
+        </div>
 
-  </main>
+        <div class="section-header">
+          <h2 data-i18n="recentAlertsTitle">Alertes i Venciments Imminents</h2>
+        </div>
+
+        <div class="alerts-container" id="alerts-list">
+          <!-- Rendered dynamically after login -->
+        </div>
+      </section>
+
+      <!-- 2. VEHICLES VIEW -->
+      <section class="tab-content" id="view-vehicles">
+        <div class="section-header">
+          <h2 data-i18n="tabVehicles">Parc de Vehicles</h2>
+          <button class="btn-primary" id="btn-add-vehicle">
+            <span>+</span> <span data-i18n="btnNewVehicle">Nou Vehicle</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="colLicensePlate">Matrícula</th>
+                <th data-i18n="colVehicle">Vehicle (Marca i Model)</th>
+                <th data-i18n="colFuelType">Combustible</th>
+                <th data-i18n="colOdometer">Quilòmetres (km)</th>
+                <th data-i18n="colItvDate">Venciment ITV</th>
+                <th data-i18n="colNextService">Pròxima Revisió</th>
+                <th data-i18n="colStatus">Estat</th>
+              </tr>
+            </thead>
+            <tbody id="vehicles-table-body">
+              <!-- Rendered dynamically after login -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. MAINTENANCE VIEW -->
+      <section class="tab-content" id="view-maintenance">
+        <div class="section-header">
+          <h2 data-i18n="tabMaintenance">ITV i Manteniment</h2>
+          <button class="btn-primary" id="btn-add-maintenance">
+            <span>+</span> <span data-i18n="btnNewMaintenance">Programar Manteniment</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="colLicensePlate">Matrícula</th>
+                <th data-i18n="colMaintenanceType">Tipus d'Intervenció</th>
+                <th data-i18n="colScheduledDate">Data Programada</th>
+                <th data-i18n="colWorkshop">Taller / Proveïdor</th>
+                <th data-i18n="colCost">Cost (€)</th>
+                <th data-i18n="colMaintenanceStatus">Estat</th>
+              </tr>
+            </thead>
+            <tbody id="maintenance-table-body">
+              <!-- Rendered dynamically after login -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. FUEL VIEW -->
+      <section class="tab-content" id="view-fuel">
+        <div class="section-header">
+          <h2 data-i18n="tabFuel">Combustible i Quilometratge</h2>
+          <button class="btn-primary" id="btn-add-fuel">
+            <span>+</span> <span data-i18n="btnNewFuelLog">Registrar Repostatge</span>
+          </button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="colDate">Data</th>
+                <th data-i18n="colLicensePlate">Matrícula</th>
+                <th data-i18n="colOdometer">Lectura km</th>
+                <th data-i18n="colLiters">Litres</th>
+                <th data-i18n="colPriceEur">Total (€)</th>
+                <th data-i18n="colFuelStation">Estació de Servei</th>
+              </tr>
+            </thead>
+            <tbody id="fuel-table-body">
+              <!-- Rendered dynamically after login -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

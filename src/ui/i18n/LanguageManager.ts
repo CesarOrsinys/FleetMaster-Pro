@@ -4,14 +4,20 @@ export type SupportedLanguage = 'va' | 'es' | 'en';
 
 export interface LanguageMeta {
   code: SupportedLanguage;
+  label: string;
   name: string;
-  flagHtml: string;
 }
 
+export const LANGUAGE_META: Record<SupportedLanguage, LanguageMeta> = {
+  va: { code: 'va', label: 'VA', name: 'Valencià' },
+  es: { code: 'es', label: 'ES', name: 'Español' },
+  en: { code: 'en', label: 'EN', name: 'English' }
+};
+
 export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
-  { code: 'va', name: 'Valencià', flagHtml: renderFlagHtml('va') },
-  { code: 'es', name: 'Español', flagHtml: renderFlagHtml('es') },
-  { code: 'en', name: 'English', flagHtml: renderFlagHtml('en') }
+  LANGUAGE_META.va,
+  LANGUAGE_META.es,
+  LANGUAGE_META.en
 ];
 
 export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
@@ -27,6 +33,26 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     profileRoleDriver: "Conductor",
     btnLogout: "Tancar sessió",
     btnLogin: "Iniciar sessió",
+
+    // Auth & Login Screen
+    loginScreenTitle: "Accés al Sistema FleetMaster-Pro",
+    loginSubtitle: "Introdueix les teues credencials per accedir a la gestió de flota",
+    inputUsernameLabel: "Nom d'usuari",
+    inputUsernamePlaceholder: "Ex: admin_valencia",
+    inputPasswordLabel: "Contrasenya",
+    inputPasswordPlaceholder: "Introdueix la teua contrasenya",
+    loginSubmitBtn: "Iniciar sessió",
+    loginLoggingIn: "Accedint...",
+    loginErrorInvalid: "Credencials incorrectes. Si us plau, revisa usuari i contrasenya.",
+    loginSelectTenant: "Empresa / Flota",
+    demoCredentialsTitle: "Credencials de prova ràpida:",
+    quickFillVal: "València Admin",
+    quickFillMed: "Mediterrània Admin",
+    quickFillDriver: "Conductor Joan",
+    quickFillSuper: "SuperAdmin",
+    welcomeBack: "Benvingut/da",
+    currentUser: "Usuari connectat",
+    loginModalTitle: "Accés al Sistema FleetMaster-Pro",
 
     // Navigation Tabs
     tabDashboard: "Panell de Control",
@@ -101,13 +127,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputItvDateLabel: "Data límit ITV",
     inputNotesLabel: "Observacions addicionals",
 
-    // Auth & Modals
-    loginModalTitle: "Accés al Sistema FleetMaster-Pro",
-    inputUsernameLabel: "Nom d'usuari",
-    inputPasswordLabel: "Contrasenya",
-    loginSubmitBtn: "Entrar",
-    loginErrorInvalid: "Credencials incorrectes. Si us plau, revisa usuari i contrasenya.",
-
     // General / Feedback
     loadingMessage: "Carregant dades...",
     savedSuccessMessage: "Registre guardat correctament.",
@@ -128,6 +147,26 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     profileRoleDriver: "Conductor",
     btnLogout: "Cerrar sesión",
     btnLogin: "Iniciar sesión",
+
+    // Auth & Login Screen
+    loginScreenTitle: "Acceso al Sistema FleetMaster-Pro",
+    loginSubtitle: "Introduce tus credenciales para acceder a la gestión de flota",
+    inputUsernameLabel: "Nombre de usuario",
+    inputUsernamePlaceholder: "Ej: admin_valencia",
+    inputPasswordLabel: "Contraseña",
+    inputPasswordPlaceholder: "Introduce tu contraseña",
+    loginSubmitBtn: "Iniciar sesión",
+    loginLoggingIn: "Accediendo...",
+    loginErrorInvalid: "Credenciales incorrectas. Por favor, revisa usuario y contraseña.",
+    loginSelectTenant: "Empresa / Flota",
+    demoCredentialsTitle: "Credenciales de prueba rápida:",
+    quickFillVal: "València Admin",
+    quickFillMed: "Mediterrània Admin",
+    quickFillDriver: "Conductor Joan",
+    quickFillSuper: "SuperAdmin",
+    welcomeBack: "Bienvenido/a",
+    currentUser: "Usuario conectado",
+    loginModalTitle: "Acceso al Sistema FleetMaster-Pro",
 
     // Navigation Tabs
     tabDashboard: "Panel de Control",
@@ -202,13 +241,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputItvDateLabel: "Fecha límite ITV",
     inputNotesLabel: "Observaciones adicionales",
 
-    // Auth & Modals
-    loginModalTitle: "Acceso al Sistema FleetMaster-Pro",
-    inputUsernameLabel: "Nombre de usuario",
-    inputPasswordLabel: "Contraseña",
-    loginSubmitBtn: "Entrar",
-    loginErrorInvalid: "Credenciales incorrectas. Por favor, revisa usuario y contraseña.",
-
     // General / Feedback
     loadingMessage: "Cargando datos...",
     savedSuccessMessage: "Registro guardado correctamente.",
@@ -229,6 +261,26 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     profileRoleDriver: "Driver",
     btnLogout: "Log out",
     btnLogin: "Log in",
+
+    // Auth & Login Screen
+    loginScreenTitle: "Sign in to FleetMaster-Pro",
+    loginSubtitle: "Enter your corporate credentials to access the fleet management system",
+    inputUsernameLabel: "Username",
+    inputUsernamePlaceholder: "E.g. admin_valencia",
+    inputPasswordLabel: "Password",
+    inputPasswordPlaceholder: "Enter your password",
+    loginSubmitBtn: "Sign in",
+    loginLoggingIn: "Signing in...",
+    loginErrorInvalid: "Invalid credentials. Please verify your username and password.",
+    loginSelectTenant: "Company / Fleet",
+    demoCredentialsTitle: "Quick demo credentials:",
+    quickFillVal: "València Admin",
+    quickFillMed: "Mediterrània Admin",
+    quickFillDriver: "Driver Joan",
+    quickFillSuper: "SuperAdmin",
+    welcomeBack: "Welcome back",
+    currentUser: "Connected user",
+    loginModalTitle: "Sign in to FleetMaster-Pro",
 
     // Navigation Tabs
     tabDashboard: "Dashboard",
@@ -303,13 +355,6 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputItvDateLabel: "MOT/ITV Expiration Date",
     inputNotesLabel: "Additional Notes",
 
-    // Auth & Modals
-    loginModalTitle: "Sign in to FleetMaster-Pro",
-    inputUsernameLabel: "Username",
-    inputPasswordLabel: "Password",
-    loginSubmitBtn: "Sign in",
-    loginErrorInvalid: "Invalid credentials. Please verify your username and password.",
-
     // General / Feedback
     loadingMessage: "Loading data...",
     savedSuccessMessage: "Record saved successfully.",
@@ -329,6 +374,7 @@ export class LanguageManager {
     } else {
       this.currentLang = 'va'; // Default to Valencian as requested
     }
+    this.setupCustomLanguageSelectors();
     this.applyTranslations();
   }
 
@@ -339,6 +385,7 @@ export class LanguageManager {
   public static setLanguage(lang: SupportedLanguage): void {
     this.currentLang = lang;
     localStorage.setItem('fleetmaster_lang', lang);
+    this.updateLanguageSelectorsUI();
     this.applyTranslations();
     document.dispatchEvent(new CustomEvent('app:language-changed', { detail: { lang } }));
   }
@@ -346,6 +393,102 @@ export class LanguageManager {
   public static t(key: string): string {
     const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS['va'];
     return dict[key] || TRANSLATIONS['es'][key] || TRANSLATIONS['en'][key] || `[${key}]`;
+  }
+
+  public static setupCustomLanguageSelectors(): void {
+    // Close dropdowns on outside click or escape
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll<HTMLElement>('.custom-lang-selector').forEach(selector => {
+        if (!selector.contains(e.target as Node)) {
+          selector.classList.remove('open');
+          const btn = selector.querySelector('.lang-select-btn');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll<HTMLElement>('.custom-lang-selector').forEach(selector => {
+          selector.classList.remove('open');
+          const btn = selector.querySelector('.lang-select-btn');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+
+    this.renderCustomSelectors();
+  }
+
+  public static renderCustomSelectors(): void {
+    const selectors = document.querySelectorAll<HTMLElement>('.custom-lang-selector');
+    selectors.forEach(container => {
+      const btn = container.querySelector<HTMLButtonElement>('.lang-select-btn');
+      const panel = container.querySelector<HTMLElement>('.lang-dropdown-panel');
+
+      if (btn && !btn.dataset.initialized) {
+        btn.dataset.initialized = 'true';
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isOpen = container.classList.toggle('open');
+          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+      }
+
+      if (panel) {
+        panel.innerHTML = '';
+        SUPPORTED_LANGUAGES.forEach(meta => {
+          const item = document.createElement('div');
+          item.className = `lang-dropdown-item ${meta.code === this.currentLang ? 'active' : ''}`;
+          item.setAttribute('role', 'option');
+          item.setAttribute('data-lang', meta.code);
+          item.setAttribute('aria-selected', meta.code === this.currentLang ? 'true' : 'false');
+          item.innerHTML = `
+            <span class="lang-item-flag">${renderFlagHtml(meta.code)}</span>
+            <span class="lang-item-name">${meta.name}</span>
+            <span class="lang-item-code">${meta.label}</span>
+          `;
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.setLanguage(meta.code);
+            container.classList.remove('open');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+          });
+          panel.appendChild(item);
+        });
+      }
+    });
+
+    this.updateLanguageSelectorsUI();
+  }
+
+  public static updateLanguageSelectorsUI(): void {
+    const selectors = document.querySelectorAll<HTMLElement>('.custom-lang-selector');
+    selectors.forEach(container => {
+      const btnFlag = container.querySelector<HTMLElement>('.lang-btn-flag');
+      const btnCode = container.querySelector<HTMLElement>('.lang-btn-code');
+      const panel = container.querySelector<HTMLElement>('.lang-dropdown-panel');
+
+      if (btnFlag) {
+        btnFlag.innerHTML = renderFlagHtml(this.currentLang);
+      }
+      if (btnCode) {
+        btnCode.textContent = LANGUAGE_META[this.currentLang].label;
+      }
+
+      if (panel) {
+        panel.querySelectorAll<HTMLElement>('.lang-dropdown-item').forEach(el => {
+          const lang = el.getAttribute('data-lang');
+          if (lang === this.currentLang) {
+            el.classList.add('active');
+            el.setAttribute('aria-selected', 'true');
+          } else {
+            el.classList.remove('active');
+            el.setAttribute('aria-selected', 'false');
+          }
+        });
+      }
+    });
   }
 
   public static applyTranslations(root: HTMLElement | Document = document): void {
@@ -365,15 +508,6 @@ export class LanguageManager {
       }
     });
 
-    // Update active flag indicators
-    const currentFlagEl = document.getElementById('current-lang-flag');
-    if (currentFlagEl) {
-      currentFlagEl.innerHTML = renderFlagHtml(this.currentLang);
-    }
-    const currentLangNameEl = document.getElementById('current-lang-name');
-    if (currentLangNameEl) {
-      const meta = SUPPORTED_LANGUAGES.find(l => l.code === this.currentLang);
-      currentLangNameEl.textContent = meta ? meta.name : this.currentLang.toUpperCase();
-    }
+    this.updateLanguageSelectorsUI();
   }
 }
