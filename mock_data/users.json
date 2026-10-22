@@ -1,0 +1,58 @@
+[
+  {
+    "id": "usr_super",
+    "tenantId": null,
+    "username": "superadmin",
+    "email": "superadmin@fleetmaster.pro",
+    "passwordHash": "$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS",
+    "fullName": "Super Administrador Global",
+    "role": "SUPERADMIN",
+    "phone": "+34600000000",
+    "licenseNumber": "B-00000000",
+    "active": true,
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "usr_admin_val",
+    "tenantId": "tenant_valencia",
+    "username": "admin_valencia",
+    "email": "admin@valenciatrans.es",
+    "passwordHash": "$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS",
+    "fullName": "Yris Orsinys (Cap de Flota)",
+    "role": "TENANT_ADMIN",
+    "phone": "+34611223344",
+    "licenseNumber": "B-12345678",
+    "active": true,
+    "createdAt": "2026-01-10T08:30:00.000Z",
+    "updatedAt": "2026-01-10T08:30:00.000Z"
+  },
+  {
+    "id": "usr_driver_joan",
+    "tenantId": "tenant_valencia",
+    "username": "conductor_joan",
+    "email": "joan@valenciatrans.es",
+    "passwordHash": "$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2",
+    "fullName": "Joan Fuster (Conductor)",
+    "role": "DRIVER",
+    "phone": "+34622334455",
+    "licenseNumber": "B-87654321",
+    "active": true,
+    "createdAt": "2026-01-12T10:00:00.000Z",
+    "updatedAt": "2026-01-12T10:00:00.000Z"
+  },
+  {
+    "id": "usr_admin_med",
+    "tenantId": "tenant_med",
+    "username": "admin_med",
+    "email": "admin@medfleet.com",
+    "passwordHash": "$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS",
+    "fullName": "Carles Gómez (Director Flota Med)",
+    "role": "TENANT_ADMIN",
+    "phone": "+34633445566",
+    "licenseNumber": "B-33445566",
+    "active": true,
+    "createdAt": "2026-02-15T11:00:00.000Z",
+    "updatedAt": "2026-02-15T11:00:00.000Z"
+  }
+]

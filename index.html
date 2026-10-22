@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="va">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FleetMaster-Pro - Gestió de Flotes i Manteniment SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0F766E;
+      --primary-hover: #0D9488;
+      --primary-light: #CCFBF1;
+      --primary-dark: #115E59;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    header.app-header {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-200);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 10px rgba(15, 118, 110, 0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .brand-tag {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Tenant Selector */
+    .tenant-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-300);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    .tenant-select {
+      border: none;
+      background: transparent;
+      font-weight: 700;
+      color: var(--primary-dark);
+      cursor: pointer;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    /* Language Dropdown with Real Flags */
+    .lang-dropdown-wrapper {
+      position: relative;
+    }
+
+    .lang-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-300);
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--primary);
+      background: var(--slate-50);
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.4rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: none;
+      flex-direction: column;
+      min-width: 140px;
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .lang-menu.open {
+      display: flex;
+    }
+
+    .lang-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.85rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      transition: background 0.15s ease;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .lang-menu-item:hover {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    /* Navigation Bar */
+    nav.app-nav {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-200);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.5rem;
+      padding: 0 1.25rem;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .nav-tab:hover {
+      color: var(--primary);
+    }
+
+    .nav-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Main Container */
+    main.app-main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .kpi-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+    }
+
+    .kpi-card.warning::before { background: var(--warning); }
+    .kpi-card.danger::before { background: var(--danger); }
+    .kpi-card.success::before { background: var(--success); }
+
+    .kpi-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-icon {
+      font-size: 1.3rem;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .kpi-card p {
+      font-size: 0.78rem;
+      color: var(--slate-400);
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 2px 6px rgba(15, 118, 110, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Tables & Responsive Cards */
+    .table-container {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    table.data-table th {
+      background: var(--slate-50);
+      color: var(--slate-600);
+      font-weight: 700;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--slate-200);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    table.data-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-700);
+      vertical-align: middle;
+    }
+
+    table.data-table tr:hover td {
+      background: var(--slate-50);
+    }
+
+    .plate-badge {
+      display: inline-block;
+      font-family: monospace;
+      font-weight: 800;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.25rem 0.55rem;
+      border-radius: var(--radius-sm);
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.active {
+      background: var(--success-light);
+      color: #065F46;
+    }
+
+    .status-badge.maintenance {
+      background: var(--warning-light);
+      color: #92400E;
+    }
+
+    .status-badge.out {
+      background: var(--danger-light);
+      color: #991B1B;
+    }
+
+    /* Alerts Box */
+    .alerts-container {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--slate-100);
+      gap: 1rem;
+    }
+
+    .alert-item:last-child {
+      border-bottom: none;
+    }
+
+    .alert-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .alert-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-window {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.2rem;
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .modal-body {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--slate-300);
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .modal-footer {
+      padding: 1rem 1.2rem;
+      border-top: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background: var(--slate-50);
+    }
+
+    .btn-secondary {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-300);
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--slate-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--slate-100);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .data-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="brand-logo-badge">🚐</div>
+        <div class="brand-text">
+          <h1>
+            <span data-i18n="appTitle">FleetMaster-Pro</span>
+            <span class="brand-tag">SaaS 1.0</span>
+          </h1>
+          <p data-i18n="appSubtitle">Gestió Intel·ligent de Flotes i Manteniment</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Tenant Switcher -->
+        <div class="tenant-pill">
+          <span>🏢</span>
+          <label style="display:none;" data-i18n="tenantSelectorLabel">Empresa</label>
+          <select class="tenant-select" id="tenant-select">
+            <option value="tenant_valencia">València Transports SL</option>
+            <option value="tenant_med">Mediterrània Fleet SA</option>
+          </select>
+        </div>
+
+        <!-- Strict i18n Language Dropdown with Real Flags -->
+        <div class="lang-dropdown-wrapper">
+          <button class="lang-btn" id="lang-btn">
+            <span id="current-lang-flag"></span>
+            <span id="current-lang-name">Valencià</span>
+            <span>▾</span>
+          </button>
+          <div class="lang-menu" id="lang-menu">
+            <button class="lang-menu-item" data-lang="va">
+              <span id="flag-va"></span>
+              <span>Valencià</span>
+            </button>
+            <button class="lang-menu-item" data-lang="es">
+              <span>🇪🇸</span>
+              <span>Español</span>
+            </button>
+            <button class="lang-menu-item" data-lang="en">
+              <span>🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-login-trigger" style="font-size:0.78rem; padding: 0.4rem 0.8rem;">
+          <span data-i18n="btnLogin">Iniciar sessió</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="dashboard">
+        <span>📊</span> <span data-i18n="tabDashboard">Panell de Control</span>
+      </button>
+      <button class="nav-tab" data-tab="vehicles">
+        <span>🚗</span> <span data-i18n="tabVehicles">Parc de Vehicles</span>
+      </button>
+      <button class="nav-tab" data-tab="maintenance">
+        <span>🔧</span> <span data-i18n="tabMaintenance">ITV i Manteniment</span>
+      </button>
+      <button class="nav-tab" data-tab="fuel">
+        <span>⛽</span> <span data-i18n="tabFuel">Combustible i Quilometratge</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="app-main">
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section class="tab-content active" id="view-dashboard">
+      <div class="kpi-grid">
+        <div class="kpi-card success">
+          <div class="kpi-card-header">
+            <span class="kpi-title" data-i18n="kpiTotalVehicles">Vehicles Actius</span>
+            <span class="kpi-icon">🚙</span>
+          </div>
+          <div class="kpi-value" id="kpi-active-vehicles">3</div>
+          <p>Flota operativa asignada</p>
+        </div>
+
+        <div class="kpi-card danger">
+          <div class="kpi-card-header">
+            <span class="kpi-title" data-i18n="kpiPendingItv">ITV Pròximes (&lt; 30 dies)</span>
+            <span class="kpi-icon">⚠️</span>
+          </div>
+          <div class="kpi-value" id="kpi-itv-alerts">2</div>
+          <p>Inspeccions tècniques urgents</p>
+        </div>
+
+        <div class="kpi-card warning">
+          <div class="kpi-card-header">
+            <span class="kpi-title" data-i18n="kpiUpcomingMaintenance">Revisions Pendents</span>
+            <span class="kpi-icon">🛠️</span>
+          </div>
+          <div class="kpi-value" id="kpi-maintenance-alerts">2</div>
+          <p>Oli, frens o filtres programats</p>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-card-header">
+            <span class="kpi-title" data-i18n="kpiFuelConsumption">Despesa en Combustible</span>
+            <span class="kpi-icon">💶</span>
+          </div>
+          <div class="kpi-value" id="kpi-fuel-expense">180,75 €</div>
+          <p>Mes actual (Octubre 2026)</p>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2 data-i18n="recentAlertsTitle">Alertes i Venciments Imminents</h2>
+      </div>
+
+      <div class="alerts-container" id="alerts-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- 2. VEHICLES VIEW -->
+    <section class="tab-content" id="view-vehicles">
+      <div class="section-header">
+        <h2 data-i18n="tabVehicles">Parc de Vehicles</h2>
+        <button class="btn-primary" id="btn-add-vehicle">
+          <span>+</span> <span data-i18n="btnNewVehicle">Nou Vehicle</span>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-i18n="colLicensePlate">Matrícula</th>
+              <th data-i18n="colVehicle">Vehicle (Marca i Model)</th>
+              <th data-i18n="colFuelType">Combustible</th>
+              <th data-i18n="colOdometer">Quilòmetres (km)</th>
+              <th data-i18n="colItvDate">Venciment ITV</th>
+              <th data-i18n="colNextService">Pròxima Revisió</th>
+              <th data-i18n="colStatus">Estat</th>
+            </tr>
+          </thead>
+          <tbody id="vehicles-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. MAINTENANCE VIEW -->
+    <section class="tab-content" id="view-maintenance">
+      <div class="section-header">
+        <h2 data-i18n="tabMaintenance">ITV i Manteniment</h2>
+        <button class="btn-primary" id="btn-add-maintenance">
+          <span>+</span> <span data-i18n="btnNewMaintenance">Programar Manteniment</span>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-i18n="colLicensePlate">Matrícula</th>
+              <th data-i18n="colMaintenanceType">Tipus d'Intervenció</th>
+              <th data-i18n="colScheduledDate">Data Programada</th>
+              <th data-i18n="colWorkshop">Taller / Proveïdor</th>
+              <th data-i18n="colCost">Cost (€)</th>
+              <th data-i18n="colMaintenanceStatus">Estat</th>
+            </tr>
+          </thead>
+          <tbody id="maintenance-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. FUEL VIEW -->
+    <section class="tab-content" id="view-fuel">
+      <div class="section-header">
+        <h2 data-i18n="tabFuel">Combustible i Quilometratge</h2>
+        <button class="btn-primary" id="btn-add-fuel">
+          <span>+</span> <span data-i18n="btnNewFuelLog">Registrar Repostatge</span>
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-i18n="colDate">Data</th>
+              <th data-i18n="colLicensePlate">Matrícula</th>
+              <th data-i18n="colOdometer">Lectura km</th>
+              <th data-i18n="colLiters">Litres</th>
+              <th data-i18n="colPriceEur">Total (€)</th>
+              <th data-i18n="colFuelStation">Estació de Servei</th>
+            </tr>
+          </thead>
+          <tbody id="fuel-table-body">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

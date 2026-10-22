@@ -1,0 +1,30 @@
+[
+  {
+    "id": "fuel_001",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_101",
+    "driverId": "usr_driver_joan",
+    "date": "2026-10-02",
+    "odometerKm": 83800,
+    "liters": 62.40,
+    "costEur": 93.60,
+    "fuelStation": "Repsol Viver / Segorbe",
+    "receiptUrl": "",
+    "notes": "Proveïment complet dièsel ruta A-23",
+    "createdAt": "2026-10-02T14:30:00.000Z"
+  },
+  {
+    "id": "fuel_002",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_101",
+    "driverId": "usr_driver_joan",
+    "date": "2026-10-14",
+    "odometerKm": 84500,
+    "liters": 58.10,
+    "costEur": 87.15,
+    "fuelStation": "Cepsa Castelló Sud",
+    "receiptUrl": "",
+    "notes": "Proveïment retorn centre logístic",
+    "createdAt": "2026-10-14T18:15:00.000Z"
+  }
+]
