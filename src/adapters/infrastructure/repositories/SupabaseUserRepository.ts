@@ -1,116 +1,88 @@
 import { IUserRepository } from '../../../core/ports/IUserRepository.js';
 import { User, SafeUser } from '../../../core/domain/User.js';
 import { getSupabaseClient } from '../services/SupabaseClient.js';
-import { JsonUserRepository } from './JsonUserRepository.js';
 
 export class SupabaseUserRepository implements IUserRepository {
-  private fallbackJsonRepo = new JsonUserRepository();
-
   private getClient() {
-    return getSupabaseClient();
+    const client = getSupabaseClient();
+    if (!client) {
+      throw new Error('Supabase client not configured. Check SUPABASE_URL and SUPABASE_ANON_KEY.');
+    }
+    return client;
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('users').select('*').ilike('username', username).maybeSingle();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] findByUsername failed, falling back to mock:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('users').select('*').ilike('username', username).maybeSingle();
+    if (error) {
+      console.error('[SupabaseUserRepository] findByUsername error:', error.message);
+      return null;
     }
-    return this.fallbackJsonRepo.findByUsername(username);
+    return data ? this.mapFromDb(data) : null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('users').select('*').ilike('email', email).maybeSingle();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] findByEmail failed, falling back to mock:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('users').select('*').ilike('email', email).maybeSingle();
+    if (error) {
+      console.error('[SupabaseUserRepository] findByEmail error:', error.message);
+      return null;
     }
-    return this.fallbackJsonRepo.findByEmail(email);
+    return data ? this.mapFromDb(data) : null;
   }
 
   async findById(id: string): Promise<User | null> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('users').select('*').eq('id', id).maybeSingle();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] findById failed, falling back to mock:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('users').select('*').eq('id', id).maybeSingle();
+    if (error) {
+      console.error('[SupabaseUserRepository] findById error:', error.message);
+      return null;
     }
-    return this.fallbackJsonRepo.findById(id);
+    return data ? this.mapFromDb(data) : null;
   }
 
   async findByTenant(tenantId: string): Promise<SafeUser[]> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('users').select('*').eq('tenant_id', tenantId);
-        if (!error && data && data.length > 0) {
-          return data.map(row => {
-            const u = this.mapFromDb(row);
-            const { passwordHash, ...safe } = u;
-            return safe as SafeUser;
-          });
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] findByTenant failed, falling back to mock:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('users').select('*').eq('tenant_id', tenantId);
+    if (error) {
+      console.error('[SupabaseUserRepository] findByTenant error:', error.message);
+      return [];
     }
-    return this.fallbackJsonRepo.findByTenant(tenantId);
+    return (data || []).map(row => {
+      const u = this.mapFromDb(row);
+      const { passwordHash, ...safe } = u;
+      return safe as SafeUser;
+    });
   }
 
   async create(user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('users').insert({
-          tenant_id: user.tenantId,
-          username: user.username,
-          email: user.email,
-          password_hash: user.passwordHash,
-          full_name: user.fullName,
-          role: user.role,
-          phone: user.phone,
-          license_number: user.licenseNumber,
-          active: user.active
-        }).select().single();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] create failed, falling back to mock:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('users').insert({
+      tenant_id: user.tenantId,
+      username: user.username,
+      email: user.email,
+      password_hash: user.passwordHash,
+      full_name: user.fullName,
+      role: user.role,
+      phone: user.phone,
+      license_number: user.licenseNumber,
+      active: user.active
+    }).select().single();
+
+    if (error || !data) {
+      throw new Error(`Failed to create user: ${error?.message}`);
     }
-    return this.fallbackJsonRepo.create(user);
+    return this.mapFromDb(data);
   }
 
   async updateLastLogin(id: string): Promise<void> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        await client.from('users').update({
-          last_login_at: new Date().toISOString()
-        }).eq('id', id);
-      }
-    } catch (err) {
-      console.warn('[SupabaseUserRepository] updateLastLogin failed:', (err as Error).message);
+    const client = this.getClient();
+    const { error } = await client.from('users').update({
+      last_login_at: new Date().toISOString()
+    }).eq('id', id);
+    if (error) {
+      console.warn('[SupabaseUserRepository] updateLastLogin error:', error.message);
     }
-    await this.fallbackJsonRepo.updateLastLogin(id);
   }
 
   private mapFromDb(row: any): User {

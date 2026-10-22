@@ -1,99 +1,74 @@
 import { ITrafficFineRepository } from '../../../core/ports/ITrafficFineRepository.js';
 import { TrafficFine, FineStatus } from '../../../core/domain/TrafficFine.js';
 import { getSupabaseClient } from '../services/SupabaseClient.js';
-import { JsonTrafficFineRepository } from './JsonTrafficFineRepository.js';
 
 export class SupabaseTrafficFineRepository implements ITrafficFineRepository {
-  private fallbackJsonRepo = new JsonTrafficFineRepository();
-
   private getClient() {
-    return getSupabaseClient();
+    const client = getSupabaseClient();
+    if (!client) {
+      throw new Error('Supabase client not configured. Check SUPABASE_URL and SUPABASE_ANON_KEY.');
+    }
+    return client;
   }
 
   async findByTenant(tenantId: string): Promise<TrafficFine[]> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId);
-        if (!error && data && data.length > 0) {
-          return data.map(this.mapFromDb);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseTrafficFineRepository] findByTenant fallback:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId).order('date', { ascending: false });
+    if (error) {
+      console.error('[SupabaseTrafficFineRepository] findByTenant error:', error.message);
+      return [];
     }
-    return this.fallbackJsonRepo.findByTenant(tenantId);
+    return (data || []).map(this.mapFromDb);
   }
 
   async findByVehicle(tenantId: string, vehicleId: string): Promise<TrafficFine[]> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId).eq('vehicle_id', vehicleId);
-        if (!error && data && data.length > 0) {
-          return data.map(this.mapFromDb);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseTrafficFineRepository] findByVehicle fallback:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId).eq('vehicle_id', vehicleId).order('date', { ascending: false });
+    if (error) {
+      console.error('[SupabaseTrafficFineRepository] findByVehicle error:', error.message);
+      return [];
     }
-    return this.fallbackJsonRepo.findByVehicle(tenantId, vehicleId);
+    return (data || []).map(this.mapFromDb);
   }
 
   async findById(tenantId: string, id: string): Promise<TrafficFine | null> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId).eq('id', id).maybeSingle();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseTrafficFineRepository] findById fallback:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('traffic_fines').select('*').eq('tenant_id', tenantId).eq('id', id).maybeSingle();
+    if (error) {
+      console.error('[SupabaseTrafficFineRepository] findById error:', error.message);
+      return null;
     }
-    return this.fallbackJsonRepo.findById(tenantId, id);
+    return data ? this.mapFromDb(data) : null;
   }
 
   async create(fine: Omit<TrafficFine, 'id' | 'createdAt'>): Promise<TrafficFine> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('traffic_fines').insert({
-          tenant_id: fine.tenantId,
-          vehicle_id: fine.vehicleId,
-          driver_id: fine.driverId,
-          date: fine.date,
-          reason: fine.reason,
-          amount_eur: fine.amountEur,
-          status: fine.status,
-          fine_reference: fine.fineReference,
-          organism: fine.organism,
-          notes: fine.notes
-        }).select().single();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseTrafficFineRepository] create fallback:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('traffic_fines').insert({
+      tenant_id: fine.tenantId,
+      vehicle_id: fine.vehicleId,
+      driver_id: fine.driverId,
+      date: fine.date,
+      reason: fine.reason,
+      amount_eur: fine.amountEur,
+      status: fine.status,
+      fine_reference: fine.fineReference,
+      organism: fine.organism,
+      notes: fine.notes
+    }).select().single();
+
+    if (error || !data) {
+      throw new Error(`Failed to create traffic fine: ${error?.message}`);
     }
-    return this.fallbackJsonRepo.create(fine);
+    return this.mapFromDb(data);
   }
 
   async updateStatus(tenantId: string, id: string, status: FineStatus): Promise<TrafficFine> {
-    try {
-      const client = this.getClient();
-      if (client) {
-        const { data, error } = await client.from('traffic_fines').update({ status }).eq('tenant_id', tenantId).eq('id', id).select().single();
-        if (!error && data) {
-          return this.mapFromDb(data);
-        }
-      }
-    } catch (err) {
-      console.warn('[SupabaseTrafficFineRepository] updateStatus fallback:', (err as Error).message);
+    const client = this.getClient();
+    const { data, error } = await client.from('traffic_fines').update({ status }).eq('tenant_id', tenantId).eq('id', id).select().single();
+    if (error || !data) {
+      throw new Error(`Failed to update fine status: ${error?.message}`);
     }
-    return this.fallbackJsonRepo.updateStatus(tenantId, id, status);
+    return this.mapFromDb(data);
   }
 
   private mapFromDb(row: any): TrafficFine {
@@ -104,8 +79,8 @@ export class SupabaseTrafficFineRepository implements ITrafficFineRepository {
       driverId: row.driver_id,
       date: row.date,
       reason: row.reason,
-      amountEur: Number(row.amount_eur),
-      status: row.status as FineStatus,
+      amountEur: Number(row.amount_eur || 0),
+      status: row.status,
       fineReference: row.fine_reference,
       organism: row.organism,
       notes: row.notes,

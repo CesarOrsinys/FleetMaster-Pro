@@ -15,6 +15,12 @@ DROP POLICY IF EXISTS "Vehicles tenant isolation" ON vehicles;
 DROP POLICY IF EXISTS "Maintenance tenant isolation" ON maintenance_records;
 DROP POLICY IF EXISTS "Fuel logs tenant isolation" ON fuel_mileage_logs;
 DROP POLICY IF EXISTS "Traffic fines tenant isolation" ON traffic_fines;
+DROP POLICY IF EXISTS "Tenants api access" ON tenants;
+DROP POLICY IF EXISTS "Users api access" ON users;
+DROP POLICY IF EXISTS "Vehicles api access" ON vehicles;
+DROP POLICY IF EXISTS "Maintenance api access" ON maintenance_records;
+DROP POLICY IF EXISTS "Fuel logs api access" ON fuel_mileage_logs;
+DROP POLICY IF EXISTS "Traffic fines api access" ON traffic_fines;
 
 DROP FUNCTION IF EXISTS get_current_tenant_id() CASCADE;
 
@@ -232,31 +238,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
--- Public / Anonymous Read Policies for Login Authentication & Tenant Switching
-CREATE POLICY "Users anon login lookup" ON users
-  FOR SELECT TO anon USING (active = true);
+-- Public / Backend API Policies (Express backend manages auth & tenant isolation)
+CREATE POLICY "Tenants api access" ON tenants
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
-CREATE POLICY "Tenants anon selection" ON tenants
-  FOR SELECT TO anon USING (active = true);
+CREATE POLICY "Users api access" ON users
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
--- Tenant Isolation Policies for Authenticated Operations
-CREATE POLICY "Tenants isolation" ON tenants
-  FOR ALL USING (id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
+CREATE POLICY "Vehicles api access" ON vehicles
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
-CREATE POLICY "Users tenant isolation" ON users
-  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
+CREATE POLICY "Maintenance api access" ON maintenance_records
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
-CREATE POLICY "Vehicles tenant isolation" ON vehicles
-  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
+CREATE POLICY "Fuel logs api access" ON fuel_mileage_logs
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
-CREATE POLICY "Maintenance tenant isolation" ON maintenance_records
-  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
-
-CREATE POLICY "Fuel logs tenant isolation" ON fuel_mileage_logs
-  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
-
-CREATE POLICY "Traffic fines tenant isolation" ON traffic_fines
-  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin' OR current_setting('request.jwt.claims', true) IS NULL);
+CREATE POLICY "Traffic fines api access" ON traffic_fines
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
 -- ============================================================================
 -- 11. SEED DATA (ENTORNOS DE PRUEBA Y DEMOSTRACIÓN)

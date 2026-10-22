@@ -6,6 +6,7 @@ import { MaintenanceRecord } from './core/domain/MaintenanceRecord.js';
 import { FuelLog } from './core/domain/FuelLog.js';
 import { TrafficFine } from './core/domain/TrafficFine.js';
 import { SafeUser } from './core/domain/User.js';
+import { Tenant } from './core/domain/Tenant.js';
 
 interface UserSession {
   id: string;
@@ -42,7 +43,7 @@ class AppController {
     this.checkAuthenticationState();
   }
 
-  private checkAuthenticationState(): void {
+  private async checkAuthenticationState(): Promise<void> {
     const savedToken = localStorage.getItem('fleetmaster_token');
     const savedUserJson = localStorage.getItem('fleetmaster_user');
 
@@ -56,10 +57,10 @@ class AppController {
         }
 
         // Show Application Shell and Hide Login View
-        this.showApplicationShell();
+        await this.showApplicationShell();
 
         // ONLY AFTER LOGIN: Execute pertinent backend calls
-        this.loadData();
+        await this.loadData();
         return;
       } catch (e) {
         console.warn('Invalid saved session. Resetting.', e);
@@ -77,6 +78,13 @@ class AppController {
 
     if (loginView) loginView.style.display = 'flex';
     if (appShell) appShell.style.display = 'none';
+
+    // Disable and reset tenant dropdown while unauthenticated
+    const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
+    if (tenantSelect) {
+      tenantSelect.innerHTML = `<option value="">${LanguageManager.t('loadingTenants')}</option>`;
+      tenantSelect.disabled = true;
+    }
 
     this.cachedVehicles = [];
     this.cachedMaintenance = [];
@@ -104,7 +112,7 @@ class AppController {
     });
   }
 
-  private showApplicationShell(): void {
+  private async showApplicationShell(): Promise<void> {
     const loginView = document.getElementById('view-login');
     const appShell = document.getElementById('app-shell');
 
@@ -112,7 +120,7 @@ class AppController {
     if (appShell) appShell.style.display = 'flex';
 
     this.updateHeaderUserInfo();
-    this.syncTenantSelect();
+    await this.fetchAndPopulateTenants();
     this.renderDriverPortalBanner();
   }
 
@@ -147,13 +155,62 @@ class AppController {
     }
   }
 
+  private async fetchAndPopulateTenants(): Promise<void> {
+    const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
+    const wrapper = document.getElementById('tenant-pill-wrapper');
+    if (!tenantSelect) return;
+
+    try {
+      const headers: Record<string, string> = {};
+      if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
+
+      const res = await fetch('/api/tenants', { headers }).catch(() => null);
+      if (res && res.ok) {
+        const tenants: Tenant[] = await res.json();
+        if (tenants && tenants.length > 0) {
+          tenantSelect.innerHTML = '';
+          tenants.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.id;
+            opt.textContent = t.name;
+            tenantSelect.appendChild(opt);
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Could not fetch tenants dynamically from BBDD:', err);
+    }
+
+    if (this.currentUser && this.currentUser.role !== 'SUPERADMIN' && this.currentUser.tenantId) {
+      this.currentTenant = this.currentUser.tenantId;
+    }
+    tenantSelect.value = this.currentTenant;
+
+    // Company/fleet selector is enabled ONLY after login, and only switchable for SUPERADMIN
+    if (this.currentUser?.role === 'SUPERADMIN') {
+      tenantSelect.disabled = false;
+      if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
+    } else {
+      tenantSelect.disabled = true;
+      if (wrapper) wrapper.title = LanguageManager.t('tenantLockedTooltip');
+    }
+  }
+
   private syncTenantSelect(): void {
     const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
+    const wrapper = document.getElementById('tenant-pill-wrapper');
     if (tenantSelect) {
-      tenantSelect.value = this.currentTenant;
       if (this.currentUser && this.currentUser.role !== 'SUPERADMIN' && this.currentUser.tenantId) {
-        tenantSelect.value = this.currentUser.tenantId;
         this.currentTenant = this.currentUser.tenantId;
+      }
+      tenantSelect.value = this.currentTenant;
+
+      if (this.currentUser?.role === 'SUPERADMIN') {
+        tenantSelect.disabled = false;
+        if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
+      } else {
+        tenantSelect.disabled = true;
+        if (wrapper) wrapper.title = LanguageManager.t('tenantLockedTooltip');
       }
     }
   }
@@ -296,47 +353,43 @@ class AppController {
   }
 
   private setupDemoCredentials(): void {
-    const setCreds = (username: string, pass: string, tenant: string) => {
+    const setCreds = (username: string, pass: string) => {
       const usernameInput = document.getElementById('login-username') as HTMLInputElement;
       const passInput = document.getElementById('login-password') as HTMLInputElement;
-      const tenantInput = document.getElementById('login-tenant') as HTMLSelectElement;
 
       if (usernameInput) usernameInput.value = username;
       if (passInput) passInput.value = pass;
-      if (tenantInput) tenantInput.value = tenant;
 
       const errorBanner = document.getElementById('login-error');
       if (errorBanner) errorBanner.style.display = 'none';
     };
 
     document.getElementById('pill-admin-val')?.addEventListener('click', () => {
-      setCreds('admin_valencia', 'Admin2026!', 'tenant_valencia');
+      setCreds('admin_valencia', 'Admin2026!');
     });
 
     document.getElementById('pill-admin-med')?.addEventListener('click', () => {
-      setCreds('admin_med', 'Admin2026!', 'tenant_med');
+      setCreds('admin_med', 'Admin2026!');
     });
 
     document.getElementById('pill-driver-joan')?.addEventListener('click', () => {
-      setCreds('conductor_joan', 'Driver2026!', 'tenant_valencia');
+      setCreds('conductor_joan', 'Driver2026!');
     });
 
     document.getElementById('pill-superadmin')?.addEventListener('click', () => {
-      setCreds('superadmin', 'Admin2026!', 'tenant_valencia');
+      setCreds('superadmin', 'Admin2026!');
     });
   }
 
   private async handleLogin(): Promise<void> {
     const usernameInput = document.getElementById('login-username') as HTMLInputElement;
     const passInput = document.getElementById('login-password') as HTMLInputElement;
-    const tenantSelect = document.getElementById('login-tenant') as HTMLSelectElement;
     const submitBtn = document.getElementById('login-submit-btn') as HTMLButtonElement;
     const errorBanner = document.getElementById('login-error');
     const errorText = document.getElementById('login-error-text');
 
     const username = usernameInput?.value.trim() || '';
     const password = passInput?.value || '';
-    const selectedTenant = tenantSelect?.value || 'tenant_valencia';
 
     if (errorBanner) errorBanner.style.display = 'none';
     if (submitBtn) {
@@ -364,15 +417,15 @@ class AppController {
 
       this.authToken = data.token;
       this.currentUser = data.user;
-      this.currentTenant = this.currentUser?.tenantId || selectedTenant;
+      this.currentTenant = this.currentUser?.tenantId || 'tenant_valencia';
 
       // Persist session
       localStorage.setItem('fleetmaster_token', this.authToken!);
       localStorage.setItem('fleetmaster_user', JSON.stringify(this.currentUser));
       localStorage.setItem('fleetmaster_tenant', this.currentTenant);
 
-      // Transition to application shell
-      this.showApplicationShell();
+      // Transition to application shell (dynamically loads tenants from BBDD & activates selector)
+      await this.showApplicationShell();
 
       // ONLY NOW: Fetch data for the active tenant
       await this.loadData();

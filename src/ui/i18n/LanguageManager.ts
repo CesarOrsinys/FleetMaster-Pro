@@ -53,6 +53,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     welcomeBack: "Benvingut/da",
     currentUser: "Usuari connectat",
     loginModalTitle: "Accés al Sistema FleetMaster-Pro",
+    loadingTenants: "Carregant empreses...",
+    switchTenantTooltip: "Canviar d'empresa (Accés SuperAdmin)",
+    tenantLockedTooltip: "Empresa assignada al teu compte",
 
     // Navigation Tabs
     tabDashboard: "Panell de Control",
@@ -430,6 +433,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     welcomeBack: "Bienvenido/a",
     currentUser: "Usuario conectado",
     loginModalTitle: "Acceso al Sistema FleetMaster-Pro",
+    loadingTenants: "Cargando empresas...",
+    switchTenantTooltip: "Cambiar de empresa (Acceso SuperAdmin)",
+    tenantLockedTooltip: "Empresa asignada a tu cuenta",
 
     // Navigation Tabs
     tabDashboard: "Panel de Control",
@@ -807,6 +813,9 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     welcomeBack: "Welcome back",
     currentUser: "Connected user",
     loginModalTitle: "Sign in to FleetMaster-Pro",
+    loadingTenants: "Loading companies...",
+    switchTenantTooltip: "Switch company (SuperAdmin Access)",
+    tenantLockedTooltip: "Company assigned to your account",
 
     // Navigation Tabs
     tabDashboard: "Dashboard",

@@ -1834,13 +1834,6 @@
 
       <!-- Login Form -->
       <form class="login-form" id="login-form">
-        <div class="form-group">
-          <label for="login-tenant" data-i18n="loginSelectTenant">Empresa / Flota</label>
-          <select id="login-tenant" required>
-            <option value="tenant_valencia" data-i18n="tenant_valencia_name">València Transports Logístics SL</option>
-            <option value="tenant_med" data-i18n="tenant_med_name">Mediterrània Fleet Services SA</option>
-          </select>
-        </div>
 
         <div class="form-group">
           <label for="login-username" data-i18n="inputUsernameLabel">Nom d'usuari</label>
@@ -1900,13 +1893,12 @@
         </div>
 
         <div class="header-actions">
-          <!-- Tenant Switcher -->
-          <div class="tenant-pill">
+          <!-- Tenant Switcher (Dynamically loaded from BBDD after login) -->
+          <div class="tenant-pill" id="tenant-pill-wrapper">
             <span>🏢</span>
             <label style="display:none;" data-i18n="tenantSelectorLabel">Empresa</label>
-            <select class="tenant-select" id="tenant-select">
-              <option value="tenant_valencia" data-i18n="tenant_valencia_name">València Transports Logístics SL</option>
-              <option value="tenant_med" data-i18n="tenant_med_name">Mediterrània Fleet Services SA</option>
+            <select class="tenant-select" id="tenant-select" disabled>
+              <option value="" data-i18n="loadingTenants">Carregant empreses...</option>
             </select>
           </div>
 

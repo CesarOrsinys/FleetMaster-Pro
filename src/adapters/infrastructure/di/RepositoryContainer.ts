@@ -28,7 +28,7 @@ export class RepositoryContainer {
   private static trafficFineRepo: ITrafficFineRepository | null = null;
 
   public static isMockMode(): boolean {
-    return (process.env.USE_MOCK_DB || 'true').toLowerCase() === 'true';
+    return (process.env.USE_MOCK_DB || 'false').toLowerCase() === 'true';
   }
 
   public static getTenantRepository(): ITenantRepository {
