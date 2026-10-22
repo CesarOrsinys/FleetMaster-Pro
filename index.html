@@ -1815,7 +1815,7 @@
 
         <!-- Custom Language Selector (Matching Dine-Done) -->
         <div class="custom-lang-selector" id="login-lang-selector">
-          <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Canviar idioma">
+          <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" data-i18n-title="switchLanguage" data-i18n-aria-label="switchLanguage" title="Canviar idioma">
             <span class="lang-btn-flag"></span>
             <span class="lang-btn-code">VA</span>
             <span class="lang-btn-arrow">▼</span>
@@ -1911,14 +1911,14 @@
           </div>
 
           <!-- Refresh Data Button -->
-          <button class="btn-refresh-header" id="btn-refresh-data" type="button" title="Refrescar dades" aria-label="Refrescar dades">
+          <button class="btn-refresh-header" id="btn-refresh-data" type="button" data-i18n-title="refreshDataTitle" data-i18n-aria-label="refreshDataTitle" title="Refrescar dades" aria-label="Refrescar dades">
             <span class="refresh-icon">🔄</span>
             <span class="refresh-label desktop-only" data-i18n="btnRefresh">Refrescar</span>
           </button>
 
           <!-- Header Custom Language Selector (Matching Dine-Done) -->
           <div class="custom-lang-selector" id="header-lang-selector">
-            <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Canviar idioma">
+            <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" data-i18n-title="switchLanguage" data-i18n-aria-label="switchLanguage" title="Canviar idioma">
               <span class="lang-btn-flag"></span>
               <span class="lang-btn-code">VA</span>
               <span class="lang-btn-arrow">▼</span>
@@ -1930,7 +1930,7 @@
 
           <!-- User Profile Dropdown Button & Menu (Staff-Incidents-Manager Architecture) -->
           <div class="user-menu-wrapper" id="user-menu-wrapper">
-            <button class="btn-user-avatar" id="btn-user-avatar" type="button" title="Perfil d'usuari" aria-haspopup="true" aria-expanded="false">
+            <button class="btn-user-avatar" id="btn-user-avatar" type="button" data-i18n-title="userProfileTitle" data-i18n-aria-label="userProfileTitle" title="Perfil d'usuari" aria-haspopup="true" aria-expanded="false">
               <span class="user-avatar-circle" id="header-user-avatar">AD</span>
               <span class="user-btn-name" id="header-user-name">Yris Orsinys</span>
               <span class="user-btn-arrow">▼</span>
@@ -2467,29 +2467,29 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalNewVehicleTitle">Registrar Nou Vehicle a la Flota</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <form id="form-new-vehicle">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
               <label for="veh-plate" data-i18n="inputPlateLabel">Matrícula oficial</label>
-              <input type="text" id="veh-plate" placeholder="Ex: 1234-BBB" required />
+              <input type="text" id="veh-plate" data-i18n-placeholder="placeholderPlate" placeholder="Ex: 1234-BBB" required />
             </div>
             <div class="form-group">
               <label for="veh-vin" data-i18n="inputVinLabel">Nombre de Bastidor (VIN)</label>
-              <input type="text" id="veh-vin" placeholder="VF1FL0000..." required />
+              <input type="text" id="veh-vin" data-i18n-placeholder="placeholderVin" placeholder="VF1FL0000..." required />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="veh-make" data-i18n="inputMakeLabel">Marca</label>
-              <input type="text" id="veh-make" placeholder="Ex: Renault" required />
+              <input type="text" id="veh-make" data-i18n-placeholder="placeholderMake" placeholder="Ex: Renault" required />
             </div>
             <div class="form-group">
               <label for="veh-model" data-i18n="inputModelLabel">Model</label>
-              <input type="text" id="veh-model" placeholder="Ex: Trafic 2.0 dCi" required />
+              <input type="text" id="veh-model" data-i18n-placeholder="placeholderModel" placeholder="Ex: Trafic 2.0 dCi" required />
             </div>
           </div>
 
@@ -2547,7 +2547,7 @@
 
           <div class="form-group">
             <label for="veh-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
-            <textarea id="veh-notes" rows="2" placeholder="..."></textarea>
+            <textarea id="veh-notes" rows="2" data-i18n-placeholder="placeholderNotes" placeholder="..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -2563,7 +2563,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalNewMaintenanceTitle">Programar Manteniment o ITV</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <form id="form-new-maintenance">
         <div class="modal-body">
@@ -2596,7 +2596,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="maint-workshop" data-i18n="inputWorkshopLabel">Taller o Proveïdor</label>
-              <input type="text" id="maint-workshop" placeholder="Ex: Tallers Morvedre" required />
+              <input type="text" id="maint-workshop" data-i18n-placeholder="placeholderWorkshop" placeholder="Ex: Tallers Morvedre" required />
             </div>
             <div class="form-group">
               <label for="maint-cost" data-i18n="inputCostLabel">Cost estimat (€)</label>
@@ -2627,7 +2627,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalNewFuelLogTitle">Registrar Repostatge de Combustible</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <form id="form-new-fuel">
         <div class="modal-body">
@@ -2665,7 +2665,7 @@
 
           <div class="form-group">
             <label for="fuel-station" data-i18n="inputFuelStationLabel">Estació de servei</label>
-            <input type="text" id="fuel-station" placeholder="Ex: Repsol Viver" required />
+            <input type="text" id="fuel-station" data-i18n-placeholder="placeholderFuelStation" placeholder="Ex: Repsol Viver" required />
           </div>
 
           <div class="form-group" style="display:flex; align-items:center; gap:8px; margin: 4px 0 10px;">
@@ -2675,7 +2675,7 @@
 
           <div class="form-group">
             <label for="fuel-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
-            <input type="text" id="fuel-notes" placeholder="Ex: Proveïment retorn centre logístic..." />
+            <input type="text" id="fuel-notes" data-i18n-placeholder="placeholderFuelNotes" placeholder="Ex: Proveïment retorn centre logístic..." />
           </div>
         </div>
         <div class="modal-footer">
@@ -2691,36 +2691,36 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalNewDriverTitle">Registrar Nou Conductor</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <form id="form-new-driver">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
               <label for="driver-name" data-i18n="inputDriverNameLabel">Nom i Cognoms</label>
-              <input type="text" id="driver-name" placeholder="Ex: Joan Martí Ferrer" required />
+              <input type="text" id="driver-name" data-i18n-placeholder="placeholderDriverName" placeholder="Ex: Joan Martí Ferrer" required />
             </div>
             <div class="form-group">
               <label for="driver-username" data-i18n="inputUsernameLabel">Nom d'usuari per a login</label>
-              <input type="text" id="driver-username" placeholder="Ex: driver_joan" required />
+              <input type="text" id="driver-username" data-i18n-placeholder="placeholderDriverUsername" placeholder="Ex: driver_joan" required />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="driver-email" data-i18n="colEmail">Correu Electrònic</label>
-              <input type="email" id="driver-email" placeholder="joan.marti@empresa.com" required />
+              <input type="email" id="driver-email" data-i18n-placeholder="placeholderDriverEmail" placeholder="joan.marti@empresa.com" required />
             </div>
             <div class="form-group">
               <label for="driver-phone" data-i18n="colPhone">Telèfon de Contacte</label>
-              <input type="tel" id="driver-phone" placeholder="+34 612 345 678" />
+              <input type="tel" id="driver-phone" data-i18n-placeholder="placeholderDriverPhone" placeholder="+34 612 345 678" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="driver-license" data-i18n="inputLicenseLabel">Permís de Conduir / Llicència</label>
-              <input type="text" id="driver-license" placeholder="B-12345678" required />
+              <input type="text" id="driver-license" data-i18n-placeholder="placeholderDriverLicense" placeholder="B-12345678" required />
             </div>
             <div class="form-group">
               <label for="driver-assigned-veh" data-i18n="inputAssignedVehicleLabel">Vehicle Assignat (Opcional)</label>
@@ -2744,7 +2744,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalNewFineTitle">Registrar Nova Multa de Trànsit</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <form id="form-new-fine">
         <div class="modal-body">
@@ -2770,19 +2770,19 @@
             </div>
             <div class="form-group">
               <label for="fine-amount" data-i18n="inputFineAmountLabel">Import de la Multa (€)</label>
-              <input type="number" id="fine-amount" step="0.01" min="1" placeholder="100.00" required />
+              <input type="number" id="fine-amount" step="0.01" min="1" data-i18n-placeholder="placeholderFineAmount" placeholder="100.00" required />
             </div>
           </div>
 
           <div class="form-group">
             <label for="fine-reason" data-i18n="inputFineReasonLabel">Motiu de la Infracció</label>
-            <input type="text" id="fine-reason" placeholder="Ex: Excés de velocitat (radar fix A-7 km 342)" required />
+            <input type="text" id="fine-reason" data-i18n-placeholder="placeholderFineReason" placeholder="Ex: Excés de velocitat (radar fix A-7 km 342)" required />
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label for="fine-organism" data-i18n="inputFineOrganismLabel">Organisme Emissor</label>
-              <input type="text" id="fine-organism" placeholder="Ex: DGT / Ajuntament de València" required />
+              <input type="text" id="fine-organism" data-i18n-placeholder="placeholderFineOrganism" placeholder="Ex: DGT / Ajuntament de València" required />
             </div>
             <div class="form-group">
               <label for="fine-status" data-i18n="colStatus">Estat del Pagament</label>
@@ -2796,7 +2796,7 @@
 
           <div class="form-group">
             <label for="fine-notes" data-i18n="inputNotesLabel">Observacions o Núm. Expedient</label>
-            <textarea id="fine-notes" rows="2" placeholder="Núm. expedient sancionador, al·legacions..."></textarea>
+            <textarea id="fine-notes" rows="2" data-i18n-placeholder="placeholderFineNotes" placeholder="Núm. expedient sancionador, al·legacions..."></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -2812,7 +2812,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalItvDetailsTitle">Fitxa Tècnica i Estat d'ITV</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <div class="modal-body">
         <!-- Vehicle identity header -->
@@ -2878,7 +2878,7 @@
     <div class="modal-window">
       <div class="modal-header">
         <h3 data-i18n="modalMaintDetailsTitle">Detalls de la Intervenció de Manteniment</h3>
-        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+        <button type="button" class="btn-close-modal" data-close-modal data-i18n-title="btnClose" data-i18n-aria-label="btnClose" title="Tancar">&times;</button>
       </div>
       <div class="modal-body">
         <div class="detail-modal-box">

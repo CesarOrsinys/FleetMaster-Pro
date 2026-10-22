@@ -1,5 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert';
+import fs from 'node:fs';
 import { TRANSLATIONS, SupportedLanguage, LanguageManager } from '../../src/ui/i18n/LanguageManager.js';
 import { VehicleSchema } from '../../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../../src/core/domain/MaintenanceRecord.js';
@@ -89,6 +90,30 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
       // Fallback for empty observations
       LanguageManager.setLanguage('es');
       assert.strictEqual(LanguageManager.translateObservation(null), "Sin observaciones adicionales registradas.");
+    });
+
+    it('Should verify that 100% of data-i18n, data-i18n-placeholder, and data-i18n-title in index.html are defined in translations', () => {
+      const html = fs.readFileSync('index.html', 'utf8');
+      const attrRegex = /data-i18n(?:-[a-z-]+)?="([^"]+)"/g;
+      let match: RegExpExecArray | null;
+      const htmlKeys = new Set<string>();
+      while ((match = attrRegex.exec(html)) !== null) {
+        htmlKeys.add(match[1]);
+      }
+
+      const vaKeys = new Set(Object.keys(TRANSLATIONS['va']));
+      const missingKeys: string[] = [];
+      for (const k of htmlKeys) {
+        if (!vaKeys.has(k)) {
+          missingKeys.push(k);
+        }
+      }
+
+      assert.strictEqual(
+        missingKeys.length,
+        0,
+        `Found keys in index.html without translations: ${missingKeys.join(', ')}`
+      );
     });
   });
 

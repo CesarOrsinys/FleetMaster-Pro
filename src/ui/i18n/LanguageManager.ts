@@ -325,7 +325,77 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     successFineStatusUpdated: "Estat de la multa actualitzat correctament!",
     btnRefresh: "Refrescar",
     btnRefreshing: "Actualitzant...",
-    successDataRefreshed: "Dades de la flota actualitzades correctament!"
+    successDataRefreshed: "Dades de la flota actualitzades correctament!",
+
+    // Driver Portal & KPIs
+    driverPortalWelcome: "Hola, Conductor",
+    driverAssignedVehicle: "Vehicle assignat:",
+    btnDriverQuickFuel: "Reportar Repostatge d'avui",
+    kpiTotalDrivers: "Conductores Totals",
+    kpiTotalDriversDesc: "Personal de conducció registrat a la flota",
+    kpiAssignedDrivers: "Amb Vehicle Assignat",
+    kpiAssignedDriversDesc: "Conductores vinculats actualment a un vehicle",
+    kpiUnassignedDrivers: "Sense Vehicle Assignat",
+    kpiUnassignedDriversDesc: "Conductores disponibles per a assignació",
+    colDriver: "Conductor",
+    colPhone: "Telèfon",
+    colEmail: "Correu Electrònic",
+    driverUnassigned: "Sense assignar",
+
+    // Traffic Fines KPIs & Actions
+    kpiTotalFines: "Multes Totals",
+    kpiTotalFinesDesc: "Expedients sancionadors registrats",
+    kpiPendingFines: "Pendents de Pagament",
+    kpiPendingFinesDesc: "Sancions pendents d'abonar o recórrer",
+    kpiTotalFinesAmount: "Import Total Sancions",
+    kpiTotalFinesAmountDesc: "Volum econòmic total de multes",
+    btnMarkFinePaid: "Marcar com a Pagada",
+    successFinePaid: "Multa marcada com a pagada correctament!",
+
+    // Modal Options & Dropdowns
+    optNoDriver: "-- Sense conductor assignat --",
+    optNoVehicle: "-- Sense vehicle assignat inicialment --",
+
+    // Modal Form Labels
+    inputDriverNameLabel: "Nom i Cognoms",
+    inputLicenseLabel: "Permís de Conduir / Llicència",
+    inputAssignedVehicleLabel: "Vehicle Assignat (Opcional)",
+    inputFineAmountLabel: "Import de la Multa (€)",
+    inputFineReasonLabel: "Motiu de la Infracció",
+    inputFineOrganismLabel: "Organisme Emissor",
+
+    // Input Placeholders
+    placeholderPlate: "Ex: 1234-BBB",
+    placeholderVin: "VF1FL0000...",
+    placeholderMake: "Ex: Renault",
+    placeholderModel: "Ex: Trafic 2.0 dCi",
+    placeholderNotes: "Observacions addicionals del vehicle...",
+    placeholderWorkshop: "Ex: Tallers Morvedre",
+    placeholderFuelStation: "Ex: Repsol Viver",
+    placeholderFuelNotes: "Ex: Proveïment retorn centre logístic...",
+    placeholderDriverName: "Ex: Joan Martí Ferrer",
+    placeholderDriverUsername: "Ex: driver_joan",
+    placeholderDriverEmail: "joan.marti@empresa.com",
+    placeholderDriverPhone: "+34 612 345 678",
+    placeholderDriverLicense: "B-12345678",
+    placeholderFineAmount: "100.00",
+    placeholderFineReason: "Ex: Excés de velocitat (radar fix A-7 km 342)",
+    placeholderFineOrganism: "Ex: DGT / Ajuntament de València",
+    placeholderFineNotes: "Núm. expedient sancionador, al·legacions...",
+
+    // Units, Hints & Dynamic Formats
+    unitDaysRemaining: "{days} dies restants",
+    unitDaysExpired: "Caducada fa {days} dies",
+    unitDaysCount: "{days} dies",
+    unitDaysExpiredShort: "Caducada",
+    hintOdometerLower: "⚠️ Odòmetre inferior al darrer registrat ({lastOdo} km)",
+    hintApproxUnitPrice: "Preu aproximat: {price} €/L",
+    lblDeltaFromLast: "+{km} km des d'últim",
+    lblFullTankShort: "✓ Ple",
+    lblPartialTankShort: "(Parcial)",
+    defaultFuelStation: "Estació de Servei",
+    userProfileTitle: "Perfil d'usuari",
+    refreshDataTitle: "Refrescar dades"
   },
 
   es: {
@@ -632,7 +702,77 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     successFineStatusUpdated: "¡Estado de la multa actualizado correctamente!",
     btnRefresh: "Refrescar",
     btnRefreshing: "Actualizando...",
-    successDataRefreshed: "¡Datos de la flota actualizados correctamente!"
+    successDataRefreshed: "¡Datos de la flota actualizados correctamente!",
+
+    // Driver Portal & KPIs
+    driverPortalWelcome: "Hola, Conductor",
+    driverAssignedVehicle: "Vehículo asignado:",
+    btnDriverQuickFuel: "Reportar Repostaje de hoy",
+    kpiTotalDrivers: "Conductores Totales",
+    kpiTotalDriversDesc: "Personal de conducción registrado en la flota",
+    kpiAssignedDrivers: "Con Vehículo Asignado",
+    kpiAssignedDriversDesc: "Conductores vinculados actualmente a un vehículo",
+    kpiUnassignedDrivers: "Sin Vehículo Asignado",
+    kpiUnassignedDriversDesc: "Conductores disponibles para asignación",
+    colDriver: "Conductor",
+    colPhone: "Teléfono",
+    colEmail: "Correo Electrónico",
+    driverUnassigned: "Sin asignar",
+
+    // Traffic Fines KPIs & Actions
+    kpiTotalFines: "Multas Totales",
+    kpiTotalFinesDesc: "Expedientes sancionadores registrados",
+    kpiPendingFines: "Pendientes de Pago",
+    kpiPendingFinesDesc: "Sanciones pendientes de abonar o recurrir",
+    kpiTotalFinesAmount: "Importe Total Sanciones",
+    kpiTotalFinesAmountDesc: "Volumen económico total de multas",
+    btnMarkFinePaid: "Marcar como Pagada",
+    successFinePaid: "¡Multa marcada como pagada correctamente!",
+
+    // Modal Options & Dropdowns
+    optNoDriver: "-- Sin conductor asignado --",
+    optNoVehicle: "-- Sin vehículo asignado inicialmente --",
+
+    // Modal Form Labels
+    inputDriverNameLabel: "Nombre y Apellidos",
+    inputLicenseLabel: "Permiso de Conducir / Licencia",
+    inputAssignedVehicleLabel: "Vehículo Asignado (Opcional)",
+    inputFineAmountLabel: "Importe de la Multa (€)",
+    inputFineReasonLabel: "Motivo de la Infracción",
+    inputFineOrganismLabel: "Organismo Emisor",
+
+    // Input Placeholders
+    placeholderPlate: "Ej: 1234-BBB",
+    placeholderVin: "VF1FL0000...",
+    placeholderMake: "Ej: Renault",
+    placeholderModel: "Ej: Trafic 2.0 dCi",
+    placeholderNotes: "Observaciones adicionales del vehículo...",
+    placeholderWorkshop: "Ej: Talleres Morvedre",
+    placeholderFuelStation: "Ej: Repsol Viver",
+    placeholderFuelNotes: "Ej: Repostaje de regreso a centro logístico...",
+    placeholderDriverName: "Ej: Juan Martín Ferrer",
+    placeholderDriverUsername: "Ej: conductor_juan",
+    placeholderDriverEmail: "juan.martin@empresa.com",
+    placeholderDriverPhone: "+34 612 345 678",
+    placeholderDriverLicense: "B-12345678",
+    placeholderFineAmount: "100.00",
+    placeholderFineReason: "Ej: Exceso de velocidad (radar fijo A-7 km 342)",
+    placeholderFineOrganism: "Ej: DGT / Ayuntamiento de Valencia",
+    placeholderFineNotes: "Nº expediente sancionador, alegaciones...",
+
+    // Units, Hints & Dynamic Formats
+    unitDaysRemaining: "{days} días restantes",
+    unitDaysExpired: "Caducada hace {days} días",
+    unitDaysCount: "{days} días",
+    unitDaysExpiredShort: "Caducada",
+    hintOdometerLower: "⚠️ Odómetro inferior al último registrado ({lastOdo} km)",
+    hintApproxUnitPrice: "Precio aproximado: {price} €/L",
+    lblDeltaFromLast: "+{km} km desde último",
+    lblFullTankShort: "✓ Lleno",
+    lblPartialTankShort: "(Parcial)",
+    defaultFuelStation: "Estación de Servicio",
+    userProfileTitle: "Perfil de usuario",
+    refreshDataTitle: "Refrescar datos"
   },
 
   en: {
@@ -939,7 +1079,77 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     successFineStatusUpdated: "Fine status updated successfully!",
     btnRefresh: "Refresh",
     btnRefreshing: "Refreshing...",
-    successDataRefreshed: "Fleet data refreshed successfully!"
+    successDataRefreshed: "Fleet data refreshed successfully!",
+
+    // Driver Portal & KPIs
+    driverPortalWelcome: "Hello, Driver",
+    driverAssignedVehicle: "Assigned vehicle:",
+    btnDriverQuickFuel: "Report Today's Refueling",
+    kpiTotalDrivers: "Total Drivers",
+    kpiTotalDriversDesc: "Driving staff registered in the fleet",
+    kpiAssignedDrivers: "With Assigned Vehicle",
+    kpiAssignedDriversDesc: "Drivers currently assigned to a vehicle",
+    kpiUnassignedDrivers: "Without Assigned Vehicle",
+    kpiUnassignedDriversDesc: "Drivers available for assignment",
+    colDriver: "Driver",
+    colPhone: "Phone",
+    colEmail: "Email",
+    driverUnassigned: "Unassigned",
+
+    // Traffic Fines KPIs & Actions
+    kpiTotalFines: "Total Fines",
+    kpiTotalFinesDesc: "Registered violation dossiers",
+    kpiPendingFines: "Pending Payment",
+    kpiPendingFinesDesc: "Penalties pending payment or appeal",
+    kpiTotalFinesAmount: "Total Fines Amount",
+    kpiTotalFinesAmountDesc: "Total monetary amount in fines",
+    btnMarkFinePaid: "Mark as Paid",
+    successFinePaid: "Fine successfully marked as paid!",
+
+    // Modal Options & Dropdowns
+    optNoDriver: "-- No assigned driver --",
+    optNoVehicle: "-- No vehicle initially assigned --",
+
+    // Modal Form Labels
+    inputDriverNameLabel: "Full Name",
+    inputLicenseLabel: "Driving License / Permit",
+    inputAssignedVehicleLabel: "Assigned Vehicle (Optional)",
+    inputFineAmountLabel: "Fine Amount (€)",
+    inputFineReasonLabel: "Violation Reason",
+    inputFineOrganismLabel: "Issuing Authority",
+
+    // Input Placeholders
+    placeholderPlate: "E.g. 1234-BBB",
+    placeholderVin: "VF1FL0000...",
+    placeholderMake: "E.g. Renault",
+    placeholderModel: "E.g. Trafic 2.0 dCi",
+    placeholderNotes: "Additional vehicle notes...",
+    placeholderWorkshop: "E.g. Morvedre Workshop",
+    placeholderFuelStation: "E.g. Repsol Viver",
+    placeholderFuelNotes: "E.g. Refueling on return to logistics center...",
+    placeholderDriverName: "E.g. John Martin",
+    placeholderDriverUsername: "E.g. driver_john",
+    placeholderDriverEmail: "john.martin@company.com",
+    placeholderDriverPhone: "+34 612 345 678",
+    placeholderDriverLicense: "B-12345678",
+    placeholderFineAmount: "100.00",
+    placeholderFineReason: "E.g. Speeding (fixed speed radar A-7 km 342)",
+    placeholderFineOrganism: "E.g. DGT / Valencia City Council",
+    placeholderFineNotes: "Violation dossier no., appeals...",
+
+    // Units, Hints & Dynamic Formats
+    unitDaysRemaining: "{days} days remaining",
+    unitDaysExpired: "Expired {days} days ago",
+    unitDaysCount: "{days} days",
+    unitDaysExpiredShort: "Expired",
+    hintOdometerLower: "⚠️ Odometer lower than last recorded ({lastOdo} km)",
+    hintApproxUnitPrice: "Approximate price: {price} €/L",
+    lblDeltaFromLast: "+{km} km since last",
+    lblFullTankShort: "✓ Full",
+    lblPartialTankShort: "(Partial)",
+    defaultFuelStation: "Fuel Station",
+    userProfileTitle: "User profile",
+    refreshDataTitle: "Refresh data"
   }
 };
 
@@ -1104,6 +1314,22 @@ export class LanguageManager {
       const key = el.getAttribute('data-i18n-placeholder');
       if (key) {
         el.placeholder = this.t(key);
+      }
+    });
+
+    const titles = targetRoot.querySelectorAll<HTMLElement>('[data-i18n-title]');
+    titles.forEach(el => {
+      const key = el.getAttribute('data-i18n-title');
+      if (key) {
+        el.title = this.t(key);
+      }
+    });
+
+    const ariaLabels = targetRoot.querySelectorAll<HTMLElement>('[data-i18n-aria-label]');
+    ariaLabels.forEach(el => {
+      const key = el.getAttribute('data-i18n-aria-label');
+      if (key) {
+        el.setAttribute('aria-label', this.t(key));
       }
     });
 

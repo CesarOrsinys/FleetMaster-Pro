@@ -950,7 +950,7 @@ class AppController {
             <td><span class="plate-badge">${item.vehicle.licensePlate}</span></td>
             <td><strong>${item.vehicle.make}</strong> ${item.vehicle.model}</td>
             <td><strong>${item.expDateStr}</strong></td>
-            <td>${item.daysRemaining > 0 ? `${item.daysRemaining} dies` : `<span style="color:#EF4444; font-weight:700;">-${Math.abs(item.daysRemaining)} dies</span>`}</td>
+            <td>${item.daysRemaining > 0 ? LanguageManager.t('unitDaysCount', { days: item.daysRemaining }) : `<span style="color:#EF4444; font-weight:700;">-${LanguageManager.t('unitDaysCount', { days: Math.abs(item.daysRemaining) })}</span>`}</td>
             <td><span class="status-badge ${item.statusClass}">${item.statusBadgeText}</span></td>
             <td style="max-width: 280px; font-size: 0.82rem; color: #475569;">
               <span title="${item.observations}">${item.observations}</span>
@@ -992,7 +992,7 @@ class AppController {
               </div>
               <div class="detail-card-item">
                 <span class="detail-label">${LanguageManager.t('colItvRemaining')}</span>
-                <span class="detail-value">${item.daysRemaining > 0 ? `${item.daysRemaining} dies` : `Caducada`}</span>
+                <span class="detail-value">${item.daysRemaining > 0 ? LanguageManager.t('unitDaysCount', { days: item.daysRemaining }) : LanguageManager.t('unitDaysExpiredShort')}</span>
               </div>
               <div class="detail-card-item full-width">
                 <span class="detail-label">${LanguageManager.t('colObservations')}</span>
@@ -1217,8 +1217,8 @@ class AppController {
             : `<span style="color:#94A3B8;">-</span>`;
 
           const tankBadge = f.fullTank !== false 
-            ? `<span title="${LanguageManager.t('lblFullTank')}" style="color:#0D9488; font-size:0.75rem;">✓ Ple</span>`
-            : `<span title="${LanguageManager.t('lblPartialTank')}" style="color:#EAB308; font-size:0.75rem;">(Parcial)</span>`;
+            ? `<span title="${LanguageManager.t('lblFullTank')}" style="color:#0D9488; font-size:0.75rem;">${LanguageManager.t('lblFullTankShort')}</span>`
+            : `<span title="${LanguageManager.t('lblPartialTank')}" style="color:#EAB308; font-size:0.75rem;">${LanguageManager.t('lblPartialTankShort')}</span>`;
 
           const translatedNotes = LanguageManager.translateObservation(f.notes || '');
 
@@ -1249,7 +1249,7 @@ class AppController {
       } else {
         cardsFeed.innerHTML = enrichedList.map(f => {
           const deltaBadge = f.deltaKm !== null
-            ? `<span style="background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-weight:700; padding:3px 8px; border-radius:12px; font-size:0.75rem;">+${f.deltaKm.toLocaleString()} km des d'últim</span>`
+            ? `<span style="background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-weight:700; padding:3px 8px; border-radius:12px; font-size:0.75rem;">${LanguageManager.t('lblDeltaFromLast', { km: f.deltaKm.toLocaleString() })}</span>`
             : `<span style="background:#F1F5F9; color:#64748B; border:1px solid #CBD5E1; padding:3px 8px; border-radius:12px; font-size:0.72rem;">${LanguageManager.t('lblInitialFill')}</span>`;
 
           const consumBadge = f.consumptionL100km !== null
@@ -1280,7 +1280,7 @@ class AppController {
               </div>
 
               <div class="detail-card-title">
-                <span>⛽ ${f.fuelStation || 'Estació de Servei'}</span>
+                <span>⛽ ${f.fuelStation || LanguageManager.t('defaultFuelStation')}</span>
                 <span style="font-size:0.78rem; font-weight:600; color:#64748B; float:right;">${f.date}</span>
               </div>
 
@@ -1435,8 +1435,8 @@ class AppController {
     if (itvDateEl) itvDateEl.textContent = vehicle.itvExpirationDate;
     if (itvRemainingEl) {
       itvRemainingEl.textContent = daysRemaining > 0 
-        ? `${daysRemaining} dies restants` 
-        : `Caducada fa ${Math.abs(daysRemaining)} dies`;
+        ? LanguageManager.t('unitDaysRemaining', { days: daysRemaining })
+        : LanguageManager.t('unitDaysExpired', { days: Math.abs(daysRemaining) });
     }
     if (itvBadgeWrap) {
       const badgeText = LanguageManager.t(statusKey, { days: Math.abs(daysRemaining) });
@@ -1761,7 +1761,7 @@ class AppController {
         deltaHintEl.textContent = `0 km (${LanguageManager.t('lblInitialFill')})`;
         deltaHintEl.style.color = '#64748B';
       } else if (currentOdo < lastOdometer) {
-        deltaHintEl.textContent = `⚠️ ${LanguageManager.t('colOdometer')} inferior al darrer conegut (${lastOdometer.toLocaleString()} km)`;
+        deltaHintEl.textContent = LanguageManager.t('hintOdometerLower', { lastOdo: lastOdometer.toLocaleString() });
         deltaHintEl.style.color = '#DC2626';
       } else {
         deltaHintEl.textContent = '';
@@ -1772,7 +1772,7 @@ class AppController {
     if (unitPriceHintEl) {
       if (price > 0 && liters > 0) {
         const unitPrice = (price / liters).toFixed(3);
-        unitPriceHintEl.textContent = `Preu aproximat: ${unitPrice} €/L`;
+        unitPriceHintEl.textContent = LanguageManager.t('hintApproxUnitPrice', { price: unitPrice });
       } else {
         unitPriceHintEl.textContent = '';
       }
