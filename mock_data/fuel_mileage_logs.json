@@ -10,7 +10,7 @@
     "costEur": 89.54,
     "fuelStation": "Repsol Sagunt Port",
     "receiptUrl": "",
-    "notes": "Proveïment inicial ruta logística",
+    "notes": "Repostaje inicial ruta logística",
     "fullTank": true,
     "createdAt": "2026-09-20T08:15:00.000Z"
   },
@@ -25,7 +25,7 @@
     "costEur": 93.60,
     "fuelStation": "Repsol Viver / Segorbe",
     "receiptUrl": "",
-    "notes": "Proveïment complet dièsel ruta A-23",
+    "notes": "Repostaje completo diésel ruta A-23",
     "fullTank": true,
     "createdAt": "2026-10-02T14:30:00.000Z"
   },
@@ -38,9 +38,9 @@
     "odometerKm": 84500,
     "liters": 58.10,
     "costEur": 87.15,
-    "fuelStation": "Cepsa Castelló Sud",
+    "fuelStation": "Cepsa Castellón Sur",
     "receiptUrl": "",
-    "notes": "Proveïment retorn centre logístic",
+    "notes": "Repostaje de regreso a centro logístico",
     "fullTank": true,
     "createdAt": "2026-10-14T18:15:00.000Z"
   },
@@ -53,9 +53,9 @@
     "odometerKm": 142100,
     "liters": 48.00,
     "costEur": 72.96,
-    "fuelStation": "Galp Paterna Parc Tecnològic",
+    "fuelStation": "Galp Paterna Parque Tecnológico",
     "receiptUrl": "",
-    "notes": "Proveïment abans d'entrada a taller",
+    "notes": "Repostaje antes de entrada a taller",
     "fullTank": true,
     "createdAt": "2026-10-08T11:20:00.000Z"
   },
@@ -68,9 +68,9 @@
     "odometerKm": 56200,
     "liters": 65.00,
     "costEur": 97.50,
-    "fuelStation": "Shell Benidorm Ponent",
+    "fuelStation": "Shell Benidorm Poniente",
     "receiptUrl": "",
-    "notes": "Ruta Mediterrània Sud",
+    "notes": "Ruta Mediterránea Sur",
     "fullTank": true,
     "createdAt": "2026-10-10T16:40:00.000Z"
   }

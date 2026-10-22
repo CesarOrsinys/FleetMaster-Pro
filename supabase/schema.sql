@@ -5,31 +5,17 @@
 -- ============================================================================
 
 -- ============================================================================
--- 0. CLEAN EXISTING SCHEMA & POLICIES (TEARDOWN COMPLETO)
+-- 0. CLEAN EXISTING SCHEMA (TEARDOWN COMPLETO)
+-- CASCADE borra automáticamente las políticas RLS asociadas a cada tabla
 -- ============================================================================
-DROP POLICY IF EXISTS "Users anon login lookup" ON users;
-DROP POLICY IF EXISTS "Tenants anon selection" ON tenants;
-DROP POLICY IF EXISTS "Tenants isolation" ON tenants;
-DROP POLICY IF EXISTS "Users tenant isolation" ON users;
-DROP POLICY IF EXISTS "Vehicles tenant isolation" ON vehicles;
-DROP POLICY IF EXISTS "Maintenance tenant isolation" ON maintenance_records;
-DROP POLICY IF EXISTS "Fuel logs tenant isolation" ON fuel_mileage_logs;
-DROP POLICY IF EXISTS "Traffic fines tenant isolation" ON traffic_fines;
-DROP POLICY IF EXISTS "Tenants api access" ON tenants;
-DROP POLICY IF EXISTS "Users api access" ON users;
-DROP POLICY IF EXISTS "Vehicles api access" ON vehicles;
-DROP POLICY IF EXISTS "Maintenance api access" ON maintenance_records;
-DROP POLICY IF EXISTS "Fuel logs api access" ON fuel_mileage_logs;
-DROP POLICY IF EXISTS "Traffic fines api access" ON traffic_fines;
-
-DROP FUNCTION IF EXISTS get_current_tenant_id() CASCADE;
-
 DROP TABLE IF EXISTS traffic_fines CASCADE;
 DROP TABLE IF EXISTS fuel_mileage_logs CASCADE;
 DROP TABLE IF EXISTS maintenance_records CASCADE;
 DROP TABLE IF EXISTS vehicles CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS tenants CASCADE;
+
+DROP FUNCTION IF EXISTS get_current_tenant_id() CASCADE;
 
 DROP TYPE IF EXISTS fine_status_enum CASCADE;
 DROP TYPE IF EXISTS maintenance_status_enum CASCADE;
@@ -260,7 +246,7 @@ CREATE POLICY "Traffic fines api access" ON traffic_fines
 -- ============================================================================
 -- 11. SEED DATA (ENTORNOS DE PRUEBA Y DEMOSTRACIÓN)
 -- ============================================================================
--- 11.1. Empresas Demo
+BEGIN; -- 11.1. Empresas Demo
 INSERT INTO tenants (id, code, name, cif, primary_color, active) VALUES
   ('tenant_valencia', 'valencia-trans', 'València Transports Logístics SL', 'B98765432', '#0F766E', true),
   ('tenant_med', 'med-flota', 'Mediterrània Fleet Services SA', 'A12345678', '#2563EB', true);
@@ -268,7 +254,7 @@ INSERT INTO tenants (id, code, name, cif, primary_color, active) VALUES
 -- 11.2. Usuarios Iniciales (Contraseñas cifradas con bcrypt: Admin2026! / Driver2026!)
 INSERT INTO users (id, tenant_id, username, email, password_hash, full_name, role, phone, license_number, active) VALUES
   ('usr_super', NULL, 'superadmin', 'superadmin@fleetmaster.pro', '$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS', 'Super Administrador Global', 'SUPERADMIN', '+34600000000', 'B-00000000', true),
-  ('usr_admin_val', 'tenant_valencia', 'admin_valencia', 'admin@valenciatrans.es', '$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS', 'Yris Orsinys (Cap de Flota)', 'TENANT_ADMIN', '+34611223344', 'B-12345678', true),
+  ('usr_admin_val', 'tenant_valencia', 'admin_valencia', 'admin@valenciatrans.es', '$2b$10$rZu4p0jQ8IHrHg0/YZwOb.IJ2Hze76gdo48B862G8uYRj38s1ceMS', 'Yris Orsinys (Jefe de Flota)', 'TENANT_ADMIN', '+34611223344', 'B-12345678', true),
   ('usr_driver_joan', 'tenant_valencia', 'conductor_joan', 'joan@valenciatrans.es', '$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2', 'Joan Fuster', 'DRIVER', '+34622334455', 'B-87654321', true),
   ('usr_driver_marta', 'tenant_valencia', 'conductora_marta', 'marta@valenciatrans.es', '$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2', 'Marta Navarro', 'DRIVER', '+34655443322', 'B-55443322', true),
   ('usr_driver_pau', 'tenant_valencia', 'conductor_pau', 'pau@valenciatrans.es', '$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2', 'Pau Beltran', 'DRIVER', '+34699887766', 'B-99887766', true),
@@ -277,25 +263,26 @@ INSERT INTO users (id, tenant_id, username, email, password_hash, full_name, rol
 
 -- 11.3. Vehículos Iniciales (con Conductor Asignado por Vehículo)
 INSERT INTO vehicles (id, tenant_id, license_plate, make, model, year, vin, fuel_type, current_odometer_km, status, assigned_driver_id, itv_expiration_date, next_maintenance_km, next_maintenance_date, notes) VALUES
-  ('veh_101', 'tenant_valencia', '4589-LDR', 'Renault', 'Trafic 2.0 dCi', 2022, 'VF1FL000012345678', 'DIESEL', 84500, 'ACTIVE', 'usr_driver_joan', '2026-11-15', 90000, '2026-12-01', 'Furgoneta principal de repartiment València - Castelló'),
-  ('veh_102', 'tenant_valencia', '7812-MMK', 'Toyota', 'Proace Electric', 2023, 'VNKFL123498765432', 'ELECTRIC', 32400, 'ACTIVE', 'usr_driver_marta', '2027-03-20', 45000, '2027-01-15', 'Vehicle 100% elèctric urbà per al centre històric'),
-  ('veh_103', 'tenant_valencia', '1945-KBC', 'Peugeot', 'Partner 1.5 BlueHDi', 2020, 'VF37J000055443322', 'DIESEL', 142100, 'MAINTENANCE', 'usr_driver_pau', '2026-10-30', 150000, '2026-11-05', 'En taller per canvi de pastilles i revisió ITV urgent'),
-  ('veh_201', 'tenant_med', '6523-MTR', 'Mercedes-Benz', 'Sprinter 314 CDI', 2023, 'WDB9061234123456', 'DIESEL', 56200, 'ACTIVE', 'usr_driver_sergi', '2027-05-10', 60000, '2027-06-01', 'Flota Mediterrània - Rutes llargues');
+  ('veh_101', 'tenant_valencia', '4589-LDR', 'Renault', 'Trafic 2.0 dCi', 2022, 'VF1FL000012345678', 'DIESEL', 84500, 'ACTIVE', 'usr_driver_joan', '2026-11-15', 90000, '2026-12-01', 'Furgoneta principal de reparto Valencia - Castellón'),
+  ('veh_102', 'tenant_valencia', '7812-MMK', 'Toyota', 'Proace Electric', 2023, 'VNKFL123498765432', 'ELECTRIC', 32400, 'ACTIVE', 'usr_driver_marta', '2027-03-20', 45000, '2027-01-15', 'Vehículo 100% eléctrico urbano para el centro histórico'),
+  ('veh_103', 'tenant_valencia', '1945-KBC', 'Peugeot', 'Partner 1.5 BlueHDi', 2020, 'VF37J000055443322', 'DIESEL', 142100, 'MAINTENANCE', 'usr_driver_pau', '2026-10-30', 150000, '2026-11-05', 'En taller por cambio de pastillas y revisión ITV urgente'),
+  ('veh_201', 'tenant_med', '6523-MTR', 'Mercedes-Benz', 'Sprinter 314 CDI', 2023, 'WDB9061234123456', 'DIESEL', 56200, 'ACTIVE', 'usr_driver_sergi', '2027-05-10', 60000, '2027-06-01', 'Flota Mediterránea - Rutas largas');
 
 -- 11.4. Mantenimientos Iniciales
 INSERT INTO maintenance_records (id, tenant_id, vehicle_id, type, status, scheduled_date, completed_date, odometer_at_service_km, cost_eur, workshop_name, notes, created_by) VALUES
-  ('maint_001', 'tenant_valencia', 'veh_101', 'OIL_CHANGE', 'COMPLETED', '2026-06-10', '2026-06-12', 75000, 185.50, 'Tallers Morvedre Sagunt', 'Canvi d oli sintètic 5W30 i filtre d oli reglamentari', 'usr_admin_val'),
-  ('maint_002', 'tenant_valencia', 'veh_103', 'ITV_MOT', 'SCHEDULED', '2026-10-28', NULL, 142100, 55.80, 'Estació ITV Castelló Nord', 'Cita prèvia confirmada per a inspecció periòdica', 'usr_admin_val'),
-  ('maint_003', 'tenant_valencia', 'veh_103', 'BRAKES', 'SCHEDULED', '2026-10-25', NULL, 142100, 240.00, 'Frens i Mecànica Borrull', 'Sustitució pastilles davanteres i revisió líquid de frens', 'usr_admin_val');
+  ('maint_001', 'tenant_valencia', 'veh_101', 'OIL_CHANGE', 'COMPLETED', '2026-06-10', '2026-06-12', 75000, 185.50, 'Talleres Morvedre Sagunto', 'Cambio de aceite sintético 5W30 y filtro de aceite reglamentario', 'usr_admin_val'),
+  ('maint_002', 'tenant_valencia', 'veh_103', 'ITV_MOT', 'SCHEDULED', '2026-10-28', NULL, 142100, 55.80, 'Estación ITV Castellón Norte', 'Cita previa confirmada para inspección periódica', 'usr_admin_val'),
+  ('maint_003', 'tenant_valencia', 'veh_103', 'BRAKES', 'SCHEDULED', '2026-10-25', NULL, 142100, 240.00, 'Frenos y Mecánica Borrull', 'Sustitución de pastillas delanteras y revisión de líquido de frenos', 'usr_admin_val');
 
 -- 11.5. Registros de Combustible Iniciales
 INSERT INTO fuel_mileage_logs (id, tenant_id, vehicle_id, driver_id, date, odometer_km, liters, cost_eur, fuel_station, notes) VALUES
-  ('fuel_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-02', 83800, 62.40, 93.60, 'Repsol Viver / Segorbe', 'Proveïment complet dièsel ruta A-23'),
-  ('fuel_002', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-14', 84500, 58.10, 87.15, 'Cepsa Castelló Sud', 'Proveïment retorn centre logístic');
+  ('fuel_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-02', 83800, 62.40, 93.60, 'Repsol Viver / Segorbe', 'Repostaje completo diésel ruta A-23'),
+  ('fuel_002', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-14', 84500, 58.10, 87.15, 'Cepsa Castellón Sur', 'Repostaje de regreso a centro logístico');
 
 -- 11.6. Sanciones y Multas de Tráfico Iniciales
 INSERT INTO traffic_fines (id, tenant_id, vehicle_id, driver_id, date, reason, amount_eur, status, fine_reference, organism, notes) VALUES
-  ('fine_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-05', 'Excés de velocitat en tram interurbà (88 km/h en zona 70 km/h)', 100.00, 'PENDING', 'DGT-2026-98124', 'DGT Trànsit València', 'Notificació rebuda per correu certificat. Descompte del 50% disponible per pagament ràpid.'),
-  ('fine_002', 'tenant_valencia', 'veh_103', 'usr_driver_pau', '2026-09-18', 'Estacionament indegut en zona de càrrega i descàrrega fora d horari', 90.00, 'PAID', 'AJV-2026-44120', 'Policia Local de València', 'Abonada via passarel·la telemàtica amb targeta d empresa amb el 50% de reducció (45,00 €).'),
-  ('fine_003', 'tenant_valencia', 'veh_102', 'usr_driver_marta', '2026-10-12', 'Accés no autoritzat a zona de baixes emissions (ZBE)', 200.00, 'APPEALED', 'AJV-2026-55901', 'Ajuntament de València (Mobilitat)', 'Al·legació presentada presentant distintiu ambiental 0 Emissions del vehicle elèctric.'),
-  ('fine_004', 'tenant_med', 'veh_201', 'usr_driver_sergi', '2026-09-25', 'No respectar senyal d obligació en intersecció', 80.00, 'PAID', 'DGT-2026-11234', 'DGT Alacant', 'Pagada per l empresa sense recàrrec.');
+  ('fine_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-05', 'Exceso de velocidad en tramo interurbano (88 km/h en zona 70 km/h)', 100.00, 'PENDING', 'DGT-2026-98124', 'DGT Tráfico Valencia', 'Notificación recibida por correo certificado. Descuento del 50% disponible por pronto pago.'),
+  ('fine_002', 'tenant_valencia', 'veh_103', 'usr_driver_pau', '2026-09-18', 'Estacionamiento indebido en zona de carga y descarga fuera de horario', 90.00, 'PAID', 'AJV-2026-44120', 'Policía Local de Valencia', 'Abonada vía pasarela telemática con tarjeta de empresa con el 50% de reducción (45,00 €).'),
+  ('fine_003', 'tenant_valencia', 'veh_102', 'usr_driver_marta', '2026-10-12', 'Acceso no autorizado a zona de bajas emisiones (ZBE)', 200.00, 'APPEALED', 'AJV-2026-55901', 'Ayuntamiento de Valencia (Movilidad)', 'Alegación presentada con distintivo ambiental 0 Emisiones del vehículo eléctrico.'),
+  ('fine_004', 'tenant_med', 'veh_201', 'usr_driver_sergi', '2026-09-25', 'No respetar señal de obligación en intersección', 80.00, 'PAID', 'DGT-2026-11234', 'DGT Alicante', 'Pagada por la empresa sin recargo.');
+COMMIT;

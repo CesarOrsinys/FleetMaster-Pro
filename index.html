@@ -1412,6 +1412,148 @@
     }
 
     /* -------------------------------------------------------------
+       DRIVER EXCLUSIVE VIEW STYLES
+       ------------------------------------------------------------- */
+    .driver-portal-card-hero {
+      background: linear-gradient(135deg, #0F766E 0%, #0D9488 100%);
+      color: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.35);
+    }
+
+    .driver-portal-hero-info {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .driver-portal-avatar-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      backdrop-filter: blur(4px);
+      flex-shrink: 0;
+    }
+
+    .driver-portal-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 0.4rem;
+    }
+
+    .driver-portal-hero-name {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .driver-portal-hero-sub {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .driver-portal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 840px) {
+      .driver-portal-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .driver-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      padding: 1.4rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .driver-card-action {
+      background: linear-gradient(180deg, #F0FDFA 0%, #FFFFFF 100%);
+      border: 1.5px solid #99F6E4;
+    }
+
+    .driver-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .driver-card-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .driver-card-icon {
+      font-size: 1.4rem;
+    }
+
+    .driver-veh-plate-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .driver-veh-details-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      background: #F8FAFC;
+      border-radius: var(--radius-md);
+      padding: 0.9rem;
+    }
+
+    .driver-detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .driver-detail-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .driver-detail-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* -------------------------------------------------------------
        MOBILE RESPONSIVE (STAFF-INCIDENTS-MANAGER ARCHITECTURE)
        ------------------------------------------------------------- */
     @media (max-width: 768px) {
@@ -1985,23 +2127,99 @@
     <!-- Main Content Area -->
     <main class="app-main">
 
-      <!-- Driver Quick Portal Banner (Shown if current user has DRIVER role) -->
-      <div class="driver-portal-banner" id="driver-portal-banner" style="display: none;">
-        <div class="driver-banner-content">
-          <div class="driver-banner-icon">🚗</div>
-          <div class="driver-banner-info">
-            <div class="driver-banner-title">
-              <span data-i18n="driverPortalWelcome">Hola, Conductor</span> <strong id="driver-portal-name">Joan Martí</strong>
-            </div>
-            <div class="driver-banner-subtitle">
-              <span data-i18n="driverAssignedVehicle">Vehicle assignat:</span> <span class="plate-badge" id="driver-portal-plate">4589-LDR</span> - <span id="driver-portal-veh-model">Renault Trafic 2.0 dCi</span>
+      <!-- Driver Exclusive Portal View (Activated when current user has DRIVER role) -->
+      <section class="tab-content" id="view-driver-portal" style="display: none;">
+        <!-- Driver Hero Banner -->
+        <div class="driver-portal-card-hero">
+          <div class="driver-portal-hero-info">
+            <div class="driver-portal-avatar-icon">🚗</div>
+            <div>
+              <div class="driver-portal-hero-badge">
+                <span data-i18n="driverPortalTitle">Portal del Conductor</span> &bull; <span data-i18n="driverTodayDate">Avui</span>
+              </div>
+              <h2 class="driver-portal-hero-name">
+                <span data-i18n="driverPortalWelcome">Hola, Conductor</span> <span id="driver-portal-name">Joan Martí</span>
+              </h2>
+              <p class="driver-portal-hero-sub" data-i18n="driverPortalSubtitle">Accés exclusiu per al registre de repostatge diari del teu vehicle assignat.</p>
             </div>
           </div>
         </div>
-        <button type="button" class="btn-primary" id="btn-driver-quick-fuel" style="background: #FFFFFF; color: var(--primary-dark); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-          <span>⛽</span> <span data-i18n="btnDriverQuickFuel">Reportar Repostatge d'avui</span>
-        </button>
-      </div>
+
+        <!-- Main Driver Grid: Assigned Vehicle + Refueling Action -->
+        <div class="driver-portal-grid">
+          <!-- Card 1: Assigned Vehicle Info -->
+          <div class="driver-card">
+            <div>
+              <div class="driver-card-header">
+                <span class="driver-card-icon">🚙</span>
+                <h3 data-i18n="driverAssignedVehicleCard">Vehicle Assignat</h3>
+              </div>
+              <div class="driver-card-body" id="driver-card-vehicle-body">
+                <div class="driver-veh-plate-row">
+                  <span class="plate-badge" id="driver-portal-plate">4589-LDR</span>
+                  <strong id="driver-portal-veh-model" style="font-size:1.1rem; color:var(--text-primary);">Renault Trafic 2.0 dCi</strong>
+                </div>
+                <div class="driver-veh-details-list">
+                  <div class="driver-detail-item">
+                    <span class="driver-detail-label" data-i18n="colOdometer">Quilòmetres (km)</span>
+                    <span class="driver-detail-val" id="driver-view-odometer">42.500 km</span>
+                  </div>
+                  <div class="driver-detail-item">
+                    <span class="driver-detail-label" data-i18n="colFuelType">Combustible</span>
+                    <span class="driver-detail-val" id="driver-view-fuel-type">DIESEL</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Big Action Button to Report Today's Refueling -->
+          <div class="driver-card driver-card-action">
+            <div>
+              <div class="driver-card-header">
+                <span class="driver-card-icon">⛽</span>
+                <h3 data-i18n="driverReportFuelCardTitle">Reportar Repostatge del Dia</h3>
+              </div>
+              <p style="color:var(--text-secondary); margin-bottom:1.5rem; font-size:0.92rem; line-height:1.5;" data-i18n="driverReportFuelCardDesc">
+                Registra els litres, import (€), estació de servei i quilometratge del dia d'avui.
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn-primary" id="btn-driver-quick-fuel" style="width:100%; justify-content:center; padding:1rem 1.4rem; font-size:1.05rem; font-weight:800; box-shadow: 0 4px 14px rgba(13,148,136,0.35); border-radius: var(--radius-md);">
+                <span>⛽</span> <span data-i18n="btnDriverQuickFuel">Reportar Repostatge d'avui</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Driver's Recent Refuelings for this Vehicle -->
+        <div class="driver-history-section" style="margin-top:2rem;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:700; margin:0;" data-i18n="driverFuelHistoryTitle">Els teus Repostatges Recents</h3>
+              <p style="font-size:0.85rem; color:var(--text-secondary); margin:2px 0 0;" data-i18n="driverFuelHistoryDesc">Històric de proveïments registrats per a aquest vehicle</p>
+            </div>
+          </div>
+          <div class="table-container" style="background:#FFFFFF; border-radius:var(--radius-lg); border:1px solid var(--border-color); overflow:hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="colDate">Data</th>
+                  <th data-i18n="colVehicle">Vehicle</th>
+                  <th data-i18n="colOdometerAtFill">Odòmetre (km)</th>
+                  <th data-i18n="colLiters">Litres</th>
+                  <th data-i18n="colPriceEur">Total (€)</th>
+                  <th data-i18n="colFuelStation">Estació de Servei</th>
+                  <th data-i18n="colObservations">Observacions</th>
+                </tr>
+              </thead>
+              <tbody id="driver-fuel-table-body">
+                <!-- Dynamically filled with driver refuelings -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <!-- 1. DASHBOARD VIEW -->
       <section class="tab-content active" id="view-dashboard">
@@ -2222,7 +2440,7 @@
                   <th data-i18n="colItvDate">Data Caducitat ITV</th>
                   <th data-i18n="colItvRemaining">Dies Restants</th>
                   <th data-i18n="colItvStatus">Estat ITV</th>
-                  <th data-i18n="colObservations">Observacions i Estat Tècnic</th>
+                  <th data-i18n="colObservations">Observacions</th>
                   <th data-i18n="colActions">Accions</th>
                 </tr>
               </thead>
@@ -2538,7 +2756,7 @@
           </div>
 
           <div class="form-group">
-            <label for="veh-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
+            <label for="veh-notes" data-i18n="inputNotesLabel">Observacions</label>
             <textarea id="veh-notes" rows="2" data-i18n-placeholder="placeholderNotes" placeholder="..."></textarea>
           </div>
         </div>
@@ -2666,7 +2884,7 @@
           </div>
 
           <div class="form-group">
-            <label for="fuel-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
+            <label for="fuel-notes" data-i18n="inputNotesLabel">Observacions</label>
             <input type="text" id="fuel-notes" data-i18n-placeholder="placeholderFuelNotes" placeholder="Ex: Proveïment retorn centre logístic..." />
           </div>
         </div>
@@ -2787,7 +3005,7 @@
           </div>
 
           <div class="form-group">
-            <label for="fine-notes" data-i18n="inputNotesLabel">Observacions o Núm. Expedient</label>
+            <label for="fine-notes" data-i18n="inputNotesLabel">Observacions</label>
             <textarea id="fine-notes" rows="2" data-i18n-placeholder="placeholderFineNotes" placeholder="Núm. expedient sancionador, al·legacions..."></textarea>
           </div>
         </div>
@@ -2842,7 +3060,7 @@
 
         <!-- Technical Observations Box -->
         <div class="detail-modal-box">
-          <h4><span>🔍</span> <span data-i18n="lblTechnicalNotes">Observacions Tècniques del Vehicle</span></h4>
+          <h4><span>🔍</span> <span data-i18n="lblTechnicalNotes">Observacions</span></h4>
           <p id="modal-itv-notes" style="font-size:0.88rem; color:var(--slate-700); line-height:1.45; margin-top:4px; background:#FFFFFF; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--slate-200);">
             Requereix canviar pneumàtics davanters abans d'ITV.
           </p>
@@ -2901,7 +3119,7 @@
         </div>
 
         <div class="detail-modal-box">
-          <h4><span>📝</span> <span data-i18n="colObservations">Observacions i Estat Tècnic</span></h4>
+          <h4><span>📝</span> <span data-i18n="colObservations">Observacions</span></h4>
           <p id="modal-maint-notes" style="font-size:0.86rem; color:var(--slate-700); line-height:1.45; margin-top:4px; background:#FFFFFF; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--slate-200);">
             Substitució pastilles davanteres i revisió líquid de frens.
           </p>

@@ -5,12 +5,12 @@
     "vehicleId": "veh_101",
     "driverId": "usr_driver_joan",
     "date": "2026-10-08",
-    "reason": "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).",
+    "reason": "Exceso de velocidad (68 km/h en tramo limitado a 50 km/h).",
     "amountEur": 100.00,
     "status": "PENDING",
     "fineReference": "EXP-2026-8841-DGT",
-    "organism": "DGT - Direcció General de Trànsit",
-    "notes": "Notificada via DEHú. Descompte 50% per pagament ràpid en 20 dies.",
+    "organism": "DGT - Dirección General de Tráfico",
+    "notes": "Notificada vía DEHú. Descuento 50% por pronto pago en 20 días.",
     "createdAt": "2026-10-09T08:30:00.000Z"
   },
   {
@@ -19,12 +19,12 @@
     "vehicleId": "veh_101",
     "driverId": "usr_driver_joan",
     "date": "2026-09-18",
-    "reason": "Estacionament indegut en carril reservat per a bus i taxi.",
+    "reason": "Estacionamiento indebido en carril reservado para bus y taxi.",
     "amountEur": 200.00,
     "status": "PAID",
     "fineReference": "PLV-77412-2026",
-    "organism": "Policia Local de València",
-    "notes": "Pagada el 25/09/2026 amb bonificació del 50% (100 € abonats pel departament d'administració).",
+    "organism": "Policía Local de Valencia",
+    "notes": "Pagada el 25/09/2026 con bonificación del 50% (100 € abonados por el departamento de administración).",
     "createdAt": "2026-09-19T10:15:00.000Z"
   },
   {
@@ -33,12 +33,12 @@
     "vehicleId": "veh_103",
     "driverId": "usr_driver_pau",
     "date": "2026-10-04",
-    "reason": "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.",
+    "reason": "Acceso no autorizado a Zona de Bajas Emisiones (ZBE) sin distintivo ambiental adecuado.",
     "amountEur": 200.00,
     "status": "APPEALED",
     "fineReference": "ZBE-VLC-2026-0914",
-    "organism": "Ajuntament de València - Mobilitat",
-    "notes": "Recurs presentat demostrant autorització temporal de càrrega i descàrrega.",
+    "organism": "Ayuntamiento de Valencia - Movilidad",
+    "notes": "Recurso presentado demostrando autorización temporal de carga y descarga.",
     "createdAt": "2026-10-05T12:00:00.000Z"
   },
   {
@@ -47,12 +47,12 @@
     "vehicleId": "veh_201",
     "driverId": "usr_driver_sergi",
     "date": "2026-09-22",
-    "reason": "No respectar la distància de seguretat entre vehicles pesants.",
+    "reason": "No respetar la distancia de seguridad entre vehículos pesados.",
     "amountEur": 150.00,
     "status": "PAID",
     "fineReference": "MED-SANC-2026-102",
     "organism": "Servei Català de Trànsit",
-    "notes": "Tram AP-7 km 241.",
+    "notes": "Tramo AP-7 km 241.",
     "createdAt": "2026-09-23T14:00:00.000Z"
   }
 ]

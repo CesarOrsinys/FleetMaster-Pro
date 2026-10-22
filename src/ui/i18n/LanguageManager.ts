@@ -199,7 +199,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFuelLabel: "Tipus de Combustible",
     inputOdometerLabel: "Lectura Odòmetre actual (km)",
     inputItvDateLabel: "Data límit ITV",
-    inputNotesLabel: "Observacions addicionals",
+    inputNotesLabel: "Observacions",
     modalNewVehicleTitle: "Registrar Nou Vehicle a la Flota",
     modalNewMaintenanceTitle: "Programar Manteniment o ITV",
     modalNewFuelLogTitle: "Registrar Repostatge de Combustible",
@@ -238,8 +238,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     // ITV Columns & Attributes
     colItvRemaining: "Dies Restants",
     colItvStatus: "Estat ITV",
-    colObservations: "Observacions i Estat Tècnic",
-    lblNoObservations: "Sense observacions addicionals registrades.",
+    colObservations: "Observacions",
+    lblNoObservations: "Sense observacions.",
 
     // ITV Status Tags
     itv_status_valid: "Vigent",
@@ -260,7 +260,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblPendingMaint: "Manteniments Pendents o Programats",
     lblNoPendingMaint: "Sense manteniments pendents programats per a este vehicle.",
     lblItvInfo: "Dades de la Inspecció Tècnica (ITV)",
-    lblTechnicalNotes: "Observacions Tècniques del Vehicle",
+    lblTechnicalNotes: "Observacions",
     btnScheduleService: "Programar Intervenció",
     btnClose: "Tancar",
 
@@ -334,6 +334,17 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     driverPortalWelcome: "Hola, Conductor",
     driverAssignedVehicle: "Vehicle assignat:",
     btnDriverQuickFuel: "Reportar Repostatge d'avui",
+    driverPortalTitle: "Portal del Conductor",
+    driverPortalSubtitle: "Accés exclusiu per al registre de repostatge diari del teu vehicle assignat.",
+    driverAssignedVehicleCard: "Vehicle Assignat",
+    driverNoAssignedVehicle: "No tens cap vehicle assignat actualment. Contacta amb el teu administrador.",
+    driverReportFuelCardTitle: "Reportar Repostatge del Dia",
+    driverReportFuelCardDesc: "Registra els litres, import (€), estació de servei i quilometratge del dia d'avui.",
+    driverFuelHistoryTitle: "Els teus Repostatges Recents",
+    driverFuelHistoryDesc: "Històric de proveïments registrats per a aquest vehicle",
+    driverNoFuelLogs: "Encara no hi ha repostatges registrats per a aquest vehicle.",
+    driverVehicleLocked: "(Vehicle assignat)",
+    driverTodayDate: "Avui",
     kpiTotalDrivers: "Conductores Totals",
     kpiTotalDriversDesc: "Personal de conducció registrat a la flota",
     kpiAssignedDrivers: "Amb Vehicle Assignat",
@@ -372,7 +383,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     placeholderVin: "VF1FL0000...",
     placeholderMake: "Ex: Renault",
     placeholderModel: "Ex: Trafic 2.0 dCi",
-    placeholderNotes: "Observacions addicionals del vehicle...",
+    placeholderNotes: "Observacions...",
     placeholderWorkshop: "Ex: Tallers Morvedre",
     placeholderFuelStation: "Ex: Repsol Viver",
     placeholderFuelNotes: "Ex: Proveïment retorn centre logístic...",
@@ -579,7 +590,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFuelLabel: "Tipo de Combustible",
     inputOdometerLabel: "Lectura Odómetro actual (km)",
     inputItvDateLabel: "Fecha límite ITV",
-    inputNotesLabel: "Observaciones adicionales",
+    inputNotesLabel: "Observaciones",
     modalNewVehicleTitle: "Registrar Nuevo Vehículo en la Flota",
     modalNewMaintenanceTitle: "Programar Mantenimiento o ITV",
     modalNewFuelLogTitle: "Registrar Repostaje de Combustible",
@@ -611,15 +622,15 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
 
     // ITV & Maintenance Split Sections & Mobile Views
     sectionItvExpiration: "Control y Vencimiento de ITV por Vehículo",
-    sectionItvSubtitle: "Supervisión de fechas límite de inspección periódica y observaciones técnicas por unidad",
+    sectionItvSubtitle: "Supervisión de fechas límite de inspección periódica y observaciones por unidad",
     sectionMaintenanceRecords: "Historial de Intervenciones y Mantenimientos Programados",
     sectionMaintSubtitle: "Registro detallado de reparaciones, costes y talleres proveedores",
 
     // ITV Columns & Attributes
     colItvRemaining: "Días Restantes",
     colItvStatus: "Estado ITV",
-    colObservations: "Observaciones y Estado Técnico",
-    lblNoObservations: "Sin observaciones adicionales registradas.",
+    colObservations: "Observaciones",
+    lblNoObservations: "Sin observaciones.",
 
     // ITV Status Tags
     itv_status_valid: "Vigente",
@@ -640,7 +651,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblPendingMaint: "Mantenimientos Pendientes o Programados",
     lblNoPendingMaint: "Sin mantenimientos pendientes programados para este vehículo.",
     lblItvInfo: "Datos de la Inspección Técnica (ITV)",
-    lblTechnicalNotes: "Observaciones Técnicas del Vehículo",
+    lblTechnicalNotes: "Observaciones",
     btnScheduleService: "Programar Intervención",
     btnClose: "Cerrar",
 
@@ -714,6 +725,17 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     driverPortalWelcome: "Hola, Conductor",
     driverAssignedVehicle: "Vehículo asignado:",
     btnDriverQuickFuel: "Reportar Repostaje de hoy",
+    driverPortalTitle: "Portal del Conductor",
+    driverPortalSubtitle: "Acceso exclusivo para el registro de repostaje diario de tu vehículo asignado.",
+    driverAssignedVehicleCard: "Vehículo Asignado",
+    driverNoAssignedVehicle: "No tienes ningún vehículo asignado actualmente. Contacta con tu administrador.",
+    driverReportFuelCardTitle: "Reportar Repostaje del Día",
+    driverReportFuelCardDesc: "Registra los litros, importe (€), estación de servicio y kilometraje del día de hoy.",
+    driverFuelHistoryTitle: "Tus Repostajes Recientes",
+    driverFuelHistoryDesc: "Histórico de repostajes registrados para este vehículo",
+    driverNoFuelLogs: "Aún no hay repostajes registrados para este vehículo.",
+    driverVehicleLocked: "(Vehículo asignado)",
+    driverTodayDate: "Hoy",
     kpiTotalDrivers: "Conductores Totales",
     kpiTotalDriversDesc: "Personal de conducción registrado en la flota",
     kpiAssignedDrivers: "Con Vehículo Asignado",
@@ -752,7 +774,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     placeholderVin: "VF1FL0000...",
     placeholderMake: "Ej: Renault",
     placeholderModel: "Ej: Trafic 2.0 dCi",
-    placeholderNotes: "Observaciones adicionales del vehículo...",
+    placeholderNotes: "Observaciones...",
     placeholderWorkshop: "Ej: Talleres Morvedre",
     placeholderFuelStation: "Ej: Repsol Viver",
     placeholderFuelNotes: "Ej: Repostaje de regreso a centro logístico...",
@@ -959,7 +981,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFuelLabel: "Fuel Type",
     inputOdometerLabel: "Current Odometer (km)",
     inputItvDateLabel: "MOT/ITV Expiration Date",
-    inputNotesLabel: "Additional Notes",
+    inputNotesLabel: "Observations",
     modalNewVehicleTitle: "Register New Fleet Vehicle",
     modalNewMaintenanceTitle: "Schedule Maintenance or MOT/ITV",
     modalNewFuelLogTitle: "Log Fuel Receipt",
@@ -998,8 +1020,8 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     // ITV Columns & Attributes
     colItvRemaining: "Remaining Days",
     colItvStatus: "MOT Status",
-    colObservations: "Observations & Technical Condition",
-    lblNoObservations: "No additional observations recorded.",
+    colObservations: "Observations",
+    lblNoObservations: "No observations.",
 
     // ITV Status Tags
     itv_status_valid: "Valid",
@@ -1020,7 +1042,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblPendingMaint: "Pending or Scheduled Maintenance",
     lblNoPendingMaint: "No pending maintenance scheduled for this vehicle.",
     lblItvInfo: "Technical Inspection (MOT) Data",
-    lblTechnicalNotes: "Vehicle Technical Observations",
+    lblTechnicalNotes: "Observations",
     btnScheduleService: "Schedule Service",
     btnClose: "Close",
 
@@ -1094,6 +1116,17 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     driverPortalWelcome: "Hello, Driver",
     driverAssignedVehicle: "Assigned vehicle:",
     btnDriverQuickFuel: "Report Today's Refueling",
+    driverPortalTitle: "Driver Portal",
+    driverPortalSubtitle: "Exclusive access to record daily refueling for your assigned vehicle.",
+    driverAssignedVehicleCard: "Assigned Vehicle",
+    driverNoAssignedVehicle: "You currently have no assigned vehicle. Please contact your fleet manager.",
+    driverReportFuelCardTitle: "Report Today's Refueling",
+    driverReportFuelCardDesc: "Enter liters, cost (€), fuel station, and odometer reading for today.",
+    driverFuelHistoryTitle: "Your Recent Refuelings",
+    driverFuelHistoryDesc: "History of refuelings recorded for this vehicle",
+    driverNoFuelLogs: "No refueling logs recorded for this vehicle yet.",
+    driverVehicleLocked: "(Assigned vehicle)",
+    driverTodayDate: "Today",
     kpiTotalDrivers: "Total Drivers",
     kpiTotalDriversDesc: "Driving staff registered in the fleet",
     kpiAssignedDrivers: "With Assigned Vehicle",
@@ -1132,7 +1165,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     placeholderVin: "VF1FL0000...",
     placeholderMake: "E.g. Renault",
     placeholderModel: "E.g. Trafic 2.0 dCi",
-    placeholderNotes: "Additional vehicle notes...",
+    placeholderNotes: "Observations...",
     placeholderWorkshop: "E.g. Morvedre Workshop",
     placeholderFuelStation: "E.g. Repsol Viver",
     placeholderFuelNotes: "E.g. Refueling on return to logistics center...",
@@ -1182,6 +1215,10 @@ export class LanguageManager {
   }
 
   public static getLanguage(): SupportedLanguage {
+    return this.currentLang;
+  }
+
+  public static getCurrentLanguage(): SupportedLanguage {
     return this.currentLang;
   }
 
@@ -1345,10 +1382,273 @@ export class LanguageManager {
     this.updateLanguageSelectorsUI();
   }
 
+  // In-memory cache for dynamic translations (instant re-use across renders)
+  private static translationCache: Map<string, string> = new Map();
+
   /**
-   * Automatic observation / comment translator.
-   * Translates free-text notes and technical observations originally in Valencian
-   * into Spanish or English depending on the currently active language.
+   * Curated bidirectional phrase definitions covering all seed and standard data.
+   */
+  private static CURATED_PHRASES: Array<{ va: string; es: string; en: string }> = [
+    {
+      va: "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.",
+      es: "Requiere cambiar neumáticos delanteros antes de ITV. Rutas de reparto Valencia - Sagunto.",
+      en: "Requires replacing front tyres before MOT/ITV. Delivery routes Valencia - Sagunto."
+    },
+    {
+      va: "Furgoneta principal de repartiment València - Castelló",
+      es: "Furgoneta principal de reparto Valencia - Castellón",
+      en: "Main delivery van Valencia - Castellon"
+    },
+    {
+      va: "Vehicle 100% elèctric urbà per al centre històric",
+      es: "Vehículo 100% eléctrico urbano para el centro histórico",
+      en: "100% urban electric vehicle for the historic center"
+    },
+    {
+      va: "En taller per canvi de pastilles i revisió ITV urgent",
+      es: "En taller por cambio de pastillas y revisión ITV urgente",
+      en: "In workshop for brake pad replacement and urgent MOT inspection"
+    },
+    {
+      va: "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).",
+      es: "En taller por desgaste de pastillas de freno y revisión ITV urgente (cita 30/10/2026).",
+      en: "In workshop for brake pad wear and urgent MOT service (appointment 30/10/2026)."
+    },
+    {
+      va: "Flota Mediterrània - Rutes llargues",
+      es: "Flota Mediterránea - Rutas largas",
+      en: "Mediterranean Fleet - Long haul routes"
+    },
+    {
+      va: "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari",
+      es: "Cambio de aceite sintético 5W30 y filtro de aceite reglamentario",
+      en: "Synthetic oil 5W30 change and regulation oil filter"
+    },
+    {
+      va: "Canvi d oli sintètic 5W30 i filtre d oli reglamentari",
+      es: "Cambio de aceite sintético 5W30 y filtro de aceite reglamentario",
+      en: "Synthetic oil 5W30 change and regulation oil filter"
+    },
+    {
+      va: "Cita prèvia confirmada per a inspecció periòdica",
+      es: "Cita previa confirmada para inspección periódica",
+      en: "Confirmed appointment for periodic inspection"
+    },
+    {
+      va: "Substitució pastilles davanteres i revisió líquid de frens",
+      es: "Sustitución de pastillas delanteras y revisión de líquido de frenos",
+      en: "Front brake pad replacement and brake fluid check"
+    },
+    {
+      va: "Sustitució pastilles davanteres i revisió líquid de frens",
+      es: "Sustitución de pastillas delanteras y revisión de líquido de frenos",
+      en: "Front brake pad replacement and brake fluid check"
+    },
+    {
+      va: "Proveïment complet dièsel ruta A-23",
+      es: "Repostaje completo diésel ruta A-23",
+      en: "Full diesel refueling route A-23"
+    },
+    {
+      va: "Proveïment retorn centre logístic",
+      es: "Repostaje de regreso a centro logístico",
+      en: "Refueling on return to logistics center"
+    },
+    {
+      va: "Proveïment inicial ruta logística",
+      es: "Repostaje inicial ruta logística",
+      en: "Initial refueling logistics route"
+    },
+    {
+      va: "Proveïment abans d'entrada a taller",
+      es: "Repostaje antes de entrada a taller",
+      en: "Refueling before workshop entry"
+    },
+    {
+      va: "Excés de velocitat en tram interurbà (88 km/h en zona 70 km/h)",
+      es: "Exceso de velocidad en tramo interurbano (88 km/h en zona 70 km/h)",
+      en: "Speeding on interurban section (88 km/h in 70 km/h zone)"
+    },
+    {
+      va: "Estacionament indegut en zona de càrrega i descàrrega fora d horari",
+      es: "Estacionamiento indebido en zona de carga y descarga fuera de horario",
+      en: "Improper parking in loading/unloading zone outside hours"
+    },
+    {
+      va: "Accés no autoritzat a zona de baixes emissions (ZBE)",
+      es: "Acceso no autorizado a zona de bajas emisiones (ZBE)",
+      en: "Unauthorized access to low emission zone (LEZ)"
+    },
+    {
+      va: "No respectar senyal d'obligació en intersecció",
+      es: "No respetar señal de obligación en intersección",
+      en: "Failure to obey mandatory sign at intersection"
+    },
+    {
+      va: "Notificació rebuda per correu certificat. Descompte del 50% disponible per pagament ràpid.",
+      es: "Notificación recibida por correo certificado. Descuento del 50% disponible por pronto pago.",
+      en: "Notification received by certified mail. 50% prompt payment discount available."
+    },
+    {
+      va: "Abonada via passarel·la telemàtica amb targeta d empresa amb el 50% de reducció (45,00 €).",
+      es: "Abonada vía pasarela telemática con tarjeta de empresa con el 50% de reducción (45,00 €).",
+      en: "Paid via online gateway with corporate card with 50% discount (€45.00)."
+    },
+    {
+      va: "Al·legació presentada presentant distintiu ambiental 0 Emissions del vehicle elèctric.",
+      es: "Alegación presentada con distintivo ambiental 0 Emisiones del vehículo eléctrico.",
+      en: "Appeal submitted with 0 Emission badge of the electric vehicle."
+    },
+    {
+      va: "Pagada per l'empresa sense recàrrec.",
+      es: "Pagada por la empresa sin recargo.",
+      en: "Paid by company without surcharge."
+    },
+    {
+      va: "Revisió periòdica estàndard sense anomalies reportades.",
+      es: "Revisión periódica estándar sin anomalías reportadas.",
+      en: "Standard periodic inspection with no reported anomalies."
+    },
+    {
+      va: "Sense observacions tècniques anòmales registrades per a este vehicle.",
+      es: "Sin observaciones para este vehículo.",
+      en: "No observations for this vehicle."
+    },
+    {
+      va: "Sense observacions addicionals registrades.",
+      es: "Sin observaciones.",
+      en: "No observations."
+    },
+    {
+      va: "Sense observacions",
+      es: "Sin observaciones",
+      en: "No observations"
+    },
+    {
+      va: "Sense incidències destacades",
+      es: "Sin incidencias destacadas",
+      en: "No notable incidents"
+    },
+    {
+      va: "Sense incidències",
+      es: "Sin incidencias",
+      en: "No incidents"
+    },
+    {
+      va: "DGT Trànsit València",
+      es: "DGT Tráfico Valencia",
+      en: "DGT Traffic Valencia"
+    },
+    {
+      va: "Policia Local de València",
+      es: "Policía Local de Valencia",
+      en: "Valencia Local Police"
+    },
+    {
+      va: "Ajuntament de València (Mobilitat)",
+      es: "Ayuntamiento de Valencia (Movilidad)",
+      en: "Valencia City Council (Mobility)"
+    },
+    {
+      va: "DGT Alacant",
+      es: "DGT Alicante",
+      en: "DGT Alicante"
+    },
+    {
+      va: "Tallers Morvedre Sagunt",
+      es: "Talleres Morvedre Sagunto",
+      en: "Morvedre Workshops Sagunto"
+    },
+    {
+      va: "Estació ITV Castelló Nord",
+      es: "Estación ITV Castellón Norte",
+      en: "Castellon North MOT Station"
+    },
+    {
+      va: "Frens i Mecànica Borrull",
+      es: "Frenos y Mecánica Borrull",
+      en: "Borrull Brakes & Mechanics"
+    },
+    {
+      va: "Cepsa Castelló Sud",
+      es: "Cepsa Castellón Sur",
+      en: "Cepsa Castellon South"
+    }
+  ];
+
+  /**
+   * Translates free text online using Google Translate GTX endpoint (matching Dine-Done architecture).
+   * Automatically auto-detects source language and translates to the target language with in-memory caching.
+   */
+  public static async translateTextOnline(text: string, targetLang: SupportedLanguage = this.currentLang): Promise<string> {
+    if (!text || !text.trim()) return '';
+    const trimmed = text.trim();
+    const cacheKey = `${targetLang}:${trimmed}`;
+
+    if (this.translationCache.has(cacheKey)) {
+      return this.translationCache.get(cacheKey)!;
+    }
+
+    // Check curated phrases first
+    const exact = this.findCuratedPhrase(trimmed, targetLang);
+    if (exact) {
+      this.translationCache.set(cacheKey, exact);
+      return exact;
+    }
+
+    const langMap: Record<string, string> = {
+      zh: 'zh-CN',
+      va: 'ca'
+    };
+    const gtxLang = langMap[targetLang] || targetLang;
+
+    try {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${encodeURIComponent(gtxLang)}&dt=t&q=${encodeURIComponent(trimmed)}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (Array.isArray(data) && Array.isArray(data[0])) {
+        const translated = data[0].map((chunk: any) => chunk[0]).join('');
+        const result = translated || trimmed;
+        this.translationCache.set(cacheKey, result);
+        return result;
+      }
+      return trimmed;
+    } catch {
+      const fallback = this.translateObservation(trimmed);
+      this.translationCache.set(cacheKey, fallback);
+      return fallback;
+    }
+  }
+
+  /**
+   * Pre-translates a batch of texts in parallel before rendering to DOM.
+   */
+  public static async pretranslateBatch(texts: (string | null | undefined)[], targetLang: SupportedLanguage = this.currentLang): Promise<void> {
+    const valid = Array.from(new Set(texts.filter((t): t is string => !!t && typeof t === 'string' && t.trim().length > 0)));
+    const needed = valid.filter(t => !this.translationCache.has(`${targetLang}:${t.trim()}`));
+    if (needed.length === 0) return;
+
+    await Promise.allSettled(needed.map(text => this.translateTextOnline(text, targetLang)));
+  }
+
+  private static findCuratedPhrase(trimmed: string, targetLang: SupportedLanguage): string | null {
+    const lower = trimmed.toLowerCase();
+    for (const row of this.CURATED_PHRASES) {
+      if (
+        row.va.toLowerCase() === lower ||
+        row.es.toLowerCase() === lower ||
+        row.en.toLowerCase() === lower
+      ) {
+        return row[targetLang];
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Synchronous observation/comment translator.
+   * Checks in-memory cache, curated phrases, and regex glossary.
    */
   public static translateObservation(rawText: string | null | undefined): string {
     if (!rawText || !rawText.trim()) {
@@ -1357,115 +1657,23 @@ export class LanguageManager {
 
     const trimmed = rawText.trim();
     const lang = this.currentLang;
+    const cacheKey = `${lang}:${trimmed}`;
 
-    // Direct curated phrase translations
-    const EXACT_PHRASES: Record<string, Record<SupportedLanguage, string>> = {
-      "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.": {
-        va: "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.",
-        es: "Requiere cambiar neumáticos delanteros antes de ITV. Rutas de reparto Valencia - Sagunto.",
-        en: "Requires replacing front tyres before MOT/ITV. Delivery routes Valencia - Sagunto."
-      },
-      "Revisió pre-ITV favorable. Estat de càrrega i bateries òptim per al centre històric.": {
-        va: "Revisió pre-ITV favorable. Estat de càrrega i bateries òptim per al centre històric.",
-        es: "Revisión pre-ITV favorable. Estado de carga y baterías óptimo para el centro histórico.",
-        en: "Pre-MOT/ITV inspection passed. Optimal battery charge state for historic center."
-      },
-      "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).": {
-        va: "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).",
-        es: "En taller por desgaste de pastillas de freno y revisión ITV urgente (cita 30/10/2026).",
-        en: "In workshop for brake pad wear and urgent MOT/ITV service (appointment 30/10/2026)."
-      },
-      "Flota Mediterrània - Rutes llargues": {
-        va: "Flota Mediterrània - Rutes llargues",
-        es: "Flota Mediterránea - Rutas largas",
-        en: "Mediterranean Fleet - Long haul routes"
-      },
-      "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari": {
-        va: "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari",
-        es: "Cambio de aceite sintético 5W30 y filtro de aceite reglamentario",
-        en: "Synthetic oil 5W30 change and regulation oil filter"
-      },
-      "Cita prèvia confirmada per a inspecció periòdica": {
-        va: "Cita prèvia confirmada per a inspecció periòdica",
-        es: "Cita previa confirmada para inspección periódica",
-        en: "Confirmed appointment for periodic inspection"
-      },
-      "Substitució pastilles davanteres i revisió líquid de frens": {
-        va: "Substitució pastilles davanteres i revisió líquid de frens",
-        es: "Sustitución de pastillas delanteras y revisión de líquido de frenos",
-        en: "Front brake pad replacement and brake fluid check"
-      },
-      "Proveïment complet dièsel ruta A-23": {
-        va: "Proveïment complet dièsel ruta A-23",
-        es: "Repostaje completo diésel ruta A-23",
-        en: "Full diesel refueling route A-23"
-      },
-      "Proveïment retorn centre logístic": {
-        va: "Proveïment retorn centre logístic",
-        es: "Repostaje de regreso a centro logístico",
-        en: "Refueling on return to logistics center"
-      },
-      "Revisió periòdica estàndard sense anomalies reportades.": {
-        va: "Revisió periòdica estàndard sense anomalies reportades.",
-        es: "Revisión periódica estándar sin anomalías reportadas.",
-        en: "Standard periodic inspection with no reported anomalies."
-      },
-      "Sense observacions tècniques anòmales registrades per a este vehicle.": {
-        va: "Sense observacions tècniques anòmales registrades per a este vehicle.",
-        es: "Sin observaciones técnicas anómalas registradas para este vehículo.",
-        en: "No abnormal technical observations recorded for this vehicle."
-      },
-      "Sense observacions addicionals registrades.": {
-        va: "Sense observacions addicionals registrades.",
-        es: "Sin observaciones adicionales registradas.",
-        en: "No additional observations recorded."
-      },
-      "Sense incidències destacades": {
-        va: "Sense incidències destacades",
-        es: "Sin incidencias destacadas",
-        en: "No notable incidents"
-      },
-      "Sense incidències": {
-        va: "Sense incidències",
-        es: "Sin incidencias",
-        en: "No incidents"
-      },
-      "Sense observacions": {
-        va: "Sense observacions",
-        es: "Sin observaciones",
-        en: "No observations"
-      },
-      "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).": {
-        va: "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).",
-        es: "Exceso de velocidad (68 km/h en tramo limitado a 50 km/h).",
-        en: "Speeding violation (68 km/h in 50 km/h zone)."
-      },
-      "Estacionament indegut en carril reservat per a bus i taxi.": {
-        va: "Estacionament indegut en carril reservat per a bus i taxi.",
-        es: "Estacionamiento indebido en carril reservado para bus y taxi.",
-        en: "Improper parking in bus/taxi reserved lane."
-      },
-      "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.": {
-        va: "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.",
-        es: "Acceso no autorizado a Zona de Bajas Emisiones (ZBE) sin distintivo ambiental adecuado.",
-        en: "Unauthorized entry to Low Emission Zone (LEZ) without required environmental badge."
-      },
-      "No respectar la distància de seguretat entre vehicles pesants.": {
-        va: "No respectar la distància de seguretat entre vehicles pesants.",
-        es: "No respetar la distancia de seguridad entre vehículos pesados.",
-        en: "Failure to maintain safety distance between heavy vehicles."
-      }
-    };
+    if (this.translationCache.has(cacheKey)) {
+      return this.translationCache.get(cacheKey)!;
+    }
 
-    if (EXACT_PHRASES[trimmed] && EXACT_PHRASES[trimmed][lang]) {
-      return EXACT_PHRASES[trimmed][lang];
+    const curated = this.findCuratedPhrase(trimmed, lang);
+    if (curated) {
+      this.translationCache.set(cacheKey, curated);
+      return curated;
     }
 
     if (lang === 'va') {
       return trimmed;
     }
 
-    // Dynamic term translation using regex glossary for general/custom text
+    // Dynamic term translation using regex glossary
     let translated = trimmed;
     const GLOSSARY: Record<'es' | 'en', [RegExp, string][]> = {
       es: [
@@ -1503,11 +1711,15 @@ export class LanguageManager {
         [/per a/gi, 'para'],
         [/Canvi d'oli sintètic/gi, 'Cambio de aceite sintético'],
         [/Canvi d'oli/gi, 'Cambio de aceite'],
+        [/Canvi d oli/gi, 'Cambio de aceite'],
         [/filtre d'oli reglamentari/gi, 'filtro de aceite reglamentario'],
+        [/filtre d oli reglamentari/gi, 'filtro de aceite reglamentario'],
         [/filtre d'aire/gi, 'filtro de aire'],
         [/filtre/gi, 'filtro'],
         [/Substitució pastilles/gi, 'Sustitución de pastillas'],
+        [/Sustitució pastilles/gi, 'Sustitución de pastillas'],
         [/Substitució/gi, 'Sustitución'],
+        [/Sustitució/gi, 'Sustitución'],
         [/Proveïment complet dièsel/gi, 'Repostaje completo diésel'],
         [/Proveïment retorn/gi, 'Repostaje de regreso'],
         [/Proveïment/gi, 'Repostaje'],
@@ -1554,11 +1766,15 @@ export class LanguageManager {
         [/per a/gi, 'for'],
         [/Canvi d'oli sintètic/gi, 'Synthetic oil change'],
         [/Canvi d'oli/gi, 'Oil change'],
+        [/Canvi d oli/gi, 'Oil change'],
         [/filtre d'oli reglamentari/gi, 'regulation oil filter'],
+        [/filtre d oli reglamentari/gi, 'regulation oil filter'],
         [/filtre d'aire/gi, 'air filter'],
         [/filtre/gi, 'filter'],
         [/Substitució pastilles/gi, 'Brake pad replacement'],
+        [/Sustitució pastilles/gi, 'Brake pad replacement'],
         [/Substitució/gi, 'Replacement'],
+        [/Sustitució/gi, 'Replacement'],
         [/Proveïment complet dièsel/gi, 'Full diesel refueling'],
         [/Proveïment retorn/gi, 'Return refueling'],
         [/Proveïment/gi, 'Refueling'],
@@ -1579,6 +1795,7 @@ export class LanguageManager {
       }
     }
 
+    this.translationCache.set(cacheKey, translated);
     return translated;
   }
 }

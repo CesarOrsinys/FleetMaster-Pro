@@ -110,6 +110,20 @@ class AppController {
       const feed = document.getElementById(`${key}-cards-feed`);
       if (feed) feed.innerHTML = '';
     });
+
+    const tenantWrapper = document.getElementById('tenant-pill-wrapper');
+    const refreshBtn = document.getElementById('btn-refresh-data');
+    const appNav = document.querySelector('nav.app-nav') as HTMLElement;
+    const driverPortalView = document.getElementById('view-driver-portal');
+    if (tenantWrapper) tenantWrapper.style.display = '';
+    if (refreshBtn) refreshBtn.style.display = '';
+    if (appNav) appNav.style.display = '';
+    if (driverPortalView) {
+      driverPortalView.style.display = 'none';
+      driverPortalView.classList.remove('active');
+    }
+    const driverFuelTbody = document.getElementById('driver-fuel-table-body');
+    if (driverFuelTbody) driverFuelTbody.innerHTML = '';
   }
 
   private async showApplicationShell(): Promise<void> {
@@ -121,7 +135,7 @@ class AppController {
 
     this.updateHeaderUserInfo();
     await this.fetchAndPopulateTenants();
-    this.renderDriverPortalBanner();
+    this.applyRoleBasedViewRestrictions();
   }
 
   private updateHeaderUserInfo(): void {
@@ -160,6 +174,14 @@ class AppController {
     const wrapper = document.getElementById('tenant-pill-wrapper');
     if (!tenantSelect) return;
 
+    // Driver role: strictly hidden and no tenant switcher access
+    if (this.currentUser?.role === 'DRIVER') {
+      if (wrapper) wrapper.style.display = 'none';
+      return;
+    } else {
+      if (wrapper) wrapper.style.display = '';
+    }
+
     try {
       const headers: Record<string, string> = {};
       if (this.authToken) headers['Authorization'] = `Bearer ${this.authToken}`;
@@ -181,37 +203,26 @@ class AppController {
       console.warn('Could not fetch tenants dynamically from BBDD:', err);
     }
 
-    if (this.currentUser && this.currentUser.role !== 'SUPERADMIN' && this.currentUser.tenantId) {
-      this.currentTenant = this.currentUser.tenantId;
-    }
+    // Set active tenant value in selector
     tenantSelect.value = this.currentTenant;
 
-    // Company/fleet selector is enabled ONLY after login, and only switchable for SUPERADMIN
-    if (this.currentUser?.role === 'SUPERADMIN') {
-      tenantSelect.disabled = false;
-      if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
-    } else {
-      tenantSelect.disabled = true;
-      if (wrapper) wrapper.title = LanguageManager.t('tenantLockedTooltip');
-    }
+    // Enable tenant selector for authenticated users so they can inspect/switch tenants
+    tenantSelect.disabled = false;
+    if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
   }
 
   private syncTenantSelect(): void {
     const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
     const wrapper = document.getElementById('tenant-pill-wrapper');
+    if (this.currentUser?.role === 'DRIVER') {
+      if (wrapper) wrapper.style.display = 'none';
+      return;
+    }
     if (tenantSelect) {
-      if (this.currentUser && this.currentUser.role !== 'SUPERADMIN' && this.currentUser.tenantId) {
-        this.currentTenant = this.currentUser.tenantId;
-      }
+      if (wrapper) wrapper.style.display = '';
       tenantSelect.value = this.currentTenant;
-
-      if (this.currentUser?.role === 'SUPERADMIN') {
-        tenantSelect.disabled = false;
-        if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
-      } else {
-        tenantSelect.disabled = true;
-        if (wrapper) wrapper.title = LanguageManager.t('tenantLockedTooltip');
-      }
+      tenantSelect.disabled = false;
+      if (wrapper) wrapper.title = LanguageManager.t('switchTenantTooltip');
     }
   }
 
@@ -294,15 +305,18 @@ class AppController {
     this.setupViewModeSwitchers();
 
     // 8. Comprehensive Re-render on Language Changed Event
-    document.addEventListener('app:language-changed', () => {
+    document.addEventListener('app:language-changed', async () => {
       this.updateHeaderUserInfo();
       this.syncTenantSelect();
+
+      // Pre-translate dynamic text to the new language before re-painting
+      await this.translateDataBeforeRender();
 
       // Immediately re-render all tables, alerts, and KPIs with the active language
       this.renderVehicles(this.cachedVehicles);
       this.renderDrivers(this.cachedDrivers, this.cachedVehicles);
       this.renderFines(this.cachedFines, this.cachedVehicles, this.cachedDrivers);
-      this.renderDriverPortalBanner();
+      this.applyRoleBasedViewRestrictions();
       this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
@@ -479,10 +493,13 @@ class AppController {
       this.cachedDrivers = driversRes && driversRes.ok ? await driversRes.json() : [];
       this.cachedFines = finesRes && finesRes.ok ? await finesRes.json() : [];
 
+      // Pre-translate dynamic text from BBDD into selected language before painting UI
+      await this.translateDataBeforeRender();
+
       this.renderVehicles(this.cachedVehicles);
       this.renderDrivers(this.cachedDrivers, this.cachedVehicles);
       this.renderFines(this.cachedFines, this.cachedVehicles, this.cachedDrivers);
-      this.renderDriverPortalBanner();
+      this.applyRoleBasedViewRestrictions();
       this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
@@ -494,6 +511,30 @@ class AppController {
       console.warn('Fallback loading data locally', err);
       this.showToast(LanguageManager.t('error_network'), 'error');
     }
+  }
+
+  private async translateDataBeforeRender(): Promise<void> {
+    const currentLang = LanguageManager.getCurrentLanguage();
+    const textsToTranslate: (string | null | undefined)[] = [];
+
+    this.cachedVehicles.forEach(v => {
+      if (v.notes) textsToTranslate.push(v.notes);
+    });
+    this.cachedMaintenance.forEach(m => {
+      if (m.notes) textsToTranslate.push(m.notes);
+      if (m.workshopName) textsToTranslate.push(m.workshopName);
+    });
+    this.cachedFuelLogs.forEach(f => {
+      if (f.notes) textsToTranslate.push(f.notes);
+      if (f.fuelStation) textsToTranslate.push(f.fuelStation);
+    });
+    this.cachedFines.forEach(f => {
+      if (f.reason) textsToTranslate.push(f.reason);
+      if (f.notes) textsToTranslate.push(f.notes);
+      if (f.organism) textsToTranslate.push(f.organism);
+    });
+
+    await LanguageManager.pretranslateBatch(textsToTranslate, currentLang);
   }
 
   private renderVehicles(vehicles: Vehicle[]): void {
@@ -862,53 +903,156 @@ class AppController {
     }
   }
 
-  private renderDriverPortalBanner(): void {
-    const banner = document.getElementById('driver-portal-banner');
-    if (!banner) return;
+  private applyRoleBasedViewRestrictions(): void {
+    const isDriver = this.currentUser?.role === 'DRIVER';
+    const tenantWrapper = document.getElementById('tenant-pill-wrapper');
+    const refreshBtn = document.getElementById('btn-refresh-data');
+    const appNav = document.querySelector('nav.app-nav') as HTMLElement;
+    const driverPortalView = document.getElementById('view-driver-portal');
+    const adminViews = ['dashboard', 'vehicles', 'drivers', 'maintenance', 'fuel', 'fines'];
 
-    if (this.currentUser?.role === 'DRIVER') {
-      banner.style.display = 'flex';
-      const nameEl = document.getElementById('driver-portal-name');
-      const plateEl = document.getElementById('driver-portal-plate');
-      const modelEl = document.getElementById('driver-portal-veh-model');
+    if (isDriver) {
+      // 1. Hide tenant switcher and company controls
+      if (tenantWrapper) tenantWrapper.style.display = 'none';
+      if (refreshBtn) refreshBtn.style.display = 'none';
 
-      if (nameEl) nameEl.textContent = this.currentUser.fullName;
+      // 2. Hide administrative navigation bar
+      if (appNav) appNav.style.display = 'none';
 
-      // Find assigned vehicle
-      const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
-      if (assignedVeh) {
-        if (plateEl) {
-          plateEl.style.display = 'inline-block';
-          plateEl.textContent = assignedVeh.licensePlate;
+      // 3. Hide all admin views
+      adminViews.forEach(tab => {
+        const view = document.getElementById(`view-${tab}`);
+        if (view) {
+          view.classList.remove('active');
+          view.style.display = 'none';
         }
-        if (modelEl) modelEl.textContent = `${assignedVeh.make} ${assignedVeh.model}`;
-      } else {
-        if (plateEl) plateEl.style.display = 'none';
-        if (modelEl) modelEl.textContent = LanguageManager.t('driverUnassigned');
+      });
+
+      // 4. Activate exclusively the Driver Portal view
+      if (driverPortalView) {
+        driverPortalView.classList.add('active');
+        driverPortalView.style.display = 'block';
       }
 
-      // Quick fuel button
-      const quickFuelBtn = document.getElementById('btn-driver-quick-fuel');
-      if (quickFuelBtn) {
-        quickFuelBtn.onclick = () => {
-          this.populateModalVehicleDropdowns();
-          if (assignedVeh) {
-            const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
-            if (fuelVehSelect) {
-              fuelVehSelect.value = assignedVeh.id;
-              this.updateFuelFormHints();
-            }
-          }
-          const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
-          if (dateInput && !dateInput.value) {
-            dateInput.value = new Date().toISOString().split('T')[0];
-          }
-          this.openModal('modal-fuel');
-        };
-      }
+      this.renderDriverPortal();
     } else {
-      banner.style.display = 'none';
+      // Admin / SuperAdmin: Restore full controls
+      if (tenantWrapper) tenantWrapper.style.display = '';
+      if (refreshBtn) refreshBtn.style.display = '';
+      if (appNav) appNav.style.display = '';
+
+      if (driverPortalView) {
+        driverPortalView.classList.remove('active');
+        driverPortalView.style.display = 'none';
+      }
+
+      adminViews.forEach(tab => {
+        const view = document.getElementById(`view-${tab}`);
+        if (view) view.style.display = '';
+      });
+
+      const activeNavTab = document.querySelector('.nav-tab.active') || document.querySelector('.nav-tab[data-tab="dashboard"]');
+      const activeTabName = activeNavTab?.getAttribute('data-tab') || 'dashboard';
+      const targetView = document.getElementById(`view-${activeTabName}`);
+      if (targetView) targetView.classList.add('active');
     }
+  }
+
+  private renderDriverPortal(): void {
+    const isDriver = this.currentUser?.role === 'DRIVER';
+    const driverPortalView = document.getElementById('view-driver-portal');
+    if (!driverPortalView) return;
+
+    if (!isDriver) {
+      driverPortalView.style.display = 'none';
+      return;
+    }
+
+    const nameEl = document.getElementById('driver-portal-name');
+    const plateEl = document.getElementById('driver-portal-plate');
+    const modelEl = document.getElementById('driver-portal-veh-model');
+    const odoEl = document.getElementById('driver-view-odometer');
+    const fuelTypeEl = document.getElementById('driver-view-fuel-type');
+    const quickFuelBtn = document.getElementById('btn-driver-quick-fuel');
+    const tbody = document.getElementById('driver-fuel-table-body');
+
+    if (nameEl) nameEl.textContent = this.currentUser?.fullName || '';
+
+    // Find assigned vehicle
+    const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
+
+    if (assignedVeh) {
+      if (plateEl) {
+        plateEl.style.display = 'inline-block';
+        plateEl.textContent = assignedVeh.licensePlate;
+      }
+      if (modelEl) modelEl.textContent = `${assignedVeh.make} ${assignedVeh.model}`;
+      if (odoEl) odoEl.textContent = `${(assignedVeh.currentOdometerKm || 0).toLocaleString()} km`;
+      if (fuelTypeEl) fuelTypeEl.textContent = assignedVeh.fuelType;
+    } else {
+      if (plateEl) plateEl.style.display = 'none';
+      if (modelEl) modelEl.textContent = LanguageManager.t('driverNoAssignedVehicle');
+      if (odoEl) odoEl.textContent = '--';
+      if (fuelTypeEl) fuelTypeEl.textContent = '--';
+    }
+
+    // Connect button to open refueling modal for driver
+    if (quickFuelBtn) {
+      quickFuelBtn.onclick = () => {
+        this.openFuelModalForDriver(assignedVeh);
+      };
+    }
+
+    // Populate driver's refuelings
+    if (tbody) {
+      const myLogs = this.cachedFuelLogs.filter(f => 
+        (assignedVeh && f.vehicleId === assignedVeh.id) || f.driverId === this.currentUser?.id
+      );
+
+      if (myLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2.5rem; color: #64748B;">
+          <span style="font-size: 1.5rem; display:block; margin-bottom: 6px;">⛽</span>
+          ${LanguageManager.t('driverNoFuelLogs')}
+        </td></tr>`;
+      } else {
+        const sorted = [...myLogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        tbody.innerHTML = sorted.map(log => {
+          const veh = this.cachedVehicles.find(v => v.id === log.vehicleId) || assignedVeh;
+          const translatedNotes = LanguageManager.translateObservation(log.notes);
+          return `
+            <tr>
+              <td><strong>${log.date}</strong></td>
+              <td>
+                <span class="plate-badge">${veh?.licensePlate || '-'}</span>
+                <span style="color:var(--text-secondary); font-size:0.85rem; margin-left:6px;">${veh ? `${veh.make} ${veh.model}` : ''}</span>
+              </td>
+              <td>${(log.odometerKm || 0).toLocaleString()} km</td>
+              <td><strong>${log.liters.toFixed(1)} L</strong></td>
+              <td><span style="color:#059669; font-weight:700;">${log.costEur.toFixed(2)} €</span></td>
+              <td>${log.fuelStation || LanguageManager.t('defaultFuelStation')}</td>
+              <td style="color:var(--text-secondary); font-size:0.85rem;">${translatedNotes}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  private openFuelModalForDriver(assignedVeh?: Vehicle): void {
+    this.populateModalVehicleDropdowns();
+    const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+    if (fuelVehSelect && assignedVeh) {
+      fuelVehSelect.value = assignedVeh.id;
+      fuelVehSelect.disabled = true; // Driver cannot switch to another vehicle
+      this.updateFuelFormHints();
+    }
+    const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
+    if (dateInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+      dateInput.max = today;
+    }
+    this.openModal('modal-fuel');
   }
 
   private populateModalDriverDropdowns(): void {
@@ -1705,20 +1849,12 @@ class AppController {
 
     document.getElementById('btn-add-fuel')?.addEventListener('click', () => {
       this.populateModalVehicleDropdowns();
-      // If driver is logged in, auto pre-select their assigned vehicle!
-      if (this.currentUser?.role === 'DRIVER') {
-        const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
-        if (assignedVeh) {
-          const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
-          if (fuelVehSelect) {
-            fuelVehSelect.value = assignedVeh.id;
-            this.updateFuelFormHints();
-          }
-        }
-      }
+      const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+      if (fuelVehSelect) fuelVehSelect.disabled = false;
       const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
-      if (dateInput && !dateInput.value) {
+      if (dateInput) {
         dateInput.value = new Date().toISOString().split('T')[0];
+        dateInput.removeAttribute('max');
       }
       this.openModal('modal-fuel');
     });
@@ -1758,7 +1894,20 @@ class AppController {
 
     if (maintVehSelect) maintVehSelect.innerHTML = optionsHtml;
     if (fuelVehSelect) {
-      fuelVehSelect.innerHTML = optionsHtml;
+      if (this.currentUser?.role === 'DRIVER') {
+        const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
+        if (assignedVeh) {
+          fuelVehSelect.innerHTML = `<option value="${assignedVeh.id}">${assignedVeh.licensePlate} - ${assignedVeh.make} ${assignedVeh.model} ${LanguageManager.t('driverVehicleLocked')}</option>`;
+          fuelVehSelect.value = assignedVeh.id;
+          fuelVehSelect.disabled = true;
+        } else {
+          fuelVehSelect.innerHTML = `<option value="">${LanguageManager.t('driverNoAssignedVehicle')}</option>`;
+          fuelVehSelect.disabled = true;
+        }
+      } else {
+        fuelVehSelect.disabled = false;
+        fuelVehSelect.innerHTML = optionsHtml;
+      }
       this.updateFuelFormHints();
     }
   }
@@ -1928,10 +2077,15 @@ class AppController {
       try {
         const fullTankInput = document.getElementById('fuel-full-tank') as HTMLInputElement;
         const notesInput = document.getElementById('fuel-notes') as HTMLInputElement;
+        const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
+
+        const vehicleId = this.currentUser?.role === 'DRIVER' && assignedVeh
+          ? assignedVeh.id
+          : (document.getElementById('fuel-veh') as HTMLSelectElement).value;
 
         const payload = {
           tenantId: this.currentTenant,
-          vehicleId: (document.getElementById('fuel-veh') as HTMLSelectElement).value,
+          vehicleId,
           driverId: this.currentUser?.id || 'usr_driver_joan',
           date: (document.getElementById('fuel-date') as HTMLInputElement).value,
           odometerKm: Number((document.getElementById('fuel-odometer') as HTMLInputElement).value),
@@ -1954,6 +2108,9 @@ class AppController {
         document.getElementById('modal-fuel')?.classList.remove('open');
         this.showToast(LanguageManager.t('successFuelLogged'), 'success');
         await this.loadData();
+        if (this.currentUser?.role === 'DRIVER') {
+          this.applyRoleBasedViewRestrictions();
+        }
       } catch (err: any) {
         this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
       }

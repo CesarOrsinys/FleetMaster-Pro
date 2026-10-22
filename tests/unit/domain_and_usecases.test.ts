@@ -1,6 +1,7 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert';
 import fs from 'node:fs';
+import path from 'node:path';
 import { TRANSLATIONS, SupportedLanguage, LanguageManager } from '../../src/ui/i18n/LanguageManager.js';
 import { VehicleSchema } from '../../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../../src/core/domain/MaintenanceRecord.js';
@@ -89,7 +90,7 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
 
       // Fallback for empty observations
       LanguageManager.setLanguage('es');
-      assert.strictEqual(LanguageManager.translateObservation(null), "Sin observaciones adicionales registradas.");
+      assert.strictEqual(LanguageManager.translateObservation(null), LanguageManager.t('lblNoObservations'));
     });
 
     it('Should verify that 100% of data-i18n, data-i18n-placeholder, and data-i18n-title in index.html are defined in translations', () => {
@@ -279,6 +280,44 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
       const forged = 'FM_PASS_v1_dGFtcGVyZWRfaW52YWxpZF9kYXRh';
       const result = await PassportCrypto.decryptAuthPassport(forged);
       assert.strictEqual(result, null, 'Tampered passport must be safely rejected with null');
+    });
+  });
+
+  describe('6. Driver Role Restrictions & Daily Refueling Portal', () => {
+    it('Should verify that driver portal view and all essential driver elements exist in index.html', () => {
+      const htmlPath = path.resolve(process.cwd(), 'index.html');
+      const html = fs.readFileSync(htmlPath, 'utf-8');
+
+      assert.ok(html.includes('id="view-driver-portal"'), 'Must have dedicated view-driver-portal');
+      assert.ok(html.includes('id="driver-portal-name"'), 'Must have driver-portal-name element');
+      assert.ok(html.includes('id="driver-portal-plate"'), 'Must have driver-portal-plate element');
+      assert.ok(html.includes('id="driver-portal-veh-model"'), 'Must have driver-portal-veh-model element');
+      assert.ok(html.includes('id="btn-driver-quick-fuel"'), 'Must have btn-driver-quick-fuel button');
+      assert.ok(html.includes('id="driver-fuel-table-body"'), 'Must have driver-fuel-table-body element');
+    });
+
+    it('Should verify that driver portal translation keys are localized across va, es, and en', () => {
+      const keys = [
+        'driverPortalTitle',
+        'driverPortalSubtitle',
+        'driverAssignedVehicleCard',
+        'driverNoAssignedVehicle',
+        'driverReportFuelCardTitle',
+        'driverReportFuelCardDesc',
+        'driverFuelHistoryTitle',
+        'driverFuelHistoryDesc',
+        'driverNoFuelLogs',
+        'driverVehicleLocked',
+        'driverTodayDate'
+      ];
+
+      ['va', 'es', 'en'].forEach(lang => {
+        LanguageManager.setLanguage(lang as any);
+        keys.forEach(k => {
+          const trans = LanguageManager.t(k as any);
+          assert.ok(trans && trans !== k, `Key ${k} must be translated in ${lang}`);
+        });
+      });
     });
   });
 

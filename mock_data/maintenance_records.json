@@ -9,8 +9,8 @@
     "completedDate": "2026-06-12",
     "odometerAtServiceKm": 75000,
     "costEur": 185.50,
-    "workshopName": "Tallers Morvedre Sagunt",
-    "notes": "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari",
+    "workshopName": "Talleres Morvedre Sagunto",
+    "notes": "Cambio de aceite sintético 5W30 y filtro de aceite reglamentario",
     "createdBy": "usr_admin_val",
     "createdAt": "2026-06-05T10:00:00.000Z",
     "updatedAt": "2026-06-12T16:00:00.000Z"
@@ -25,8 +25,8 @@
     "completedDate": null,
     "odometerAtServiceKm": 142100,
     "costEur": 55.80,
-    "workshopName": "Estació ITV Castelló Nord",
-    "notes": "Cita prèvia confirmada per a inspecció periòdica",
+    "workshopName": "Estación ITV Castellón Norte",
+    "notes": "Cita previa confirmada para inspección periódica",
     "createdBy": "usr_admin_val",
     "createdAt": "2026-10-01T09:00:00.000Z",
     "updatedAt": "2026-10-01T09:00:00.000Z"
@@ -41,8 +41,8 @@
     "completedDate": null,
     "odometerAtServiceKm": 142100,
     "costEur": 240.00,
-    "workshopName": "Frens i Mecànica Borrull",
-    "notes": "Substitució pastilles davanteres i revisió líquid de frens",
+    "workshopName": "Frenos y Mecánica Borrull",
+    "notes": "Sustitución de pastillas delanteras y revisión de líquido de frenos",
     "createdBy": "usr_admin_val",
     "createdAt": "2026-10-15T11:00:00.000Z",
     "updatedAt": "2026-10-15T11:00:00.000Z"
