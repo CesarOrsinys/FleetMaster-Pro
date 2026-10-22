@@ -60,6 +60,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabMaintenance: "ITV i Manteniment",
     tabFuel: "Combustible i Quilometratge",
     tabTenantSettings: "Configuració d'Empresa",
+    tabDashboardShort: "Panell",
+    tabVehiclesShort: "Vehicles",
+    tabMaintenanceShort: "ITV / Mant.",
+    tabFuelShort: "Combustible",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Vehicles Actius",
@@ -273,6 +277,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabMaintenance: "ITV y Mantenimiento",
     tabFuel: "Combustible y Kilometraje",
     tabTenantSettings: "Configuración de Empresa",
+    tabDashboardShort: "Panel",
+    tabVehiclesShort: "Vehículos",
+    tabMaintenanceShort: "ITV / Mant.",
+    tabFuelShort: "Combustible",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Vehículos Activos",
@@ -486,6 +494,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabMaintenance: "MOT/ITV & Maintenance",
     tabFuel: "Fuel & Mileage Logs",
     tabTenantSettings: "Company Settings",
+    tabDashboardShort: "Dashboard",
+    tabVehiclesShort: "Vehicles",
+    tabMaintenanceShort: "MOT & Service",
+    tabFuelShort: "Fuel",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Active Vehicles",

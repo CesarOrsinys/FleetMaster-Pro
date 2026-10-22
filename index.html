@@ -656,6 +656,14 @@
       color: #991B1B;
     }
 
+    .desktop-only {
+      display: inline;
+    }
+
+    .mobile-only {
+      display: none;
+    }
+
     /* Navigation Bar */
     nav.app-nav {
       background: #FFFFFF;
@@ -687,6 +695,15 @@
       border-top: none;
       border-left: none;
       border-right: none;
+      font-family: inherit;
+    }
+
+    .nav-tab .tab-icon {
+      font-size: 1.1rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .nav-tab:hover {
@@ -1324,14 +1341,107 @@
         max-width: calc(100vw - 24px) !important;
       }
 
-      /* Navigation Tabs Scroll */
+      .desktop-only {
+        display: none !important;
+      }
+
+      .mobile-only {
+        display: block !important;
+      }
+
+      /* Mobile 4-Column Visual Navigation App-Bar (Zero Horizontal Scroll, 100% Visual) */
+      nav.app-nav {
+        background: #FFFFFF !important;
+        position: sticky !important;
+        top: 61px !important;
+        z-index: 40 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+        border-bottom: 1px solid var(--slate-200) !important;
+        padding: 6px 8px !important;
+      }
+
       .nav-container {
-        padding: 0 0.75rem;
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        overflow: visible !important;
       }
 
       .nav-tab {
-        padding: 0.75rem 0.85rem;
-        font-size: 0.8rem;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 7px 2px 6px !important;
+        min-height: 54px !important;
+        border-radius: var(--radius-md) !important;
+        text-align: center !important;
+        background: var(--slate-50) !important;
+        border: 1px solid var(--slate-200) !important;
+        white-space: normal !important;
+        gap: 3px !important;
+        color: var(--slate-600) !important;
+        transition: all 0.15s ease !important;
+        cursor: pointer !important;
+      }
+
+      .nav-tab .tab-icon {
+        font-size: 1.25rem !important;
+        line-height: 1 !important;
+        margin-bottom: 1px !important;
+      }
+
+      .nav-tab .tab-label {
+        font-size: 0.68rem !important;
+        font-weight: 700 !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.2px !important;
+      }
+
+      .nav-tab:hover {
+        background: var(--slate-100) !important;
+        color: var(--primary) !important;
+      }
+
+      .nav-tab.active {
+        background: linear-gradient(180deg, #F0FDFA 0%, #CCFBF1 100%) !important;
+        border-color: var(--primary) !important;
+        color: var(--primary-dark) !important;
+        font-weight: 800 !important;
+        box-shadow: 0 2px 6px rgba(15, 118, 110, 0.22) !important;
+        transform: translateY(-1px) !important;
+      }
+
+      .nav-tab.active .tab-label {
+        color: var(--primary-dark) !important;
+      }
+
+      /* Visual Segmented View Mode Toggle on Mobile */
+      .view-mode-bar {
+        display: flex !important;
+        width: 100% !important;
+        margin-bottom: 12px !important;
+      }
+
+      .view-mode-switcher {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        background: var(--slate-200) !important;
+        padding: 4px !important;
+        border-radius: var(--radius-md) !important;
+        gap: 4px !important;
+      }
+
+      .view-mode-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 8px 10px !important;
+        font-size: 0.82rem !important;
+        border-radius: var(--radius-sm) !important;
       }
 
       /* Mobile Scroll Hint & Tables */
@@ -1515,16 +1625,24 @@
     <nav class="app-nav">
       <div class="nav-container">
         <button class="nav-tab active" data-tab="dashboard">
-          <span>📊</span> <span data-i18n="tabDashboard">Panell de Control</span>
+          <span class="tab-icon">📊</span>
+          <span class="tab-label desktop-only" data-i18n="tabDashboard">Panell de Control</span>
+          <span class="tab-label mobile-only" data-i18n="tabDashboardShort">Panell</span>
         </button>
         <button class="nav-tab" data-tab="vehicles">
-          <span>🚗</span> <span data-i18n="tabVehicles">Parc de Vehicles</span>
+          <span class="tab-icon">🚗</span>
+          <span class="tab-label desktop-only" data-i18n="tabVehicles">Parc de Vehicles</span>
+          <span class="tab-label mobile-only" data-i18n="tabVehiclesShort">Vehicles</span>
         </button>
         <button class="nav-tab" data-tab="maintenance">
-          <span>🔧</span> <span data-i18n="tabMaintenance">ITV i Manteniment</span>
+          <span class="tab-icon">🔧</span>
+          <span class="tab-label desktop-only" data-i18n="tabMaintenance">ITV i Manteniment</span>
+          <span class="tab-label mobile-only" data-i18n="tabMaintenanceShort">ITV / Mant.</span>
         </button>
         <button class="nav-tab" data-tab="fuel">
-          <span>⛽</span> <span data-i18n="tabFuel">Combustible i Quilometratge</span>
+          <span class="tab-icon">⛽</span>
+          <span class="tab-label desktop-only" data-i18n="tabFuel">Combustible i Quilometratge</span>
+          <span class="tab-label mobile-only" data-i18n="tabFuelShort">Combustible</span>
         </button>
       </div>
     </nav>

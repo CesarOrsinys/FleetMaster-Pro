@@ -220,6 +220,8 @@ class AppController {
   }
 
   private setupViewModeSwitchers(): void {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
     document.querySelectorAll<HTMLElement>('.view-mode-switcher').forEach(switcher => {
       const target = switcher.getAttribute('data-target');
       if (!target) return;
@@ -245,6 +247,14 @@ class AppController {
           }
         });
       });
+
+      // On mobile screens, automatically default to visual 'cards' view
+      if (isMobile) {
+        const cardsBtn = switcher.querySelector<HTMLButtonElement>('.view-mode-btn[data-mode="cards"]');
+        if (cardsBtn) {
+          cardsBtn.click();
+        }
+      }
     });
   }
 
