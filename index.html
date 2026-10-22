@@ -297,7 +297,8 @@
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    .form-group textarea {
       width: 100%;
       padding: 0.7rem 0.9rem;
       border: 1px solid var(--slate-300);
@@ -310,7 +311,8 @@
     }
 
     .form-group input:focus,
-    .form-group select:focus {
+    .form-group select:focus,
+    .form-group textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--primary-light);
     }
@@ -830,7 +832,7 @@
       font-size: 1.2rem;
     }
 
-    /* Modal */
+    /* Modal Backdrop and Window */
     .modal-backdrop {
       position: fixed;
       top: 0;
@@ -843,6 +845,7 @@
       justify-content: center;
       z-index: 1000;
       padding: 1rem;
+      backdrop-filter: blur(4px);
     }
 
     .modal-backdrop.open {
@@ -853,9 +856,15 @@
       background: #FFFFFF;
       border-radius: var(--radius-lg);
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
       box-shadow: var(--shadow-lg);
       overflow: hidden;
+      animation: modalSlideUp 0.2s ease-out;
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .modal-header {
@@ -864,6 +873,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: var(--slate-50);
     }
 
     .modal-header h3 {
@@ -872,11 +882,33 @@
       color: var(--slate-900);
     }
 
+    .btn-close-modal {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--slate-400);
+      line-height: 1;
+      padding: 0.2rem;
+    }
+
+    .btn-close-modal:hover {
+      color: var(--slate-800);
+    }
+
     .modal-body {
       padding: 1.2rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
     }
 
     .modal-footer {
@@ -903,6 +935,40 @@
       background: var(--slate-100);
     }
 
+    /* Toast Notification Banner */
+    .toast-notification {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--slate-900);
+      color: white;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 2000;
+      animation: toastIn 0.25s ease-out;
+    }
+
+    .toast-notification.success {
+      background: #065F46;
+      border: 1px solid #10B981;
+    }
+
+    .toast-notification.error {
+      background: #991B1B;
+      border: 1px solid #EF4444;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Mobile Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -916,6 +982,9 @@
       .data-table {
         display: block;
         overflow-x: auto;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -960,8 +1029,8 @@
         <div class="form-group">
           <label for="login-tenant" data-i18n="loginSelectTenant">Empresa / Flota</label>
           <select id="login-tenant" required>
-            <option value="tenant_valencia">València Transports Logístics SL</option>
-            <option value="tenant_med">Mediterrània Fleet SA</option>
+            <option value="tenant_valencia" data-i18n="tenant_valencia_name">València Transports Logístics SL</option>
+            <option value="tenant_med" data-i18n="tenant_med_name">Mediterrània Fleet Services SA</option>
           </select>
         </div>
 
@@ -1028,8 +1097,8 @@
             <span>🏢</span>
             <label style="display:none;" data-i18n="tenantSelectorLabel">Empresa</label>
             <select class="tenant-select" id="tenant-select">
-              <option value="tenant_valencia">València Transports SL</option>
-              <option value="tenant_med">Mediterrània Fleet SA</option>
+              <option value="tenant_valencia" data-i18n="tenant_valencia_name">València Transports Logístics SL</option>
+              <option value="tenant_med" data-i18n="tenant_med_name">Mediterrània Fleet Services SA</option>
             </select>
           </div>
 
@@ -1093,7 +1162,7 @@
               <span class="kpi-icon">🚙</span>
             </div>
             <div class="kpi-value" id="kpi-active-vehicles">0</div>
-            <p>Flota operativa asignada</p>
+            <p data-i18n="kpiTotalVehiclesDesc">Flota operativa assignada a l'empresa</p>
           </div>
 
           <div class="kpi-card danger">
@@ -1102,7 +1171,7 @@
               <span class="kpi-icon">⚠️</span>
             </div>
             <div class="kpi-value" id="kpi-itv-alerts">0</div>
-            <p>Inspeccions tècniques urgents</p>
+            <p data-i18n="kpiPendingItvDesc">Inspeccions tècniques urgents requerides</p>
           </div>
 
           <div class="kpi-card warning">
@@ -1111,7 +1180,7 @@
               <span class="kpi-icon">🛠️</span>
             </div>
             <div class="kpi-value" id="kpi-maintenance-alerts">0</div>
-            <p>Oli, frens o filtres programats</p>
+            <p data-i18n="kpiUpcomingMaintDesc">Oli, frens o filtres programats</p>
           </div>
 
           <div class="kpi-card">
@@ -1120,7 +1189,7 @@
               <span class="kpi-icon">💶</span>
             </div>
             <div class="kpi-value" id="kpi-fuel-expense">0,00 €</div>
-            <p>Mes actual (Octubre 2026)</p>
+            <p data-i18n="kpiFuelExpenseDesc">Mes actual (facturació en curs)</p>
           </div>
         </div>
 
@@ -1219,6 +1288,219 @@
       </section>
 
     </main>
+  </div>
+
+  <!-- =============================================================
+       MODALS FOR DATA CREATION (100% TRANSLATED)
+       ============================================================= -->
+
+  <!-- Modal: Nou Vehicle -->
+  <div class="modal-backdrop" id="modal-vehicle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalNewVehicleTitle">Registrar Nou Vehicle a la Flota</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <form id="form-new-vehicle">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="veh-plate" data-i18n="inputPlateLabel">Matrícula oficial</label>
+              <input type="text" id="veh-plate" placeholder="Ex: 1234-BBB" required />
+            </div>
+            <div class="form-group">
+              <label for="veh-vin" data-i18n="inputVinLabel">Nombre de Bastidor (VIN)</label>
+              <input type="text" id="veh-vin" placeholder="VF1FL0000..." required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="veh-make" data-i18n="inputMakeLabel">Marca</label>
+              <input type="text" id="veh-make" placeholder="Ex: Renault" required />
+            </div>
+            <div class="form-group">
+              <label for="veh-model" data-i18n="inputModelLabel">Model</label>
+              <input type="text" id="veh-model" placeholder="Ex: Trafic 2.0 dCi" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="veh-year" data-i18n="inputYearLabel">Any de fabricació</label>
+              <input type="number" id="veh-year" value="2024" min="2000" max="2030" required />
+            </div>
+            <div class="form-group">
+              <label for="veh-fuel" data-i18n="inputFuelLabel">Tipus de Combustible</label>
+              <select id="veh-fuel" required>
+                <option value="DIESEL" data-i18n="fuel_diesel">Dièsel</option>
+                <option value="GASOLINE" data-i18n="fuel_gasoline">Gasolina</option>
+                <option value="ELECTRIC" data-i18n="fuel_electric">Elèctric</option>
+                <option value="HYBRID" data-i18n="fuel_hybrid">Híbrid</option>
+                <option value="PLUGIN_HYBRID" data-i18n="fuel_plugin_hybrid">Híbrid Endollable</option>
+                <option value="CNG_GAS" data-i18n="fuel_cng_gas">Gas GNC</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="veh-odometer" data-i18n="inputOdometerLabel">Lectura Odòmetre actual (km)</label>
+              <input type="number" id="veh-odometer" value="0" min="0" required />
+            </div>
+            <div class="form-group">
+              <label for="veh-next-km" data-i18n="inputNextServiceKmLabel">Pròxima revisió (km)</label>
+              <input type="number" id="veh-next-km" value="15000" min="0" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="veh-itv" data-i18n="inputItvDateLabel">Data límit ITV</label>
+              <input type="date" id="veh-itv" required />
+            </div>
+            <div class="form-group">
+              <label for="veh-status" data-i18n="inputStatusLabel">Estat operatiu</label>
+              <select id="veh-status" required>
+                <option value="ACTIVE" data-i18n="status_active">Actiu</option>
+                <option value="MAINTENANCE" data-i18n="status_maintenance">En Taller</option>
+                <option value="OUT_OF_SERVICE" data-i18n="status_out_of_service">Fora de Servei</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
+            <textarea id="veh-notes" rows="2" placeholder="..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close-modal data-i18n="modalCancelBtn">Cancel·lar</button>
+          <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Programar Manteniment -->
+  <div class="modal-backdrop" id="modal-maintenance">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalNewMaintenanceTitle">Programar Manteniment o ITV</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <form id="form-new-maintenance">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="maint-veh" data-i18n="colVehicle">Vehicle</label>
+            <select id="maint-veh" required>
+              <!-- Filled dynamically with vehicles -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="maint-type" data-i18n="inputInterventionTypeLabel">Tipus d'intervenció</label>
+              <select id="maint-type" required>
+                <option value="OIL_CHANGE" data-i18n="maint_type_oil_change">Canvi d'Oli i Filtres</option>
+                <option value="ITV_MOT" data-i18n="maint_type_itv_mot">Inspecció Tècnica (ITV)</option>
+                <option value="BRAKES" data-i18n="maint_type_brakes">Pastilles i Discos de Fre</option>
+                <option value="TIRES" data-i18n="maint_type_tires">Canvi de Pneumàtics</option>
+                <option value="FILTERS" data-i18n="maint_type_filters">Filtres d'Aire i Habitacle</option>
+                <option value="GENERAL_REPAIR" data-i18n="maint_type_general_repair">Reparació Mecànica General</option>
+                <option value="BODYWORK" data-i18n="maint_type_bodywork">Planxa i Pintura</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="maint-date" data-i18n="inputScheduledDateLabel">Data programada</label>
+              <input type="date" id="maint-date" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="maint-workshop" data-i18n="inputWorkshopLabel">Taller o Proveïdor</label>
+              <input type="text" id="maint-workshop" placeholder="Ex: Tallers Morvedre" required />
+            </div>
+            <div class="form-group">
+              <label for="maint-cost" data-i18n="inputCostLabel">Cost estimat (€)</label>
+              <input type="number" id="maint-cost" step="0.01" min="0" value="120.00" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="maint-status" data-i18n="colMaintenanceStatus">Estat</label>
+            <select id="maint-status" required>
+              <option value="SCHEDULED" data-i18n="maint_status_scheduled">Programada</option>
+              <option value="IN_PROGRESS" data-i18n="maint_status_in_progress">En Curs</option>
+              <option value="COMPLETED" data-i18n="maint_status_completed">Realitzada</option>
+              <option value="CANCELLED" data-i18n="maint_status_cancelled">Anul·lada</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close-modal data-i18n="modalCancelBtn">Cancel·lar</button>
+          <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Registrar Repostatge -->
+  <div class="modal-backdrop" id="modal-fuel">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalNewFuelLogTitle">Registrar Repostatge de Combustible</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <form id="form-new-fuel">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="fuel-veh" data-i18n="colVehicle">Vehicle</label>
+            <select id="fuel-veh" required>
+              <!-- Filled dynamically with vehicles -->
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fuel-date" data-i18n="inputDateLabel">Data del registre</label>
+              <input type="date" id="fuel-date" required />
+            </div>
+            <div class="form-group">
+              <label for="fuel-odometer" data-i18n="inputOdometerLabel">Lectura Odòmetre actual (km)</label>
+              <input type="number" id="fuel-odometer" min="0" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fuel-liters" data-i18n="inputLitersLabel">Litres repostats (L)</label>
+              <input type="number" id="fuel-liters" step="0.01" min="0.1" value="50.00" required />
+            </div>
+            <div class="form-group">
+              <label for="fuel-price" data-i18n="inputCostLabel">Total import (€)</label>
+              <input type="number" id="fuel-price" step="0.01" min="0.1" value="75.00" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fuel-station" data-i18n="inputFuelStationLabel">Estació de servei</label>
+            <input type="text" id="fuel-station" placeholder="Ex: Repsol Viver" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close-modal data-i18n="modalCancelBtn">Cancel·lar</button>
+          <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Banner -->
+  <div class="toast-notification" id="app-toast">
+    <span id="toast-icon">✓</span>
+    <span id="toast-message"></span>
   </div>
 
   <script type="module" src="/src/main.ts"></script>

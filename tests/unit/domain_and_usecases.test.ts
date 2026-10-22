@@ -1,6 +1,6 @@
 import { describe, it, beforeEach } from 'node:test';
 import assert from 'node:assert';
-import { TRANSLATIONS, SupportedLanguage } from '../../src/ui/i18n/LanguageManager.js';
+import { TRANSLATIONS, SupportedLanguage, LanguageManager } from '../../src/ui/i18n/LanguageManager.js';
 import { VehicleSchema } from '../../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../../src/core/domain/MaintenanceRecord.js';
 import { FuelLogSchema } from '../../src/core/domain/FuelLog.js';
@@ -43,6 +43,32 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
       assert.strictEqual(valencianFlagHtml.includes('<img'), true, 'Valencian flag must render an <img> element');
       assert.strictEqual(valencianFlagHtml.includes('lang-flag-img'), true, 'Valencian flag must have lang-flag-img class');
       assert.strictEqual(valencianFlagHtml.includes('va.png') || valencianFlagHtml.includes('data:image/png;base64'), true, 'Valencian flag must reference va.png or base64 Senyera Coronada');
+    });
+
+    it('Should interpolate parameters dynamically and translate statuses, maintenance, and fuel across all languages', () => {
+      // Test Valencià
+      LanguageManager.setLanguage('va');
+      const valAlert = LanguageManager.t('alert_itv_imminent', { date: '30/10/2026', days: '8' });
+      assert.strictEqual(valAlert, 'Venciment ITV el 30/10/2026 (8 dies restants)');
+      assert.strictEqual(LanguageManager.t('status_active'), 'Actiu');
+      assert.strictEqual(LanguageManager.t('maint_type_oil_change'), "Canvi d'Oli i Filtres");
+      assert.strictEqual(LanguageManager.t('fuel_diesel'), 'Dièsel');
+
+      // Test Español
+      LanguageManager.setLanguage('es');
+      const esAlert = LanguageManager.t('alert_itv_imminent', { date: '30/10/2026', days: '8' });
+      assert.strictEqual(esAlert, 'Vencimiento ITV el 30/10/2026 (8 días restantes)');
+      assert.strictEqual(LanguageManager.t('status_active'), 'Activo');
+      assert.strictEqual(LanguageManager.t('maint_type_oil_change'), 'Cambio de Aceite y Filtros');
+      assert.strictEqual(LanguageManager.t('fuel_diesel'), 'Diésel');
+
+      // Test English
+      LanguageManager.setLanguage('en');
+      const enAlert = LanguageManager.t('alert_itv_imminent', { date: '30/10/2026', days: '8' });
+      assert.strictEqual(enAlert, 'MOT/ITV expiration on 30/10/2026 (8 days remaining)');
+      assert.strictEqual(LanguageManager.t('status_active'), 'Active');
+      assert.strictEqual(LanguageManager.t('maint_type_oil_change'), 'Oil & Filter Service');
+      assert.strictEqual(LanguageManager.t('fuel_diesel'), 'Diesel');
     });
   });
 

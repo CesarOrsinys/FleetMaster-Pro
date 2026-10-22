@@ -69,6 +69,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     kpiOdometerTotal: "Quilòmetres Totals Recorreguts",
     recentAlertsTitle: "Alertes i Venciments Imminents",
     noAlertsMessage: "No hi ha alertes pendents. Tots els vehicles compleixen amb el pla de manteniment.",
+    kpiTotalVehiclesDesc: "Flota operativa assignada a l'empresa",
+    kpiPendingItvDesc: "Inspeccions tècniques urgents requerides",
+    kpiUpcomingMaintDesc: "Oli, frens o filtres programats",
+    kpiFuelExpenseDesc: "Mes actual (facturació en curs)",
 
     // Vehicles Section
     btnNewVehicle: "Nou Vehicle",
@@ -88,6 +92,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     statusOutOfService: "Fora de Servei",
     unassignedDriver: "Sense assignar",
 
+    // Fuel Types
+    fuel_diesel: "Dièsel",
+    fuel_gasoline: "Gasolina",
+    fuel_electric: "Elèctric",
+    fuel_hybrid: "Híbrid",
+    fuel_plugin_hybrid: "Híbrid Endollable",
+    fuel_cng_gas: "Gas GNC",
+
+    // Vehicle Statuses
+    status_active: "Actiu",
+    status_maintenance: "En Taller",
+    status_out_of_service: "Fora de Servei",
+
     // Maintenance Section
     btnNewMaintenance: "Programar Manteniment",
     colMaintenanceType: "Tipus d'Intervenció",
@@ -106,6 +123,33 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     maintStatusCompleted: "Realitzada",
     maintStatusCancelled: "Anul·lada",
 
+    // Maintenance Types
+    maint_type_oil_change: "Canvi d'Oli i Filtres",
+    maint_type_itv_mot: "Inspecció Tècnica (ITV)",
+    maint_type_brakes: "Pastilles i Discos de Fre",
+    maint_type_tires: "Canvi de Pneumàtics",
+    maint_type_filters: "Filtres d'Aire i Habitacle",
+    maint_type_general_repair: "Reparació Mecànica General",
+    maint_type_bodywork: "Planxa i Pintura",
+
+    // Maintenance Statuses
+    maint_status_scheduled: "Programada",
+    maint_status_in_progress: "En Curs",
+    maint_status_completed: "Realitzada",
+    maint_status_cancelled: "Anul·lada",
+
+    // Alerts & Urgency Badges
+    badge_urgent: "URGENT",
+    badge_scheduled: "PROGRAMAT",
+    badge_in_progress: "EN CURS",
+    alert_itv_imminent: "Venciment ITV el {date} ({days} dies restants)",
+    alert_maint_scheduled: "{type} programat per al {date}",
+    alert_oil_odometer: "Pròxima revisió d'oli als {targetKm} km (actual: {curKm} km)",
+
+    // Tenants
+    tenant_valencia_name: "València Transports Logístics SL",
+    tenant_med_name: "Mediterrània Fleet Services SA",
+
     // Fuel Logs Section
     btnNewFuelLog: "Registrar Repostatge",
     colDate: "Data",
@@ -114,7 +158,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     colFuelStation: "Estació de Servei",
     colReceipt: "Tiquet / Factura",
 
-    // Modal & Form Labels
+    // Modals & Form Labels
     modalSaveBtn: "Guardar Registre",
     modalCancelBtn: "Cancel·lar",
     inputPlateLabel: "Matrícula oficial",
@@ -126,13 +170,34 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputOdometerLabel: "Lectura Odòmetre actual (km)",
     inputItvDateLabel: "Data límit ITV",
     inputNotesLabel: "Observacions addicionals",
+    modalNewVehicleTitle: "Registrar Nou Vehicle a la Flota",
+    modalNewMaintenanceTitle: "Programar Manteniment o ITV",
+    modalNewFuelLogTitle: "Registrar Repostatge de Combustible",
+    inputWorkshopLabel: "Taller o Proveïdor",
+    inputCostLabel: "Cost estimat / import (€)",
+    inputScheduledDateLabel: "Data programada",
+    inputLitersLabel: "Litres repostats (L)",
+    inputFuelStationLabel: "Estació de servei",
+    inputDateLabel: "Data del registre",
+    selectVehiclePlaceholder: "Tria vehicle...",
+    inputNextServiceKmLabel: "Pròxima revisió de manteniment (km)",
+    inputStatusLabel: "Estat operatiu",
+    inputInterventionTypeLabel: "Tipus d'intervenció",
 
-    // General / Feedback
+    // Success & Error Feedback
     loadingMessage: "Carregant dades...",
     savedSuccessMessage: "Registre guardat correctament.",
     deletedSuccessMessage: "Registre eliminat satisfactòriament.",
     confirmDeletePrompt: "Segur que desitges eliminar este registre?",
-    emptyTableMessage: "No s'han trobat registres per a esta consulta."
+    emptyTableMessage: "No s'han trobat registres per a esta consulta.",
+    successVehicleCreated: "Vehicle registrat amb èxit en la flota.",
+    successMaintenanceCreated: "Intervenció de manteniment programada amb èxit.",
+    successFuelLogged: "Repostatge guardat correctament en el sistema.",
+    error_network: "Error de connexió amb el servidor. Reintenta-ho en uns segons.",
+    error_unauthorized: "Sessió caducada o credencials no vàlides.",
+    error_required_fields: "Si us plau, ompli tots els camps obligatoris.",
+    error_vehicle_not_found: "No s'ha trobat el vehicle especificat.",
+    error_internal: "S'ha produït un error intern en el servidor."
   },
 
   es: {
@@ -183,6 +248,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     kpiOdometerTotal: "Kilómetros Totales Recorridos",
     recentAlertsTitle: "Alertas y Vencimientos Inminentes",
     noAlertsMessage: "No hay alertas pendientes. Todos los vehículos cumplen con el plan de mantenimiento.",
+    kpiTotalVehiclesDesc: "Flota operativa asignada a la empresa",
+    kpiPendingItvDesc: "Inspecciones técnicas urgentes requeridas",
+    kpiUpcomingMaintDesc: "Aceite, frenos o filtros programados",
+    kpiFuelExpenseDesc: "Mes actual (facturación en curso)",
 
     // Vehicles Section
     btnNewVehicle: "Nuevo Vehículo",
@@ -202,6 +271,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     statusOutOfService: "Fuera de Servicio",
     unassignedDriver: "Sin asignar",
 
+    // Fuel Types
+    fuel_diesel: "Diésel",
+    fuel_gasoline: "Gasolina",
+    fuel_electric: "Eléctrico",
+    fuel_hybrid: "Híbrido",
+    fuel_plugin_hybrid: "Híbrido Enchufable",
+    fuel_cng_gas: "Gas GNC",
+
+    // Vehicle Statuses
+    status_active: "Activo",
+    status_maintenance: "En Taller",
+    status_out_of_service: "Fuera de Servicio",
+
     // Maintenance Section
     btnNewMaintenance: "Programar Mantenimiento",
     colMaintenanceType: "Tipo de Intervención",
@@ -219,6 +301,33 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     maintStatusScheduled: "Programada",
     maintStatusCompleted: "Realizada",
     maintStatusCancelled: "Anulada",
+
+    // Maintenance Types
+    maint_type_oil_change: "Cambio de Aceite y Filtros",
+    maint_type_itv_mot: "Inspección Técnica (ITV)",
+    maint_type_brakes: "Pastillas y Discos de Freno",
+    maint_type_tires: "Cambio de Neumáticos",
+    maint_type_filters: "Filtros de Aire y Habitáculo",
+    maint_type_general_repair: "Reparación Mecánica General",
+    maint_type_bodywork: "Chapa y Pintura",
+
+    // Maintenance Statuses
+    maint_status_scheduled: "Programada",
+    maint_status_in_progress: "En Curso",
+    maint_status_completed: "Realizada",
+    maint_status_cancelled: "Anulada",
+
+    // Alerts & Urgency Badges
+    badge_urgent: "URGENTE",
+    badge_scheduled: "PROGRAMADO",
+    badge_in_progress: "EN CURSO",
+    alert_itv_imminent: "Vencimiento ITV el {date} ({days} días restantes)",
+    alert_maint_scheduled: "{type} programado para el {date}",
+    alert_oil_odometer: "Próxima revisión de aceite a los {targetKm} km (actual: {curKm} km)",
+
+    // Tenants
+    tenant_valencia_name: "València Transports Logístics SL",
+    tenant_med_name: "Mediterrània Fleet Services SA",
 
     // Fuel Logs Section
     btnNewFuelLog: "Registrar Repostaje",
@@ -240,13 +349,34 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputOdometerLabel: "Lectura Odómetro actual (km)",
     inputItvDateLabel: "Fecha límite ITV",
     inputNotesLabel: "Observaciones adicionales",
+    modalNewVehicleTitle: "Registrar Nuevo Vehículo en la Flota",
+    modalNewMaintenanceTitle: "Programar Mantenimiento o ITV",
+    modalNewFuelLogTitle: "Registrar Repostaje de Combustible",
+    inputWorkshopLabel: "Taller o Proveedor",
+    inputCostLabel: "Coste estimado / importe (€)",
+    inputScheduledDateLabel: "Fecha programada",
+    inputLitersLabel: "Litros repostados (L)",
+    inputFuelStationLabel: "Estación de servicio",
+    inputDateLabel: "Fecha del registro",
+    selectVehiclePlaceholder: "Elige vehículo...",
+    inputNextServiceKmLabel: "Próxima revisión de mantenimiento (km)",
+    inputStatusLabel: "Estado operativo",
+    inputInterventionTypeLabel: "Tipo de intervención",
 
-    // General / Feedback
+    // Success & Error Feedback
     loadingMessage: "Cargando datos...",
     savedSuccessMessage: "Registro guardado correctamente.",
     deletedSuccessMessage: "Registro eliminado satisfactoriamente.",
     confirmDeletePrompt: "¿Seguro que deseas eliminar este registro?",
-    emptyTableMessage: "No se han encontrado registros para esta consulta."
+    emptyTableMessage: "No se han encontrado registros para esta consulta.",
+    successVehicleCreated: "Vehículo registrado con éxito en la flota.",
+    successMaintenanceCreated: "Intervención de mantenimiento programada con éxito.",
+    successFuelLogged: "Repostaje guardado correctamente en el sistema.",
+    error_network: "Error de conexión con el servidor. Reinténtalo en unos segundos.",
+    error_unauthorized: "Sesión caducada o credenciales no válidas.",
+    error_required_fields: "Por favor, completa todos los campos requeridos.",
+    error_vehicle_not_found: "No se ha encontrado el vehículo especificado.",
+    error_internal: "Se ha producido un error interno en el servidor."
   },
 
   en: {
@@ -297,6 +427,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     kpiOdometerTotal: "Total Distance Logged (km)",
     recentAlertsTitle: "Imminent Maintenance & Expiration Alerts",
     noAlertsMessage: "No pending alerts. All vehicles comply with the maintenance plan.",
+    kpiTotalVehiclesDesc: "Operational fleet assigned to company",
+    kpiPendingItvDesc: "Urgent vehicle inspections required",
+    kpiUpcomingMaintDesc: "Oil, brakes or filter services scheduled",
+    kpiFuelExpenseDesc: "Current month (billing in progress)",
 
     // Vehicles Section
     btnNewVehicle: "Add Vehicle",
@@ -316,6 +450,19 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     statusOutOfService: "Out of Service",
     unassignedDriver: "Unassigned",
 
+    // Fuel Types
+    fuel_diesel: "Diesel",
+    fuel_gasoline: "Gasoline",
+    fuel_electric: "Electric",
+    fuel_hybrid: "Hybrid",
+    fuel_plugin_hybrid: "Plug-in Hybrid",
+    fuel_cng_gas: "CNG Gas",
+
+    // Vehicle Statuses
+    status_active: "Active",
+    status_maintenance: "In Workshop",
+    status_out_of_service: "Out of Service",
+
     // Maintenance Section
     btnNewMaintenance: "Schedule Maintenance",
     colMaintenanceType: "Service Type",
@@ -333,6 +480,33 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     maintStatusScheduled: "Scheduled",
     maintStatusCompleted: "Completed",
     maintStatusCancelled: "Cancelled",
+
+    // Maintenance Types
+    maint_type_oil_change: "Oil & Filter Service",
+    maint_type_itv_mot: "Technical Inspection (MOT/ITV)",
+    maint_type_brakes: "Brake Pads & Discs",
+    maint_type_tires: "Tire Replacement",
+    maint_type_filters: "Air & Cabin Filters",
+    maint_type_general_repair: "General Mechanical Repair",
+    maint_type_bodywork: "Bodywork & Paint",
+
+    // Maintenance Statuses
+    maint_status_scheduled: "Scheduled",
+    maint_status_in_progress: "In Progress",
+    maint_status_completed: "Completed",
+    maint_status_cancelled: "Cancelled",
+
+    // Alerts & Urgency Badges
+    badge_urgent: "URGENT",
+    badge_scheduled: "SCHEDULED",
+    badge_in_progress: "IN PROGRESS",
+    alert_itv_imminent: "MOT/ITV expiration on {date} ({days} days remaining)",
+    alert_maint_scheduled: "{type} scheduled for {date}",
+    alert_oil_odometer: "Next oil service at {targetKm} km (current: {curKm} km)",
+
+    // Tenants
+    tenant_valencia_name: "València Transports Logístics SL",
+    tenant_med_name: "Mediterrània Fleet Services SA",
 
     // Fuel Logs Section
     btnNewFuelLog: "Log Fuel Receipt",
@@ -354,13 +528,34 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputOdometerLabel: "Current Odometer (km)",
     inputItvDateLabel: "MOT/ITV Expiration Date",
     inputNotesLabel: "Additional Notes",
+    modalNewVehicleTitle: "Register New Fleet Vehicle",
+    modalNewMaintenanceTitle: "Schedule Maintenance or MOT/ITV",
+    modalNewFuelLogTitle: "Log Fuel Receipt",
+    inputWorkshopLabel: "Workshop or Provider",
+    inputCostLabel: "Estimated Cost (€)",
+    inputScheduledDateLabel: "Scheduled Date",
+    inputLitersLabel: "Liters Filled (L)",
+    inputFuelStationLabel: "Fuel Station",
+    inputDateLabel: "Record Date",
+    selectVehiclePlaceholder: "Select vehicle...",
+    inputNextServiceKmLabel: "Next Scheduled Maintenance (km)",
+    inputStatusLabel: "Operational Status",
+    inputInterventionTypeLabel: "Intervention Type",
 
-    // General / Feedback
+    // Success & Error Feedback
     loadingMessage: "Loading data...",
     savedSuccessMessage: "Record saved successfully.",
     deletedSuccessMessage: "Record deleted successfully.",
     confirmDeletePrompt: "Are you sure you want to delete this record?",
-    emptyTableMessage: "No records found matching this query."
+    emptyTableMessage: "No records found matching this query.",
+    successVehicleCreated: "Vehicle successfully registered in the fleet.",
+    successMaintenanceCreated: "Maintenance intervention scheduled successfully.",
+    successFuelLogged: "Fuel receipt successfully saved in the system.",
+    error_network: "Network connection error. Please try again shortly.",
+    error_unauthorized: "Session expired or invalid credentials.",
+    error_required_fields: "Please fill in all required fields.",
+    error_vehicle_not_found: "The specified vehicle was not found.",
+    error_internal: "An internal server error occurred."
   }
 };
 
@@ -368,14 +563,19 @@ export class LanguageManager {
   private static currentLang: SupportedLanguage = 'va';
 
   public static init(): void {
-    const saved = localStorage.getItem('fleetmaster_lang') as SupportedLanguage;
+    let saved: SupportedLanguage | null = null;
+    if (typeof localStorage !== 'undefined') {
+      saved = localStorage.getItem('fleetmaster_lang') as SupportedLanguage;
+    }
     if (saved && (saved === 'va' || saved === 'es' || saved === 'en')) {
       this.currentLang = saved;
     } else {
       this.currentLang = 'va'; // Default to Valencian as requested
     }
-    this.setupCustomLanguageSelectors();
-    this.applyTranslations();
+    if (typeof document !== 'undefined') {
+      this.setupCustomLanguageSelectors();
+      this.applyTranslations();
+    }
   }
 
   public static getLanguage(): SupportedLanguage {
@@ -384,18 +584,29 @@ export class LanguageManager {
 
   public static setLanguage(lang: SupportedLanguage): void {
     this.currentLang = lang;
-    localStorage.setItem('fleetmaster_lang', lang);
-    this.updateLanguageSelectorsUI();
-    this.applyTranslations();
-    document.dispatchEvent(new CustomEvent('app:language-changed', { detail: { lang } }));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('fleetmaster_lang', lang);
+    }
+    if (typeof document !== 'undefined') {
+      this.updateLanguageSelectorsUI();
+      this.applyTranslations();
+      document.dispatchEvent(new CustomEvent('app:language-changed', { detail: { lang } }));
+    }
   }
 
-  public static t(key: string): string {
+  public static t(key: string, params?: Record<string, string | number>): string {
     const dict = TRANSLATIONS[this.currentLang] || TRANSLATIONS['va'];
-    return dict[key] || TRANSLATIONS['es'][key] || TRANSLATIONS['en'][key] || `[${key}]`;
+    let text = dict[key] || TRANSLATIONS['es'][key] || TRANSLATIONS['en'][key] || `[${key}]`;
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+      }
+    }
+    return text;
   }
 
   public static setupCustomLanguageSelectors(): void {
+    if (typeof document === 'undefined') return;
     // Close dropdowns on outside click or escape
     document.addEventListener('click', (e) => {
       document.querySelectorAll<HTMLElement>('.custom-lang-selector').forEach(selector => {
@@ -421,6 +632,7 @@ export class LanguageManager {
   }
 
   public static renderCustomSelectors(): void {
+    if (typeof document === 'undefined') return;
     const selectors = document.querySelectorAll<HTMLElement>('.custom-lang-selector');
     selectors.forEach(container => {
       const btn = container.querySelector<HTMLButtonElement>('.lang-select-btn');
@@ -463,6 +675,7 @@ export class LanguageManager {
   }
 
   public static updateLanguageSelectorsUI(): void {
+    if (typeof document === 'undefined') return;
     const selectors = document.querySelectorAll<HTMLElement>('.custom-lang-selector');
     selectors.forEach(container => {
       const btnFlag = container.querySelector<HTMLElement>('.lang-btn-flag');
@@ -491,8 +704,10 @@ export class LanguageManager {
     });
   }
 
-  public static applyTranslations(root: HTMLElement | Document = document): void {
-    const elements = root.querySelectorAll<HTMLElement>('[data-i18n]');
+  public static applyTranslations(root?: HTMLElement | Document): void {
+    if (typeof document === 'undefined') return;
+    const targetRoot = root || document;
+    const elements = targetRoot.querySelectorAll<HTMLElement>('[data-i18n]');
     elements.forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (key) {
@@ -500,7 +715,7 @@ export class LanguageManager {
       }
     });
 
-    const placeholders = root.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-i18n-placeholder]');
+    const placeholders = targetRoot.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('[data-i18n-placeholder]');
     placeholders.forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
       if (key) {

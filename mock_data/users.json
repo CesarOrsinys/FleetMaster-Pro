@@ -25,7 +25,8 @@
     "licenseNumber": "B-12345678",
     "active": true,
     "createdAt": "2026-01-10T08:30:00.000Z",
-    "updatedAt": "2026-01-10T08:30:00.000Z"
+    "updatedAt": "2026-10-22T11:28:29.006Z",
+    "lastLoginAt": "2026-10-22T11:28:29.006Z"
   },
   {
     "id": "usr_driver_joan",

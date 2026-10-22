@@ -16,12 +16,18 @@ class AppController {
   private authToken: string | null = null;
   private currentUser: UserSession | null = null;
 
+  // Cached in-memory data for instant re-translation on language change
+  private cachedVehicles: Vehicle[] = [];
+  private cachedMaintenance: MaintenanceRecord[] = [];
+  private cachedFuelLogs: FuelLog[] = [];
+
   public init(): void {
-    // 1. Initialize Strict i18n and Custom Language Selector (with Dine-Done Senyera Coronada flag)
+    // 1. Initialize Strict i18n and Custom Language Selector
     LanguageManager.init();
 
-    // 2. Setup All UI Event Handlers (Login form, demo pills, tabs, logout, tenant switch)
+    // 2. Setup All UI Event Handlers (Login, demo buttons, modals, tabs, tenant)
     this.setupEventListeners();
+    this.setupModals();
 
     // 3. Evaluate Authentication Status
     this.checkAuthenticationState();
@@ -40,7 +46,7 @@ class AppController {
           this.currentTenant = user.tenantId;
         }
 
-        // Show Application Shell and Hide Login
+        // Show Application Shell and Hide Login View
         this.showApplicationShell();
 
         // ONLY AFTER LOGIN: Execute pertinent backend calls
@@ -62,6 +68,10 @@ class AppController {
 
     if (loginView) loginView.style.display = 'flex';
     if (appShell) appShell.style.display = 'none';
+
+    this.cachedVehicles = [];
+    this.cachedMaintenance = [];
+    this.cachedFuelLogs = [];
 
     // Clear any table data
     const vehiclesTbody = document.getElementById('vehicles-table-body');
@@ -118,7 +128,6 @@ class AppController {
     const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
     if (tenantSelect) {
       tenantSelect.value = this.currentTenant;
-      // If user is a tenant admin or driver, restrict switching or sync to their tenant
       if (this.currentUser && this.currentUser.role !== 'SUPERADMIN' && this.currentUser.tenantId) {
         tenantSelect.value = this.currentUser.tenantId;
         this.currentTenant = this.currentUser.tenantId;
@@ -142,9 +151,10 @@ class AppController {
     logoutBtn?.addEventListener('click', () => {
       this.clearSession();
       this.showLoginView();
+      this.showToast(LanguageManager.t('btnLogout'), 'success');
     });
 
-    // 4. Tenant Switcher (in app shell)
+    // 4. Tenant Switcher
     const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
     tenantSelect?.addEventListener('change', () => {
       this.currentTenant = tenantSelect.value;
@@ -167,10 +177,18 @@ class AppController {
       });
     });
 
-    // 6. Re-render text on Language Changed Event
+    // 6. Comprehensive Re-render on Language Changed Event
     document.addEventListener('app:language-changed', () => {
       this.updateHeaderUserInfo();
+      this.syncTenantSelect();
+
+      // Immediately re-render all tables, alerts, and KPIs with the active language
+      this.renderVehicles(this.cachedVehicles);
+      this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
+      this.renderFuelLogs(this.cachedFuelLogs);
+      this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
       this.renderAlerts();
+      this.populateModalVehicleDropdowns();
     });
   }
 
@@ -230,11 +248,13 @@ class AppController {
         body: JSON.stringify({ username, password })
       });
 
-      if (!res.ok) {
-        throw new Error('Invalid credentials');
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok || !data?.token) {
+        const errorCode = data?.code || 'loginErrorInvalid';
+        throw new Error(LanguageManager.t(errorCode));
       }
 
-      const data = await res.json();
       this.authToken = data.token;
       this.currentUser = data.user;
       this.currentTenant = this.currentUser?.tenantId || selectedTenant;
@@ -249,11 +269,13 @@ class AppController {
 
       // ONLY NOW: Fetch data for the active tenant
       await this.loadData();
-    } catch (err) {
+      const userName = this.currentUser?.fullName || '';
+      this.showToast(`${LanguageManager.t('welcomeBack')}${userName ? ', ' + userName : ''}`, 'success');
+    } catch (err: any) {
       if (errorBanner) {
         errorBanner.style.display = 'flex';
         if (errorText) {
-          errorText.textContent = LanguageManager.t('loginErrorInvalid');
+          errorText.textContent = err.message || LanguageManager.t('loginErrorInvalid');
         }
       }
     } finally {
@@ -289,16 +311,19 @@ class AppController {
         fetch(`/api/fuel-logs?tenantId=${this.currentTenant}`, { headers }).catch(() => null)
       ]);
 
-      const vehicles: Vehicle[] = vehiclesRes && vehiclesRes.ok ? await vehiclesRes.json() : [];
-      const maintenance: MaintenanceRecord[] = maintRes && maintRes.ok ? await maintRes.json() : [];
-      const fuelLogs: FuelLog[] = fuelRes && fuelRes.ok ? await fuelRes.json() : [];
+      this.cachedVehicles = vehiclesRes && vehiclesRes.ok ? await vehiclesRes.json() : [];
+      this.cachedMaintenance = maintRes && maintRes.ok ? await maintRes.json() : [];
+      this.cachedFuelLogs = fuelRes && fuelRes.ok ? await fuelRes.json() : [];
 
-      this.renderVehicles(vehicles);
-      this.renderMaintenance(maintenance, vehicles);
-      this.renderFuelLogs(fuelLogs);
-      this.updateKpis(vehicles, maintenance, fuelLogs);
+      this.renderVehicles(this.cachedVehicles);
+      this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
+      this.renderFuelLogs(this.cachedFuelLogs);
+      this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
+      this.renderAlerts();
+      this.populateModalVehicleDropdowns();
     } catch (err) {
       console.warn('Fallback loading data locally', err);
+      this.showToast(LanguageManager.t('error_network'), 'error');
     }
   }
 
@@ -313,17 +338,16 @@ class AppController {
 
     tbody.innerHTML = vehicles.map(v => {
       const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
-      const statusLabel = v.status === 'ACTIVE'
-        ? LanguageManager.t('statusActive')
-        : v.status === 'MAINTENANCE'
-        ? LanguageManager.t('statusMaintenance')
-        : LanguageManager.t('statusOutOfService');
+      
+      // Translated Status & Fuel Type
+      const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
+      const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
 
       return `
         <tr>
           <td><span class="plate-badge">${v.licensePlate}</span></td>
           <td><strong>${v.make}</strong> ${v.model} (${v.year})</td>
-          <td>${v.fuelType}</td>
+          <td>${fuelLabel}</td>
           <td><strong>${v.currentOdometerKm.toLocaleString()}</strong> km</td>
           <td>${v.itvExpirationDate}</td>
           <td>${v.nextMaintenanceKm.toLocaleString()} km</td>
@@ -346,17 +370,16 @@ class AppController {
 
     tbody.innerHTML = maintenance.map(m => {
       const plate = vehicleMap.get(m.vehicleId) || m.vehicleId;
-      const statusLabel = m.status === 'COMPLETED'
-        ? LanguageManager.t('maintStatusCompleted')
-        : m.status === 'SCHEDULED'
-        ? LanguageManager.t('maintStatusScheduled')
-        : LanguageManager.t('maintStatusCancelled');
-      const statusClass = m.status === 'COMPLETED' ? 'active' : 'maintenance';
+      
+      // Translated Maintenance Type & Status
+      const typeLabel = LanguageManager.t('maint_type_' + m.type.toLowerCase());
+      const statusLabel = LanguageManager.t('maint_status_' + m.status.toLowerCase());
+      const statusClass = m.status === 'COMPLETED' ? 'active' : m.status === 'SCHEDULED' ? 'maintenance' : 'out';
 
       return `
         <tr>
           <td><span class="plate-badge">${plate}</span></td>
-          <td><strong>${m.type}</strong></td>
+          <td><strong>${typeLabel}</strong></td>
           <td>${m.scheduledDate}</td>
           <td>${m.workshopName || '-'}</td>
           <td><strong>${m.costEur.toFixed(2)} €</strong></td>
@@ -375,16 +398,21 @@ class AppController {
       return;
     }
 
-    tbody.innerHTML = logs.map(f => `
-      <tr>
-        <td>${f.date}</td>
-        <td><span class="plate-badge">4589-LDR</span></td>
-        <td><strong>${f.odometerKm.toLocaleString()}</strong> km</td>
-        <td>${f.liters.toFixed(2)} L</td>
-        <td><strong>${f.costEur.toFixed(2)} €</strong></td>
-        <td>${f.fuelStation || '-'}</td>
-      </tr>
-    `).join('');
+    const vehicleMap = new Map(this.cachedVehicles.map(v => [v.id, v.licensePlate]));
+
+    tbody.innerHTML = logs.map(f => {
+      const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
+      return `
+        <tr>
+          <td>${f.date}</td>
+          <td><span class="plate-badge">${plate}</span></td>
+          <td><strong>${f.odometerKm.toLocaleString()}</strong> km</td>
+          <td>${f.liters.toFixed(2)} L</td>
+          <td><strong>${f.costEur.toFixed(2)} €</strong></td>
+          <td>${f.fuelStation || '-'}</td>
+        </tr>
+      `;
+    }).join('');
   }
 
   private updateKpis(vehicles: Vehicle[], maintenance: MaintenanceRecord[], fuelLogs: FuelLog[]): void {
@@ -409,13 +437,32 @@ class AppController {
 
     const kpiFuel = document.getElementById('kpi-fuel-expense');
     if (kpiFuel) kpiFuel.textContent = `${totalFuel.toFixed(2)} €`;
-
-    this.renderAlerts();
   }
 
   private renderAlerts(): void {
     const alertsContainer = document.getElementById('alerts-list');
     if (!alertsContainer) return;
+
+    const urgentBadge = LanguageManager.t('badge_urgent');
+    const scheduledBadge = LanguageManager.t('badge_scheduled');
+    const inProgressBadge = LanguageManager.t('badge_in_progress');
+
+    // 100% Translated alerts using localized string templates
+    const itvAlertText = LanguageManager.t('alert_itv_imminent', {
+      date: '30/10/2026',
+      days: '< 10'
+    });
+
+    const brakeTypeLabel = LanguageManager.t('maint_type_brakes');
+    const maintAlertText = LanguageManager.t('alert_maint_scheduled', {
+      type: brakeTypeLabel,
+      date: '25/10/2026'
+    });
+
+    const oilAlertText = LanguageManager.t('alert_oil_odometer', {
+      targetKm: '90.000',
+      curKm: '84.500'
+    });
 
     alertsContainer.innerHTML = `
       <div class="alert-item">
@@ -423,32 +470,208 @@ class AppController {
           <span class="alert-icon">⚠️</span>
           <div>
             <strong>1945-KBC (Peugeot Partner)</strong>
-            <p style="font-size: 0.8rem; color: #991B1B;">Venciment ITV el 30/10/2026 (&lt; 10 dies restants)</p>
+            <p style="font-size: 0.8rem; color: #991B1B;">${itvAlertText}</p>
           </div>
         </div>
-        <span class="status-badge out">URGENT</span>
+        <span class="status-badge out">${urgentBadge}</span>
       </div>
       <div class="alert-item">
         <div class="alert-left">
           <span class="alert-icon">🔧</span>
           <div>
             <strong>1945-KBC (Peugeot Partner)</strong>
-            <p style="font-size: 0.8rem; color: #92400E;">Canvi de pastilles de fre programat per al 25/10/2026</p>
+            <p style="font-size: 0.8rem; color: #92400E;">${maintAlertText}</p>
           </div>
         </div>
-        <span class="status-badge maintenance">PROGRAMAT</span>
+        <span class="status-badge maintenance">${scheduledBadge}</span>
       </div>
       <div class="alert-item">
         <div class="alert-left">
           <span class="alert-icon">📅</span>
           <div>
             <strong>4589-LDR (Renault Trafic)</strong>
-            <p style="font-size: 0.8rem; color: #64748B;">Pròxima revisió d'oli als 90.000 km (actual: 84.500 km)</p>
+            <p style="font-size: 0.8rem; color: #64748B;">${oilAlertText}</p>
           </div>
         </div>
-        <span class="status-badge active">EN CURS</span>
+        <span class="status-badge active">${inProgressBadge}</span>
       </div>
     `;
+  }
+
+  private setupModals(): void {
+    // Open modal buttons
+    document.getElementById('btn-add-vehicle')?.addEventListener('click', () => {
+      this.openModal('modal-vehicle');
+    });
+
+    document.getElementById('btn-add-maintenance')?.addEventListener('click', () => {
+      this.populateModalVehicleDropdowns();
+      this.openModal('modal-maintenance');
+    });
+
+    document.getElementById('btn-add-fuel')?.addEventListener('click', () => {
+      this.populateModalVehicleDropdowns();
+      this.openModal('modal-fuel');
+    });
+
+    // Close buttons
+    document.querySelectorAll('[data-close-modal]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('open'));
+      });
+    });
+
+    // Backdrop click close
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('open');
+        }
+      });
+    });
+
+    // Forms submission with localized feedback
+    this.setupModalForms();
+  }
+
+  private openModal(id: string): void {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.add('open');
+  }
+
+  private populateModalVehicleDropdowns(): void {
+    const maintVehSelect = document.getElementById('maint-veh') as HTMLSelectElement;
+    const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+
+    const optionsHtml = this.cachedVehicles.map(v => 
+      `<option value="${v.id}">${v.licensePlate} - ${v.make} ${v.model}</option>`
+    ).join('');
+
+    if (maintVehSelect) maintVehSelect.innerHTML = optionsHtml;
+    if (fuelVehSelect) fuelVehSelect.innerHTML = optionsHtml;
+  }
+
+  private setupModalForms(): void {
+    // 1. New Vehicle Form
+    const vehicleForm = document.getElementById('form-new-vehicle') as HTMLFormElement;
+    vehicleForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          tenantId: this.currentTenant,
+          licensePlate: (document.getElementById('veh-plate') as HTMLInputElement).value.trim(),
+          vin: (document.getElementById('veh-vin') as HTMLInputElement).value.trim(),
+          make: (document.getElementById('veh-make') as HTMLInputElement).value.trim(),
+          model: (document.getElementById('veh-model') as HTMLInputElement).value.trim(),
+          year: Number((document.getElementById('veh-year') as HTMLInputElement).value),
+          fuelType: (document.getElementById('veh-fuel') as HTMLSelectElement).value,
+          currentOdometerKm: Number((document.getElementById('veh-odometer') as HTMLInputElement).value),
+          nextMaintenanceKm: Number((document.getElementById('veh-next-km') as HTMLInputElement).value),
+          itvExpirationDate: (document.getElementById('veh-itv') as HTMLInputElement).value,
+          status: (document.getElementById('veh-status') as HTMLSelectElement).value,
+          notes: (document.getElementById('veh-notes') as HTMLTextAreaElement).value
+        };
+
+        const res = await fetch('/api/vehicles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+
+        vehicleForm.reset();
+        document.getElementById('modal-vehicle')?.classList.remove('open');
+        this.showToast(LanguageManager.t('successVehicleCreated'), 'success');
+        await this.loadData();
+      } catch (err: any) {
+        this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+      }
+    });
+
+    // 2. New Maintenance Form
+    const maintForm = document.getElementById('form-new-maintenance') as HTMLFormElement;
+    maintForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          tenantId: this.currentTenant,
+          vehicleId: (document.getElementById('maint-veh') as HTMLSelectElement).value,
+          type: (document.getElementById('maint-type') as HTMLSelectElement).value,
+          scheduledDate: (document.getElementById('maint-date') as HTMLInputElement).value,
+          workshopName: (document.getElementById('maint-workshop') as HTMLInputElement).value.trim(),
+          costEur: Number((document.getElementById('maint-cost') as HTMLInputElement).value),
+          status: (document.getElementById('maint-status') as HTMLSelectElement).value
+        };
+
+        const res = await fetch('/api/maintenance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+
+        maintForm.reset();
+        document.getElementById('modal-maintenance')?.classList.remove('open');
+        this.showToast(LanguageManager.t('successMaintenanceCreated'), 'success');
+        await this.loadData();
+      } catch (err: any) {
+        this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+      }
+    });
+
+    // 3. New Fuel Form
+    const fuelForm = document.getElementById('form-new-fuel') as HTMLFormElement;
+    fuelForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          tenantId: this.currentTenant,
+          vehicleId: (document.getElementById('fuel-veh') as HTMLSelectElement).value,
+          driverId: this.currentUser?.id || 'usr_driver_joan',
+          date: (document.getElementById('fuel-date') as HTMLInputElement).value,
+          odometerKm: Number((document.getElementById('fuel-odometer') as HTMLInputElement).value),
+          liters: Number((document.getElementById('fuel-liters') as HTMLInputElement).value),
+          costEur: Number((document.getElementById('fuel-price') as HTMLInputElement).value),
+          fuelStation: (document.getElementById('fuel-station') as HTMLInputElement).value.trim()
+        };
+
+        const res = await fetch('/api/fuel-logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+
+        fuelForm.reset();
+        document.getElementById('modal-fuel')?.classList.remove('open');
+        this.showToast(LanguageManager.t('successFuelLogged'), 'success');
+        await this.loadData();
+      } catch (err: any) {
+        this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+      }
+    });
+  }
+
+  private showToast(message: string, type: 'success' | 'error' = 'success'): void {
+    const toast = document.getElementById('app-toast');
+    const toastMsg = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+
+    if (!toast || !toastMsg) return;
+
+    toast.className = `toast-notification ${type}`;
+    if (toastIcon) {
+      toastIcon.textContent = type === 'success' ? '✓' : '⚠️';
+    }
+    toastMsg.textContent = message;
+    toast.style.display = 'flex';
+
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3500);
   }
 }
 

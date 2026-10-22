@@ -46,19 +46,19 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password required' });
+      return res.status(400).json({ error: 'Username and password required', code: 'error_required_fields' });
     }
 
     const userRepo = RepositoryContainer.getUserRepository();
     const user = await userRepo.findByUsername(username);
 
     if (!user || !user.active) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials', code: 'loginErrorInvalid' });
     }
 
     const match = await bcrypt.compare(password, user.passwordHash);
     if (!match) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials', code: 'loginErrorInvalid' });
     }
 
     await userRepo.updateLastLogin(user.id);
@@ -77,7 +77,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
     const { passwordHash, ...safeUser } = user;
     return res.json({ token, user: safeUser });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message || 'Internal server error' });
+    return res.status(500).json({ error: err.message || 'Internal server error', code: 'error_internal' });
   }
 });
 
