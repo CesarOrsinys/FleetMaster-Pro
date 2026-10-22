@@ -22,6 +22,8 @@ app.use((_req: Request, res: Response, next: NextFunction) => {
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fleetmaster_pro_super_secure_jwt_secret_2026_xyz';
 
+import { executeKeepalivePing } from './services/keepalive.service.js';
+
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
@@ -31,6 +33,13 @@ app.get('/api/health', (_req: Request, res: Response) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Server-side keepalive endpoint for Supabase (no frontend interaction)
+app.get('/api/keepalive', async (_req: Request, res: Response) => {
+  const result = await executeKeepalivePing();
+  res.status(result.ok ? 200 : 500).json(result);
+});
+
 
 // Authentication endpoint
 app.post('/api/auth/login', async (req: Request, res: Response) => {

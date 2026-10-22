@@ -28,3 +28,21 @@ export function getSupabaseClient(): SupabaseClient | null {
 
   return clientInstance;
 }
+
+let keepaliveClientInstance: SupabaseClient | null = null;
+
+/**
+ * Returns a dedicated lightweight client solely for the keepalive ping to prevent Supabase inactivity pausing.
+ */
+export function getSupabaseKeepaliveClient(): SupabaseClient | null {
+  if (keepaliveClientInstance) return keepaliveClientInstance;
+  const supabaseUrl = process.env.SUPABASE_URL || '';
+  const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+  if (!supabaseUrl || !supabaseKey) return null;
+
+  keepaliveClientInstance = createClient(supabaseUrl, supabaseKey, {
+    auth: { persistSession: false }
+  });
+  return keepaliveClientInstance;
+}
+
