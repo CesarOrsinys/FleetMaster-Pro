@@ -1,12 +1,6 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "crons": [
-    {
-      "path": "/api/keepalive",
-      "schedule": "0 * * * *"
-    }
-  ],
   "functions": {
     "api/**/*.ts": {
       "includeFiles": "mock_data/**"

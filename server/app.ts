@@ -34,8 +34,11 @@ app.get('/api/health', (_req: Request, res: Response) => {
   });
 });
 
-// Server-side keepalive endpoint for Supabase (no frontend interaction)
+// Server-side keepalive endpoint for Supabase (temporarily disabled)
 app.get('/api/keepalive', async (_req: Request, res: Response) => {
+  if (process.env.ENABLE_KEEPALIVE !== 'true') {
+    return res.json({ ok: true, status: 'disabled', message: 'Keepalive is temporarily disabled.' });
+  }
   const result = await executeKeepalivePing();
   res.status(result.ok ? 200 : 500).json(result);
 });
