@@ -1141,12 +1141,19 @@
       border: 1px dashed var(--slate-300);
     }
 
-    /* Mobile Cards Feed */
+    /* Cards Feed - Default Active View across all screens */
     .mobile-cards-feed {
-      display: none;
-      flex-direction: column;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
       margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+      .mobile-cards-feed {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
     }
 
     .detail-card {
@@ -1710,23 +1717,23 @@
           </button>
         </div>
 
-        <!-- View mode switcher for mobile (Cards vs Table) -->
+        <!-- View mode switcher (Cards vs Table - Cards Default) -->
         <div class="view-mode-bar">
           <div class="view-mode-switcher" data-target="vehicles">
-            <button type="button" class="view-mode-btn" data-mode="cards">
+            <button type="button" class="view-mode-btn active" data-mode="cards">
               <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
             </button>
-            <button type="button" class="view-mode-btn active" data-mode="table">
+            <button type="button" class="view-mode-btn" data-mode="table">
               <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
             </button>
           </div>
         </div>
 
-        <!-- Mobile Cards Feed -->
+        <!-- Cards Feed (Default) -->
         <div class="mobile-cards-feed" id="vehicles-cards-feed"></div>
 
         <!-- Table View -->
-        <div class="table-container" id="vehicles-table-container">
+        <div class="table-container" id="vehicles-table-container" style="display: none;">
           <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
           <table class="data-table">
             <thead>
@@ -1765,23 +1772,23 @@
             <p data-i18n="sectionItvSubtitle">Supervisió de dates límit d'inspecció periòdica i observacions tècniques per unitat</p>
           </div>
 
-          <!-- View mode switcher for ITV -->
+          <!-- View mode switcher for ITV (Cards Default) -->
           <div class="view-mode-bar">
             <div class="view-mode-switcher" data-target="itv">
-              <button type="button" class="view-mode-btn" data-mode="cards">
+              <button type="button" class="view-mode-btn active" data-mode="cards">
                 <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
               </button>
-              <button type="button" class="view-mode-btn active" data-mode="table">
+              <button type="button" class="view-mode-btn" data-mode="table">
                 <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
               </button>
             </div>
           </div>
 
-          <!-- Mobile Cards Feed for ITV -->
+          <!-- Cards Feed for ITV (Default) -->
           <div class="mobile-cards-feed" id="itv-cards-feed"></div>
 
           <!-- Table View for ITV -->
-          <div class="table-container" id="itv-table-container">
+          <div class="table-container" id="itv-table-container" style="display: none;">
             <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
             <table class="data-table">
               <thead>
@@ -1809,23 +1816,23 @@
             <p data-i18n="sectionMaintSubtitle">Registre detallat de reparacions, costos i tallers proveïdors</p>
           </div>
 
-          <!-- View mode switcher for Maintenance -->
+          <!-- View mode switcher for Maintenance (Cards Default) -->
           <div class="view-mode-bar">
             <div class="view-mode-switcher" data-target="maintenance">
-              <button type="button" class="view-mode-btn" data-mode="cards">
+              <button type="button" class="view-mode-btn active" data-mode="cards">
                 <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
               </button>
-              <button type="button" class="view-mode-btn active" data-mode="table">
+              <button type="button" class="view-mode-btn" data-mode="table">
                 <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
               </button>
             </div>
           </div>
 
-          <!-- Mobile Cards Feed for Maintenance -->
+          <!-- Cards Feed for Maintenance (Default) -->
           <div class="mobile-cards-feed" id="maintenance-cards-feed"></div>
 
           <!-- Table View for Maintenance -->
-          <div class="table-container" id="maintenance-table-container">
+          <div class="table-container" id="maintenance-table-container" style="display: none;">
             <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
             <table class="data-table">
               <thead>
@@ -1858,23 +1865,23 @@
           </button>
         </div>
 
-        <!-- View mode switcher for Fuel -->
+        <!-- View mode switcher for Fuel (Cards Default) -->
         <div class="view-mode-bar">
           <div class="view-mode-switcher" data-target="fuel">
-            <button type="button" class="view-mode-btn" data-mode="cards">
+            <button type="button" class="view-mode-btn active" data-mode="cards">
               <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
             </button>
-            <button type="button" class="view-mode-btn active" data-mode="table">
+            <button type="button" class="view-mode-btn" data-mode="table">
               <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
             </button>
           </div>
         </div>
 
-        <!-- Mobile Cards Feed for Fuel -->
+        <!-- Cards Feed for Fuel (Default) -->
         <div class="mobile-cards-feed" id="fuel-cards-feed"></div>
 
         <!-- Table View for Fuel -->
-        <div class="table-container" id="fuel-table-container">
+        <div class="table-container" id="fuel-table-container" style="display: none;">
           <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
           <table class="data-table">
             <thead>

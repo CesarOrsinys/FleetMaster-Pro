@@ -213,6 +213,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     colItvRemaining: "Dies Restants",
     colItvStatus: "Estat ITV",
     colObservations: "Observacions i Estat Tècnic",
+    lblNoObservations: "Sense observacions addicionals registrades.",
 
     // ITV Status Tags
     itv_status_valid: "Vigent",
@@ -430,6 +431,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     colItvRemaining: "Días Restantes",
     colItvStatus: "Estado ITV",
     colObservations: "Observaciones y Estado Técnico",
+    lblNoObservations: "Sin observaciones adicionales registradas.",
 
     // ITV Status Tags
     itv_status_valid: "Vigente",
@@ -647,6 +649,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     colItvRemaining: "Remaining Days",
     colItvStatus: "MOT Status",
     colObservations: "Observations & Technical Condition",
+    lblNoObservations: "No additional observations recorded.",
 
     // ITV Status Tags
     itv_status_valid: "Valid",
@@ -838,5 +841,222 @@ export class LanguageManager {
     });
 
     this.updateLanguageSelectorsUI();
+  }
+
+  /**
+   * Automatic observation / comment translator.
+   * Translates free-text notes and technical observations originally in Valencian
+   * into Spanish or English depending on the currently active language.
+   */
+  public static translateObservation(rawText: string | null | undefined): string {
+    if (!rawText || !rawText.trim()) {
+      return this.t('lblNoObservations');
+    }
+
+    const trimmed = rawText.trim();
+    const lang = this.currentLang;
+
+    // Direct curated phrase translations
+    const EXACT_PHRASES: Record<string, Record<SupportedLanguage, string>> = {
+      "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.": {
+        va: "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.",
+        es: "Requiere cambiar neumáticos delanteros antes de ITV. Rutas de reparto Valencia - Sagunto.",
+        en: "Requires replacing front tyres before MOT/ITV. Delivery routes Valencia - Sagunto."
+      },
+      "Revisió pre-ITV favorable. Estat de càrrega i bateries òptim per al centre històric.": {
+        va: "Revisió pre-ITV favorable. Estat de càrrega i bateries òptim per al centre històric.",
+        es: "Revisión pre-ITV favorable. Estado de carga y baterías óptimo para el centro histórico.",
+        en: "Pre-MOT/ITV inspection passed. Optimal battery charge state for historic center."
+      },
+      "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).": {
+        va: "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).",
+        es: "En taller por desgaste de pastillas de freno y revisión ITV urgente (cita 30/10/2026).",
+        en: "In workshop for brake pad wear and urgent MOT/ITV service (appointment 30/10/2026)."
+      },
+      "Flota Mediterrània - Rutes llargues": {
+        va: "Flota Mediterrània - Rutes llargues",
+        es: "Flota Mediterránea - Rutas largas",
+        en: "Mediterranean Fleet - Long haul routes"
+      },
+      "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari": {
+        va: "Canvi d'oli sintètic 5W30 i filtre d'oli reglamentari",
+        es: "Cambio de aceite sintético 5W30 y filtro de aceite reglamentario",
+        en: "Synthetic oil 5W30 change and regulation oil filter"
+      },
+      "Cita prèvia confirmada per a inspecció periòdica": {
+        va: "Cita prèvia confirmada per a inspecció periòdica",
+        es: "Cita previa confirmada para inspección periódica",
+        en: "Confirmed appointment for periodic inspection"
+      },
+      "Substitució pastilles davanteres i revisió líquid de frens": {
+        va: "Substitució pastilles davanteres i revisió líquid de frens",
+        es: "Sustitución de pastillas delanteras y revisión de líquido de frenos",
+        en: "Front brake pad replacement and brake fluid check"
+      },
+      "Proveïment complet dièsel ruta A-23": {
+        va: "Proveïment complet dièsel ruta A-23",
+        es: "Repostaje completo diésel ruta A-23",
+        en: "Full diesel refueling route A-23"
+      },
+      "Proveïment retorn centre logístic": {
+        va: "Proveïment retorn centre logístic",
+        es: "Repostaje de regreso a centro logístico",
+        en: "Refueling on return to logistics center"
+      },
+      "Revisió periòdica estàndard sense anomalies reportades.": {
+        va: "Revisió periòdica estàndard sense anomalies reportades.",
+        es: "Revisión periódica estándar sin anomalías reportadas.",
+        en: "Standard periodic inspection with no reported anomalies."
+      },
+      "Sense observacions tècniques anòmales registrades per a este vehicle.": {
+        va: "Sense observacions tècniques anòmales registrades per a este vehicle.",
+        es: "Sin observaciones técnicas anómalas registradas para este vehículo.",
+        en: "No abnormal technical observations recorded for this vehicle."
+      },
+      "Sense observacions addicionals registrades.": {
+        va: "Sense observacions addicionals registrades.",
+        es: "Sin observaciones adicionales registradas.",
+        en: "No additional observations recorded."
+      },
+      "Sense incidències destacades": {
+        va: "Sense incidències destacades",
+        es: "Sin incidencias destacadas",
+        en: "No notable incidents"
+      },
+      "Sense incidències": {
+        va: "Sense incidències",
+        es: "Sin incidencias",
+        en: "No incidents"
+      },
+      "Sense observacions": {
+        va: "Sense observacions",
+        es: "Sin observaciones",
+        en: "No observations"
+      }
+    };
+
+    if (EXACT_PHRASES[trimmed] && EXACT_PHRASES[trimmed][lang]) {
+      return EXACT_PHRASES[trimmed][lang];
+    }
+
+    if (lang === 'va') {
+      return trimmed;
+    }
+
+    // Dynamic term translation using regex glossary for general/custom text
+    let translated = trimmed;
+    const GLOSSARY: Record<'es' | 'en', [RegExp, string][]> = {
+      es: [
+        [/Requereix canviar/gi, 'Requiere cambiar'],
+        [/pneumàtics davanters/gi, 'neumáticos delanteros'],
+        [/pneumàtics posteriors/gi, 'neumáticos traseros'],
+        [/pneumàtics/gi, 'neumáticos'],
+        [/abans d'ITV/gi, 'antes de ITV'],
+        [/abans de/gi, 'antes de'],
+        [/Rutes de repartiment/gi, 'Rutas de reparto'],
+        [/Rutes llargues/gi, 'Rutas largas'],
+        [/Revisió pre-ITV favorable/gi, 'Revisión pre-ITV favorable'],
+        [/Revisió periòdica estàndard/gi, 'Revisión periódica estándar'],
+        [/Revisió periòdica/gi, 'Revisión periódica'],
+        [/Revisió oficial/gi, 'Revisión oficial'],
+        [/Revisió/gi, 'Revisión'],
+        [/sense anomalies reportades/gi, 'sin anomalías reportadas'],
+        [/sense anomalies/gi, 'sin anomalías'],
+        [/sense observacions/gi, 'sin observaciones'],
+        [/sense incidències/gi, 'sin incidencias'],
+        [/Sense/gi, 'Sin'],
+        [/Estat de càrrega i bateries òptim/gi, 'Estado de carga y baterías óptimo'],
+        [/per al centre històric/gi, 'para el centro histórico'],
+        [/En taller per desgast de/gi, 'En taller por desgaste de'],
+        [/En taller per/gi, 'En taller por'],
+        [/pastilles de fre/gi, 'pastillas de freno'],
+        [/pastilles davanteres/gi, 'pastillas delanteras'],
+        [/pastilles posteriors/gi, 'pastillas traseras'],
+        [/pastilles/gi, 'pastillas'],
+        [/revisió líquid de frens/gi, 'revisión de líquido de frenos'],
+        [/líquid de frens/gi, 'líquido de frenos'],
+        [/revisió ITV urgent/gi, 'revisión ITV urgente'],
+        [/cita prèvia confirmada/gi, 'cita previa confirmada'],
+        [/per a inspecció periòdica/gi, 'para inspección periódica'],
+        [/per a/gi, 'para'],
+        [/Canvi d'oli sintètic/gi, 'Cambio de aceite sintético'],
+        [/Canvi d'oli/gi, 'Cambio de aceite'],
+        [/filtre d'oli reglamentari/gi, 'filtro de aceite reglamentario'],
+        [/filtre d'aire/gi, 'filtro de aire'],
+        [/filtre/gi, 'filtro'],
+        [/Substitució pastilles/gi, 'Sustitución de pastillas'],
+        [/Substitució/gi, 'Sustitución'],
+        [/Proveïment complet dièsel/gi, 'Repostaje completo diésel'],
+        [/Proveïment retorn/gi, 'Repostaje de regreso'],
+        [/Proveïment/gi, 'Repostaje'],
+        [/centre logístic/gi, 'centro logístico'],
+        [/este vehicle/gi, 'este vehículo'],
+        [/anòmales registrades/gi, 'anómalas registradas'],
+        [/addicionals registrades/gi, 'adicionales registradas'],
+        [/dipòsit omplit/gi, 'depósito llenado'],
+        [/dipòsit/gi, 'depósito'],
+        [/concessionari oficial/gi, 'concesionario oficial']
+      ],
+      en: [
+        [/Requereix canviar/gi, 'Requires replacing'],
+        [/pneumàtics davanters/gi, 'front tyres'],
+        [/pneumàtics posteriors/gi, 'rear tyres'],
+        [/pneumàtics/gi, 'tyres'],
+        [/abans d'ITV/gi, 'before MOT/ITV'],
+        [/abans de/gi, 'before'],
+        [/Rutes de repartiment/gi, 'Delivery routes'],
+        [/Rutes llargues/gi, 'Long haul routes'],
+        [/Revisió pre-ITV favorable/gi, 'Pre-MOT inspection passed'],
+        [/Revisió periòdica estàndard/gi, 'Standard periodic inspection'],
+        [/Revisió periòdica/gi, 'Periodic service'],
+        [/Revisió oficial/gi, 'Official service'],
+        [/Revisió/gi, 'Inspection'],
+        [/sense anomalies reportades/gi, 'with no reported anomalies'],
+        [/sense anomalies/gi, 'without anomalies'],
+        [/sense observacions/gi, 'without observations'],
+        [/sense incidències/gi, 'with no incidents'],
+        [/Sense/gi, 'No'],
+        [/Estat de càrrega i bateries òptim/gi, 'Optimal battery charge state'],
+        [/per al centre històric/gi, 'for the historic center'],
+        [/En taller per desgast de/gi, 'In workshop due to wear on'],
+        [/En taller per/gi, 'In workshop for'],
+        [/pastilles de fre/gi, 'brake pads'],
+        [/pastilles davanteres/gi, 'front brake pads'],
+        [/pastilles posteriors/gi, 'rear brake pads'],
+        [/pastilles/gi, 'brake pads'],
+        [/revisió líquid de frens/gi, 'brake fluid check'],
+        [/líquid de frens/gi, 'brake fluid'],
+        [/revisió ITV urgent/gi, 'urgent MOT/ITV inspection'],
+        [/cita prèvia confirmada/gi, 'confirmed appointment'],
+        [/per a inspecció periòdica/gi, 'for periodic inspection'],
+        [/per a/gi, 'for'],
+        [/Canvi d'oli sintètic/gi, 'Synthetic oil change'],
+        [/Canvi d'oli/gi, 'Oil change'],
+        [/filtre d'oli reglamentari/gi, 'regulation oil filter'],
+        [/filtre d'aire/gi, 'air filter'],
+        [/filtre/gi, 'filter'],
+        [/Substitució pastilles/gi, 'Brake pad replacement'],
+        [/Substitució/gi, 'Replacement'],
+        [/Proveïment complet dièsel/gi, 'Full diesel refueling'],
+        [/Proveïment retorn/gi, 'Return refueling'],
+        [/Proveïment/gi, 'Refueling'],
+        [/centre logístic/gi, 'logistics hub'],
+        [/este vehicle/gi, 'this vehicle'],
+        [/anòmales registrades/gi, 'abnormal registered'],
+        [/addicionals registrades/gi, 'additionally registered'],
+        [/dipòsit omplit/gi, 'tank filled'],
+        [/dipòsit/gi, 'tank'],
+        [/concessionari oficial/gi, 'official dealership']
+      ]
+    };
+
+    const rules = GLOSSARY[lang as 'es' | 'en'];
+    if (rules) {
+      for (const [regex, replacement] of rules) {
+        translated = translated.replace(regex, replacement);
+      }
+    }
+
+    return translated;
   }
 }

@@ -220,41 +220,41 @@ class AppController {
   }
 
   private setupViewModeSwitchers(): void {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-
     document.querySelectorAll<HTMLElement>('.view-mode-switcher').forEach(switcher => {
       const target = switcher.getAttribute('data-target');
       if (!target) return;
 
       const buttons = switcher.querySelectorAll<HTMLButtonElement>('.view-mode-btn');
+      const cardsFeed = document.getElementById(`${target}-cards-feed`);
+      const tableContainer = document.getElementById(`${target}-table-container`);
+
+      const applyMode = (mode: string) => {
+        buttons.forEach(b => {
+          if (b.getAttribute('data-mode') === mode) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+
+        if (mode === 'cards') {
+          if (cardsFeed) cardsFeed.style.display = 'grid';
+          if (tableContainer) tableContainer.style.display = 'none';
+        } else {
+          if (cardsFeed) cardsFeed.style.display = 'none';
+          if (tableContainer) tableContainer.style.display = 'block';
+        }
+      };
+
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
           const mode = btn.getAttribute('data-mode');
-          if (!mode) return;
-
-          buttons.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-
-          const cardsFeed = document.getElementById(`${target}-cards-feed`);
-          const tableContainer = document.getElementById(`${target}-table-container`);
-
-          if (mode === 'cards') {
-            if (cardsFeed) cardsFeed.style.display = 'flex';
-            if (tableContainer) tableContainer.style.display = 'none';
-          } else {
-            if (cardsFeed) cardsFeed.style.display = 'none';
-            if (tableContainer) tableContainer.style.display = 'block';
-          }
+          if (mode) applyMode(mode);
         });
       });
 
-      // On mobile screens, automatically default to visual 'cards' view
-      if (isMobile) {
-        const cardsBtn = switcher.querySelector<HTMLButtonElement>('.view-mode-btn[data-mode="cards"]');
-        if (cardsBtn) {
-          cardsBtn.click();
-        }
-      }
+      // Default to CARDS view as requested
+      applyMode('cards');
     });
   }
 
@@ -455,6 +455,14 @@ class AppController {
                   <span class="detail-label">${LanguageManager.t('colNextService')}</span>
                   <span class="detail-value">${v.nextMaintenanceKm.toLocaleString()} km</span>
                 </div>
+                ${v.notes ? `
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colObservations')}</span>
+                  <span class="detail-value" style="color: #475569; font-weight:500;">
+                    ${LanguageManager.translateObservation(v.notes)}
+                  </span>
+                </div>
+                ` : ''}
               </div>
               <div class="detail-card-footer">
                 <span>👁️ ${LanguageManager.t('viewDetailsBtn')}</span>
@@ -502,7 +510,8 @@ class AppController {
       }
 
       const statusBadgeText = LanguageManager.t(statusKey, { days: Math.abs(daysRemaining) });
-      const observations = v.notes || 'Revisió periòdica estàndard sense anomalies reportades.';
+      const rawObservations = v.notes || 'Revisió periòdica estàndard sense anomalies reportades.';
+      const observations = LanguageManager.translateObservation(rawObservations);
 
       return {
         vehicle: v,
@@ -672,6 +681,14 @@ class AppController {
                   <span class="detail-label">${LanguageManager.t('colWorkshop')}</span>
                   <span class="detail-value">${m.workshopName || '-'}</span>
                 </div>
+                ${m.notes ? `
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colObservations')}</span>
+                  <span class="detail-value" style="color: #475569; font-weight:500;">
+                    ${LanguageManager.translateObservation(m.notes)}
+                  </span>
+                </div>
+                ` : ''}
               </div>
               <div class="detail-card-footer">
                 <span>👁️ ${LanguageManager.t('viewDetailsBtn')}</span>
@@ -746,6 +763,14 @@ class AppController {
                   <span class="detail-label">${LanguageManager.t('colLiters')}</span>
                   <span class="detail-value">${f.liters.toFixed(2)} L</span>
                 </div>
+                ${f.notes ? `
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colObservations')}</span>
+                  <span class="detail-value" style="color: #475569; font-weight:500;">
+                    ${LanguageManager.translateObservation(f.notes)}
+                  </span>
+                </div>
+                ` : ''}
               </div>
             </div>
           `;
@@ -815,7 +840,9 @@ class AppController {
     // 3. Technical Observations
     const notesEl = document.getElementById('modal-itv-notes');
     if (notesEl) {
-      notesEl.textContent = vehicle.notes || 'Sense observacions tècniques anòmales registrades per a este vehicle.';
+      notesEl.textContent = LanguageManager.translateObservation(
+        vehicle.notes || 'Sense observacions tècniques anòmales registrades per a este vehicle.'
+      );
     }
 
     // 4. Pending / Scheduled Maintenance for this specific vehicle
@@ -898,7 +925,11 @@ class AppController {
     if (dateEl) dateEl.textContent = maint.scheduledDate;
     if (costEl) costEl.textContent = `${maint.costEur.toFixed(2)} €`;
     if (workshopEl) workshopEl.textContent = maint.workshopName || '-';
-    if (notesEl) notesEl.textContent = maint.notes || 'Sense observacions addicionals registrades.';
+    if (notesEl) {
+      notesEl.textContent = LanguageManager.translateObservation(
+        maint.notes || 'Sense observacions addicionals registrades.'
+      );
+    }
 
     modal.classList.add('open');
   }

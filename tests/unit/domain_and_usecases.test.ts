@@ -70,6 +70,25 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
       assert.strictEqual(LanguageManager.t('maint_type_oil_change'), 'Oil & Filter Service');
       assert.strictEqual(LanguageManager.t('fuel_diesel'), 'Diesel');
     });
+
+    it('Should automatically translate Valencian technical observations into Spanish and English', () => {
+      const valText = "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.";
+
+      LanguageManager.setLanguage('va');
+      assert.strictEqual(LanguageManager.translateObservation(valText), valText);
+
+      LanguageManager.setLanguage('es');
+      const esTrans = LanguageManager.translateObservation(valText);
+      assert.strictEqual(esTrans, "Requiere cambiar neumáticos delanteros antes de ITV. Rutas de reparto Valencia - Sagunto.");
+
+      LanguageManager.setLanguage('en');
+      const enTrans = LanguageManager.translateObservation(valText);
+      assert.strictEqual(enTrans, "Requires replacing front tyres before MOT/ITV. Delivery routes Valencia - Sagunto.");
+
+      // Fallback for empty observations
+      LanguageManager.setLanguage('es');
+      assert.strictEqual(LanguageManager.translateObservation(null), "Sin observaciones adicionales registradas.");
+    });
   });
 
   describe('2. Multi-Tenant Data Isolation (Kickoff Section 2.3)', () => {
