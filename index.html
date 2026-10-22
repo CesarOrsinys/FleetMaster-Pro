@@ -499,6 +499,46 @@
       font-family: inherit;
     }
 
+    .btn-refresh-header {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--slate-50);
+      border: 1px solid var(--slate-300);
+      padding: 0 0.85rem;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--slate-700);
+      box-sizing: border-box;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: inherit;
+    }
+
+    .btn-refresh-header:hover {
+      border-color: var(--primary);
+      color: var(--primary-dark);
+      background: #FFFFFF;
+      box-shadow: 0 2px 6px rgba(15, 118, 110, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-refresh-header:active {
+      transform: translateY(0);
+    }
+
+    .btn-refresh-header.refreshing .refresh-icon {
+      display: inline-block;
+      animation: spinRefresh 0.8s linear infinite;
+    }
+
+    @keyframes spinRefresh {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     /* User Profile Dropdown (Staff-Incidents-Manager Architecture) */
     .user-menu-wrapper {
       position: relative;
@@ -1420,6 +1460,7 @@
       }
 
       .tenant-pill,
+      .btn-refresh-header,
       .lang-select-btn,
       .btn-user-avatar {
         height: 36px !important;
@@ -1868,6 +1909,12 @@
               <option value="tenant_med" data-i18n="tenant_med_name">Mediterrània Fleet Services SA</option>
             </select>
           </div>
+
+          <!-- Refresh Data Button -->
+          <button class="btn-refresh-header" id="btn-refresh-data" type="button" title="Refrescar dades" aria-label="Refrescar dades">
+            <span class="refresh-icon">🔄</span>
+            <span class="refresh-label desktop-only" data-i18n="btnRefresh">Refrescar</span>
+          </button>
 
           <!-- Header Custom Language Selector (Matching Dine-Done) -->
           <div class="custom-lang-selector" id="header-lang-selector">

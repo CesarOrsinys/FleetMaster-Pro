@@ -322,7 +322,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFineOrganism: "Organisme / Policia / DGT",
     inputFineReference: "Número d'expedient o butlletí",
     successFineCreated: "Multa registrada correctament!",
-    successFineStatusUpdated: "Estat de la multa actualitzat correctament!"
+    successFineStatusUpdated: "Estat de la multa actualitzat correctament!",
+    btnRefresh: "Refrescar",
+    btnRefreshing: "Actualitzant...",
+    successDataRefreshed: "Dades de la flota actualitzades correctament!"
   },
 
   es: {
@@ -626,7 +629,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFineOrganism: "Organismo / Policía / DGT",
     inputFineReference: "Número de expediente o boletín",
     successFineCreated: "¡Multa registrada correctamente!",
-    successFineStatusUpdated: "¡Estado de la multa actualizado correctamente!"
+    successFineStatusUpdated: "¡Estado de la multa actualizado correctamente!",
+    btnRefresh: "Refrescar",
+    btnRefreshing: "Actualizando...",
+    successDataRefreshed: "¡Datos de la flota actualizados correctamente!"
   },
 
   en: {
@@ -930,7 +936,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     inputFineOrganism: "Authority / Police / Traffic Dept",
     inputFineReference: "Dossier or ticket reference",
     successFineCreated: "Traffic fine registered successfully!",
-    successFineStatusUpdated: "Fine status updated successfully!"
+    successFineStatusUpdated: "Fine status updated successfully!",
+    btnRefresh: "Refresh",
+    btnRefreshing: "Refreshing...",
+    successDataRefreshed: "Fleet data refreshed successfully!"
   }
 };
 

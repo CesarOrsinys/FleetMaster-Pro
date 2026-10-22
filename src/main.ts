@@ -200,6 +200,23 @@ class AppController {
       this.loadData();
     });
 
+    // 5.1. Refresh Data Button (Manual service reload)
+    const refreshBtn = document.getElementById('btn-refresh-data');
+    refreshBtn?.addEventListener('click', async () => {
+      if (refreshBtn.classList.contains('refreshing')) return;
+      refreshBtn.classList.add('refreshing');
+      try {
+        await this.loadData();
+        this.showToast(LanguageManager.t('successDataRefreshed'), 'success');
+      } catch (err: any) {
+        this.showToast(err?.message || LanguageManager.t('error_internal'), 'error');
+      } finally {
+        setTimeout(() => {
+          refreshBtn.classList.remove('refreshing');
+        }, 600);
+      }
+    });
+
     // 6. Tab Navigation
     document.querySelectorAll<HTMLButtonElement>('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
