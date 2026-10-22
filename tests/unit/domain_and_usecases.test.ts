@@ -4,6 +4,7 @@ import { TRANSLATIONS, SupportedLanguage, LanguageManager } from '../../src/ui/i
 import { VehicleSchema } from '../../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../../src/core/domain/MaintenanceRecord.js';
 import { FuelLogSchema } from '../../src/core/domain/FuelLog.js';
+import { TrafficFineSchema } from '../../src/core/domain/TrafficFine.js';
 import { JsonVehicleRepository } from '../../src/adapters/infrastructure/repositories/JsonVehicleRepository.js';
 import { RepositoryContainer } from '../../src/adapters/infrastructure/di/RepositoryContainer.js';
 import { getSupabaseClient } from '../../src/adapters/infrastructure/services/SupabaseClient.js';
@@ -173,6 +174,44 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
 
       const invalidType = { ...validMaint, type: 'UNKNOWN_SERVICE' };
       assert.throws(() => MaintenanceRecordSchema.parse(invalidType));
+    });
+
+    it('Should validate TrafficFine schema and reject invalid status or negative amounts', () => {
+      const validFine = {
+        id: 'fine_test_1',
+        tenantId: 'tenant_valencia',
+        vehicleId: 'veh_101',
+        driverId: 'usr_driver_joan',
+        date: '2026-10-10',
+        reason: 'Excedir límit de velocitat',
+        amountEur: 100.00,
+        status: 'PENDING'
+      };
+
+      assert.doesNotThrow(() => TrafficFineSchema.parse(validFine));
+
+      const invalidAmount = { ...validFine, amountEur: -50 };
+      assert.throws(() => TrafficFineSchema.parse(invalidAmount));
+
+      const invalidStatus = { ...validFine, status: 'UNKNOWN_STATUS' };
+      assert.throws(() => TrafficFineSchema.parse(invalidStatus));
+    });
+
+    it('Should verify vehicle assignedDriverId relationship', () => {
+      const vehWithDriver = {
+        id: 'veh_test_driver',
+        tenantId: 'tenant_valencia',
+        licensePlate: '9999-XYZ',
+        make: 'Peugeot',
+        model: 'Partner',
+        year: 2022,
+        currentOdometerKm: 50000,
+        itvExpirationDate: '2027-01-01',
+        assignedDriverId: 'usr_driver_joan'
+      };
+
+      const parsed = VehicleSchema.parse(vehWithDriver);
+      assert.strictEqual(parsed.assignedDriverId, 'usr_driver_joan');
     });
   });
 

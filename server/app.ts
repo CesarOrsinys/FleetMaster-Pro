@@ -6,6 +6,7 @@ import { RepositoryContainer } from '../src/adapters/infrastructure/di/Repositor
 import { VehicleSchema } from '../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../src/core/domain/MaintenanceRecord.js';
 import { FuelLogSchema } from '../src/core/domain/FuelLog.js';
+import { TrafficFineSchema } from '../src/core/domain/TrafficFine.js';
 
 export const app = express();
 
@@ -178,3 +179,115 @@ app.post('/api/fuel-logs', async (req: Request, res: Response) => {
     res.status(400).json({ error: err.message });
   }
 });
+
+// ==========================================
+// DRIVERS API
+// ==========================================
+app.get('/api/drivers', async (req: Request, res: Response) => {
+  try {
+    const tenantId = (req.query.tenantId as string) || 'tenant_valencia';
+    const userRepo = RepositoryContainer.getUserRepository();
+    const allUsers = await userRepo.findByTenant(tenantId);
+    const drivers = allUsers.filter(u => u.role === 'DRIVER');
+    res.json(drivers);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/drivers', async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.body.tenantId || 'tenant_valencia';
+    const { fullName, username, email, phone, licenseNumber, assignedVehicleId } = req.body;
+
+    if (!fullName || !username || !email) {
+      return res.status(400).json({ error: 'Full name, username, and email are required' });
+    }
+
+    const defaultPassword = 'Driver2026!';
+    const passwordHash = await bcrypt.hash(defaultPassword, 10);
+
+    const userRepo = RepositoryContainer.getUserRepository();
+    const created = await userRepo.create({
+      tenantId,
+      username: username.trim().toLowerCase(),
+      email: email.trim().toLowerCase(),
+      passwordHash,
+      fullName: fullName.trim(),
+      role: 'DRIVER',
+      phone: phone?.trim() || null,
+      licenseNumber: licenseNumber?.trim() || null,
+      active: true,
+      lastLoginAt: null
+    });
+
+    // If an assigned vehicle was chosen, update the vehicle
+    if (assignedVehicleId) {
+      const vehicleRepo = RepositoryContainer.getVehicleRepository();
+      await vehicleRepo.update(tenantId, assignedVehicleId, { assignedDriverId: created.id });
+    }
+
+    const { passwordHash: _, ...safeUser } = created;
+    res.status(201).json(safeUser);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Assign driver to vehicle
+app.put('/api/vehicles/:id/driver', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { tenantId, driverId } = req.body;
+    const activeTenant = tenantId || 'tenant_valencia';
+
+    const vehicleRepo = RepositoryContainer.getVehicleRepository();
+    const updated = await vehicleRepo.update(activeTenant, id, { assignedDriverId: driverId || null });
+    res.json(updated);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// TRAFFIC FINES API
+// ==========================================
+app.get('/api/fines', async (req: Request, res: Response) => {
+  try {
+    const tenantId = (req.query.tenantId as string) || 'tenant_valencia';
+    const finesRepo = RepositoryContainer.getTrafficFineRepository();
+    const fines = await finesRepo.findByTenant(tenantId);
+    res.json(fines);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/fines', async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.body.tenantId || 'tenant_valencia';
+    const parsed = TrafficFineSchema.omit({ id: true, createdAt: true }).parse({
+      ...req.body,
+      tenantId
+    });
+    const finesRepo = RepositoryContainer.getTrafficFineRepository();
+    const created = await finesRepo.create(parsed);
+    res.status(201).json(created);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.put('/api/fines/:id/status', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { tenantId, status } = req.body;
+    const activeTenant = tenantId || 'tenant_valencia';
+    const finesRepo = RepositoryContainer.getTrafficFineRepository();
+    const updated = await finesRepo.updateStatus(activeTenant, id, status);
+    res.json(updated);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+

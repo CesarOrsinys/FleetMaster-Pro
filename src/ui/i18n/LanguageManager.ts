@@ -62,8 +62,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabTenantSettings: "Configuració d'Empresa",
     tabDashboardShort: "Panell",
     tabVehiclesShort: "Vehicles",
+    tabDrivers: "Conductors",
+    tabDriversShort: "Conductors",
     tabMaintenanceShort: "ITV / Mant.",
     tabFuelShort: "Combustible",
+    tabFines: "Multes i Sancions",
+    tabFinesShort: "Multes",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Vehicles Actius",
@@ -258,7 +262,67 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     btnClose: "Tancar",
 
     // Global Service Loader
-    loadingServiceText: "Carregant dades del servei..."
+    loadingServiceText: "Carregant dades del servei...",
+
+    // Drivers Section
+    driversSectionTitle: "Gestió de Conductors i Personal de Flota",
+    btnNewDriver: "Registrar Nou Conductor",
+    driverKpiTotal: "Total Conductors",
+    driverKpiTotalDesc: "Conductors registrats en la flota",
+    driverKpiActive: "Conductors Actius",
+    driverKpiActiveDesc: "Personal amb llicència en vigor",
+    driverKpiAssigned: "Amb Vehicle Assignat",
+    driverKpiAssignedDesc: "Conductors amb vehicle vinculat",
+    colDriverName: "Nom del Conductor",
+    colLicenseNumber: "Núm. Llicència / Carnet",
+    colAssignedVehicle: "Vehicle Assignat",
+    colDriverPhone: "Telèfon",
+    colDriverEmail: "Correu Electrònic",
+    colDriverStatus: "Estat Conductor",
+    lblAssignedDriver: "Conductor Assignat",
+    lblNoDriverAssigned: "Sense conductor assignat",
+    lblDriverVehicleBadge: "Conductor:",
+    lblDriverBannerHello: "Hola, {name}!",
+    lblDriverBannerVehicle: "El teu vehicle assignat és:",
+    lblDriverBannerTip: "Pots registrar directament els teus proveïments de combustible i consultar les dades del teu vehicle.",
+    modalNewDriverTitle: "Registrar Nou Conductor",
+    inputDriverFullName: "Nom i cognoms",
+    inputDriverUsername: "Nom d'usuari d'accés",
+    inputDriverEmail: "Correu corporatiu",
+    inputDriverPhone: "Telèfon de contacte",
+    inputDriverLicense: "Número de carnet de conduir (DGT)",
+    inputDriverAssignVeh: "Assignar Vehicle de la flota",
+    inputVehicleAssignDriver: "Conductor Assignat (opcional)",
+    successDriverCreated: "Conductor registrat correctament!",
+    successDriverAssigned: "Vehicle assignat al conductor amb èxit!",
+
+    // Fines Section (Multes)
+    finesSectionTitle: "Gestió de Multes i Expedients Sancionadors",
+    btnNewFine: "Registrar Sanció / Multa",
+    fineKpiPendingAmount: "Import Pendent de Pagament",
+    fineKpiPendingAmountDesc: "Total de sancions pendents",
+    fineKpiPendingCount: "Multes Pendents",
+    fineKpiPendingCountDesc: "Expedients sense abonar",
+    fineKpiTotalPaid: "Total Abonat en Multes",
+    fineKpiTotalPaidDesc: "Sancions pagades de la flota",
+    colFineReason: "Motiu de la Infracció",
+    colFineAmount: "Import (€)",
+    colFineDate: "Data Infracció",
+    colFineOrganism: "Organisme Emissor",
+    colFineReference: "Núm. Expedient",
+    colFineStatus: "Estat Multa",
+    fine_status_pending: "Pendent",
+    fine_status_paid: "Pagada",
+    fine_status_appealed: "Recorreguda",
+    btnPayFine: "Marcar com a Pagada",
+    modalNewFineTitle: "Registrar Nova Sanció o Multa",
+    inputFineReason: "Motiu de la infracció",
+    inputFineAmount: "Import de la sanció (€)",
+    inputFineDate: "Data de la denúncia",
+    inputFineOrganism: "Organisme / Policia / DGT",
+    inputFineReference: "Número d'expedient o butlletí",
+    successFineCreated: "Multa registrada correctament!",
+    successFineStatusUpdated: "Estat de la multa actualitzat correctament!"
   },
 
   es: {
@@ -302,8 +366,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabTenantSettings: "Configuración de Empresa",
     tabDashboardShort: "Panel",
     tabVehiclesShort: "Vehículos",
+    tabDrivers: "Conductores",
+    tabDriversShort: "Conductores",
     tabMaintenanceShort: "ITV / Mant.",
     tabFuelShort: "Combustible",
+    tabFines: "Multas y Sanciones",
+    tabFinesShort: "Multas",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Vehículos Activos",
@@ -498,7 +566,67 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     btnClose: "Cerrar",
 
     // Global Service Loader
-    loadingServiceText: "Cargando datos del servicio..."
+    loadingServiceText: "Cargando datos del servicio...",
+
+    // Drivers Section
+    driversSectionTitle: "Gestión de Conductores y Personal de Flota",
+    btnNewDriver: "Registrar Nuevo Conductor",
+    driverKpiTotal: "Total Conductores",
+    driverKpiTotalDesc: "Conductores registrados en la flota",
+    driverKpiActive: "Conductores Activos",
+    driverKpiActiveDesc: "Personal con carnet en vigor",
+    driverKpiAssigned: "Con Vehículo Asignado",
+    driverKpiAssignedDesc: "Conductores con vehículo vinculado",
+    colDriverName: "Nombre del Conductor",
+    colLicenseNumber: "Nº Licencia / Carnet",
+    colAssignedVehicle: "Vehículo Asignado",
+    colDriverPhone: "Teléfono",
+    colDriverEmail: "Correo Electrónico",
+    colDriverStatus: "Estado Conductor",
+    lblAssignedDriver: "Conductor Asignado",
+    lblNoDriverAssigned: "Sin conductor asignado",
+    lblDriverVehicleBadge: "Conductor:",
+    lblDriverBannerHello: "¡Hola, {name}!",
+    lblDriverBannerVehicle: "Tu vehículo asignado es:",
+    lblDriverBannerTip: "Puedes registrar directamente tus repostajes de combustible y consultar los datos de tu vehículo.",
+    modalNewDriverTitle: "Registrar Nuevo Conductor",
+    inputDriverFullName: "Nombre y apellidos",
+    inputDriverUsername: "Nombre de usuario de acceso",
+    inputDriverEmail: "Correo corporativo",
+    inputDriverPhone: "Teléfono de contacto",
+    inputDriverLicense: "Número de carnet de conducir (DGT)",
+    inputDriverAssignVeh: "Asignar Vehículo de la flota",
+    inputVehicleAssignDriver: "Conductor Asignado (opcional)",
+    successDriverCreated: "¡Conductor registrado correctamente!",
+    successDriverAssigned: "¡Vehículo asignado al conductor con éxito!",
+
+    // Fines Section (Multas)
+    finesSectionTitle: "Gestión de Multas y Expedientes Sancionadores",
+    btnNewFine: "Registrar Sanción / Multa",
+    fineKpiPendingAmount: "Importe Pendiente de Pago",
+    fineKpiPendingAmountDesc: "Total de sanciones pendientes",
+    fineKpiPendingCount: "Multas Pendientes",
+    fineKpiPendingCountDesc: "Expedientes sin abonar",
+    fineKpiTotalPaid: "Total Abonado en Multas",
+    fineKpiTotalPaidDesc: "Sanciones pagadas de la flota",
+    colFineReason: "Motivo de la Infracción",
+    colFineAmount: "Importe (€)",
+    colFineDate: "Fecha Infracción",
+    colFineOrganism: "Organismo Emisor",
+    colFineReference: "Nº Expediente",
+    colFineStatus: "Estado Multa",
+    fine_status_pending: "Pendiente",
+    fine_status_paid: "Pagada",
+    fine_status_appealed: "Recurrida",
+    btnPayFine: "Marcar como Pagada",
+    modalNewFineTitle: "Registrar Nueva Sanción o Multa",
+    inputFineReason: "Motivo de la infracción",
+    inputFineAmount: "Importe de la sanción (€)",
+    inputFineDate: "Fecha de la denuncia",
+    inputFineOrganism: "Organismo / Policía / DGT",
+    inputFineReference: "Número de expediente o boletín",
+    successFineCreated: "¡Multa registrada correctamente!",
+    successFineStatusUpdated: "¡Estado de la multa actualizado correctamente!"
   },
 
   en: {
@@ -542,8 +670,12 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     tabTenantSettings: "Company Settings",
     tabDashboardShort: "Dashboard",
     tabVehiclesShort: "Vehicles",
+    tabDrivers: "Drivers",
+    tabDriversShort: "Drivers",
     tabMaintenanceShort: "MOT & Service",
     tabFuelShort: "Fuel",
+    tabFines: "Fines & Penalties",
+    tabFinesShort: "Fines",
 
     // Dashboard KPIs
     kpiTotalVehicles: "Active Vehicles",
@@ -738,7 +870,67 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     btnClose: "Close",
 
     // Global Service Loader
-    loadingServiceText: "Loading service data..."
+    loadingServiceText: "Loading service data...",
+
+    // Drivers Section
+    driversSectionTitle: "Driver & Fleet Staff Management",
+    btnNewDriver: "Register New Driver",
+    driverKpiTotal: "Total Drivers",
+    driverKpiTotalDesc: "Drivers registered in the fleet",
+    driverKpiActive: "Active Drivers",
+    driverKpiActiveDesc: "Staff with valid driver licenses",
+    driverKpiAssigned: "With Assigned Vehicle",
+    driverKpiAssignedDesc: "Drivers with an allocated vehicle",
+    colDriverName: "Driver Name",
+    colLicenseNumber: "License / Permit No.",
+    colAssignedVehicle: "Assigned Vehicle",
+    colDriverPhone: "Phone",
+    colDriverEmail: "Email",
+    colDriverStatus: "Driver Status",
+    lblAssignedDriver: "Assigned Driver",
+    lblNoDriverAssigned: "No driver assigned",
+    lblDriverVehicleBadge: "Driver:",
+    lblDriverBannerHello: "Hello, {name}!",
+    lblDriverBannerVehicle: "Your assigned vehicle is:",
+    lblDriverBannerTip: "You can directly report refuelings and check your assigned vehicle details.",
+    modalNewDriverTitle: "Register New Driver",
+    inputDriverFullName: "Full name",
+    inputDriverUsername: "Login username",
+    inputDriverEmail: "Corporate email",
+    inputDriverPhone: "Contact phone",
+    inputDriverLicense: "Driving license number (DGT)",
+    inputDriverAssignVeh: "Assign Fleet Vehicle",
+    inputVehicleAssignDriver: "Assigned Driver (optional)",
+    successDriverCreated: "Driver registered successfully!",
+    successDriverAssigned: "Vehicle assigned to driver successfully!",
+
+    // Fines Section (Multas)
+    finesSectionTitle: "Traffic Fines & Violations Management",
+    btnNewFine: "Register Fine / Penalty",
+    fineKpiPendingAmount: "Outstanding Fine Amount",
+    fineKpiPendingAmountDesc: "Total unsettled penalties",
+    fineKpiPendingCount: "Pending Fines",
+    fineKpiPendingCountDesc: "Unpaid violation dossiers",
+    fineKpiTotalPaid: "Total Paid in Fines",
+    fineKpiTotalPaidDesc: "Paid fleet traffic fines",
+    colFineReason: "Violation Reason",
+    colFineAmount: "Amount (€)",
+    colFineDate: "Violation Date",
+    colFineOrganism: "Issuing Authority",
+    colFineReference: "Dossier / Ticket No.",
+    colFineStatus: "Fine Status",
+    fine_status_pending: "Pending",
+    fine_status_paid: "Paid",
+    fine_status_appealed: "Appealed",
+    btnPayFine: "Mark as Paid",
+    modalNewFineTitle: "Register New Traffic Fine",
+    inputFineReason: "Violation reason",
+    inputFineAmount: "Fine amount (€)",
+    inputFineDate: "Date of notification",
+    inputFineOrganism: "Authority / Police / Traffic Dept",
+    inputFineReference: "Dossier or ticket reference",
+    successFineCreated: "Traffic fine registered successfully!",
+    successFineStatusUpdated: "Fine status updated successfully!"
   }
 };
 
@@ -998,6 +1190,26 @@ export class LanguageManager {
         va: "Sense observacions",
         es: "Sin observaciones",
         en: "No observations"
+      },
+      "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).": {
+        va: "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).",
+        es: "Exceso de velocidad (68 km/h en tramo limitado a 50 km/h).",
+        en: "Speeding violation (68 km/h in 50 km/h zone)."
+      },
+      "Estacionament indegut en carril reservat per a bus i taxi.": {
+        va: "Estacionament indegut en carril reservat per a bus i taxi.",
+        es: "Estacionamiento indebido en carril reservado para bus y taxi.",
+        en: "Improper parking in bus/taxi reserved lane."
+      },
+      "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.": {
+        va: "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.",
+        es: "Acceso no autorizado a Zona de Bajas Emisiones (ZBE) sin distintivo ambiental adecuado.",
+        en: "Unauthorized entry to Low Emission Zone (LEZ) without required environmental badge."
+      },
+      "No respectar la distància de seguretat entre vehicles pesants.": {
+        va: "No respectar la distància de seguretat entre vehicles pesants.",
+        es: "No respetar la distancia de seguridad entre vehículos pesados.",
+        en: "Failure to maintain safety distance between heavy vehicles."
       }
     };
 

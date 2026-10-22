@@ -3,6 +3,8 @@ import { LoadingService } from './ui/services/LoadingService.js';
 import { Vehicle } from './core/domain/Vehicle.js';
 import { MaintenanceRecord } from './core/domain/MaintenanceRecord.js';
 import { FuelLog } from './core/domain/FuelLog.js';
+import { TrafficFine } from './core/domain/TrafficFine.js';
+import { SafeUser } from './core/domain/User.js';
 
 interface UserSession {
   id: string;
@@ -21,6 +23,8 @@ class AppController {
   private cachedVehicles: Vehicle[] = [];
   private cachedMaintenance: MaintenanceRecord[] = [];
   private cachedFuelLogs: FuelLog[] = [];
+  private cachedDrivers: SafeUser[] = [];
+  private cachedFines: TrafficFine[] = [];
 
   public init(): void {
     // 0. Initialize Global HTTP Service Loader (Car Spinner)
@@ -76,6 +80,8 @@ class AppController {
     this.cachedVehicles = [];
     this.cachedMaintenance = [];
     this.cachedFuelLogs = [];
+    this.cachedDrivers = [];
+    this.cachedFines = [];
 
     // Clear any table and feed data
     const vehiclesTbody = document.getElementById('vehicles-table-body');
@@ -86,8 +92,12 @@ class AppController {
     if (maintTbody) maintTbody.innerHTML = '';
     const fuelTbody = document.getElementById('fuel-table-body');
     if (fuelTbody) fuelTbody.innerHTML = '';
+    const driversTbody = document.getElementById('drivers-table-body');
+    if (driversTbody) driversTbody.innerHTML = '';
+    const finesTbody = document.getElementById('fines-table-body');
+    if (finesTbody) finesTbody.innerHTML = '';
 
-    ['vehicles', 'itv', 'maintenance', 'fuel'].forEach(key => {
+    ['vehicles', 'itv', 'maintenance', 'fuel', 'drivers', 'fines'].forEach(key => {
       const feed = document.getElementById(`${key}-cards-feed`);
       if (feed) feed.innerHTML = '';
     });
@@ -102,6 +112,7 @@ class AppController {
 
     this.updateHeaderUserInfo();
     this.syncTenantSelect();
+    this.renderDriverPortalBanner();
   }
 
   private updateHeaderUserInfo(): void {
@@ -214,12 +225,16 @@ class AppController {
 
       // Immediately re-render all tables, alerts, and KPIs with the active language
       this.renderVehicles(this.cachedVehicles);
+      this.renderDrivers(this.cachedDrivers, this.cachedVehicles);
+      this.renderFines(this.cachedFines, this.cachedVehicles, this.cachedDrivers);
+      this.renderDriverPortalBanner();
       this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
       this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
       this.renderAlerts();
       this.populateModalVehicleDropdowns();
+      this.populateModalDriverDropdowns();
     });
   }
 
@@ -375,23 +390,31 @@ class AppController {
         'Authorization': `Bearer ${this.authToken}`
       };
 
-      const [vehiclesRes, maintRes, fuelRes] = await Promise.all([
+      const [vehiclesRes, maintRes, fuelRes, driversRes, finesRes] = await Promise.all([
         fetch(`/api/vehicles?tenantId=${this.currentTenant}`, { headers }).catch(() => null),
         fetch(`/api/maintenance?tenantId=${this.currentTenant}`, { headers }).catch(() => null),
-        fetch(`/api/fuel-logs?tenantId=${this.currentTenant}`, { headers }).catch(() => null)
+        fetch(`/api/fuel-logs?tenantId=${this.currentTenant}`, { headers }).catch(() => null),
+        fetch(`/api/drivers?tenantId=${this.currentTenant}`, { headers }).catch(() => null),
+        fetch(`/api/fines?tenantId=${this.currentTenant}`, { headers }).catch(() => null)
       ]);
 
       this.cachedVehicles = vehiclesRes && vehiclesRes.ok ? await vehiclesRes.json() : [];
       this.cachedMaintenance = maintRes && maintRes.ok ? await maintRes.json() : [];
       this.cachedFuelLogs = fuelRes && fuelRes.ok ? await fuelRes.json() : [];
+      this.cachedDrivers = driversRes && driversRes.ok ? await driversRes.json() : [];
+      this.cachedFines = finesRes && finesRes.ok ? await finesRes.json() : [];
 
       this.renderVehicles(this.cachedVehicles);
+      this.renderDrivers(this.cachedDrivers, this.cachedVehicles);
+      this.renderFines(this.cachedFines, this.cachedVehicles, this.cachedDrivers);
+      this.renderDriverPortalBanner();
       this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
       this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
       this.renderAlerts();
       this.populateModalVehicleDropdowns();
+      this.populateModalDriverDropdowns();
     } catch (err) {
       console.warn('Fallback loading data locally', err);
       this.showToast(LanguageManager.t('error_network'), 'error');
@@ -404,17 +427,22 @@ class AppController {
 
     if (tbody) {
       if (vehicles.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
       } else {
         tbody.innerHTML = vehicles.map(v => {
           const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
           const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
           const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
+          const assignedDriver = this.cachedDrivers.find(d => d.id === v.assignedDriverId);
+          const driverHtml = assignedDriver 
+            ? `<span>👤 <strong>${assignedDriver.fullName}</strong></span>` 
+            : `<span style="color:#94A3B8; font-style:italic;">${LanguageManager.t('driverUnassigned')}</span>`;
 
           return `
             <tr>
               <td><span class="plate-badge">${v.licensePlate}</span></td>
               <td><strong>${v.make}</strong> ${v.model} (${v.year})</td>
+              <td>${driverHtml}</td>
               <td>${fuelLabel}</td>
               <td><strong>${v.currentOdometerKm.toLocaleString()}</strong> km</td>
               <td>${v.itvExpirationDate}</td>
@@ -434,6 +462,10 @@ class AppController {
           const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
           const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
           const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
+          const assignedDriver = this.cachedDrivers.find(d => d.id === v.assignedDriverId);
+          const driverHtml = assignedDriver 
+            ? `<span>👤 <strong>${assignedDriver.fullName}</strong></span>` 
+            : `<span style="color:#94A3B8; font-style:italic;">${LanguageManager.t('driverUnassigned')}</span>`;
 
           return `
             <div class="detail-card" data-vehicle-id="${v.id}">
@@ -443,6 +475,12 @@ class AppController {
               </div>
               <div class="detail-card-title">${v.make} ${v.model} (${v.year})</div>
               <div class="detail-card-grid">
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colAssignedDriver')}</span>
+                  <span class="detail-value" style="display:flex; align-items:center; gap:6px;">
+                    ${driverHtml}
+                  </span>
+                </div>
                 <div class="detail-card-item">
                   <span class="detail-label">${LanguageManager.t('colFuelType')}</span>
                   <span class="detail-value">${fuelLabel}</span>
@@ -486,6 +524,359 @@ class AppController {
         });
       }
     }
+  }
+
+  // 2B. GESTIÓ DE CONDUCTORS (DRIVERS FEED & TABLE)
+  private renderDrivers(drivers: SafeUser[], vehicles: Vehicle[]): void {
+    const tbody = document.getElementById('drivers-table-body');
+    const cardsFeed = document.getElementById('drivers-cards-feed');
+    const kpiTotal = document.getElementById('kpi-total-drivers');
+    const kpiAssigned = document.getElementById('kpi-assigned-drivers');
+    const kpiUnassigned = document.getElementById('kpi-unassigned-drivers');
+
+    const assignedDriversCount = drivers.filter(d => 
+      vehicles.some(v => v.assignedDriverId === d.id)
+    ).length;
+    const unassignedCount = drivers.length - assignedDriversCount;
+
+    if (kpiTotal) kpiTotal.textContent = String(drivers.length);
+    if (kpiAssigned) kpiAssigned.textContent = String(assignedDriversCount);
+    if (kpiUnassigned) kpiUnassigned.textContent = String(Math.max(0, unassignedCount));
+
+    // 1. Table View
+    if (tbody) {
+      if (drivers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = drivers.map(d => {
+          const assignedVeh = vehicles.find(v => v.assignedDriverId === d.id);
+          const assignedVehHtml = assignedVeh 
+            ? `<span><span class="plate-badge">${assignedVeh.licensePlate}</span> <strong>${assignedVeh.make}</strong> ${assignedVeh.model}</span>`
+            : `<span style="color:#94A3B8; font-style:italic;">${LanguageManager.t('driverUnassigned')}</span>`;
+          
+          const initials = d.fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+          const statusClass = d.active ? 'active' : 'out';
+          const statusLabel = d.active ? LanguageManager.t('status_active') : LanguageManager.t('status_out_of_service');
+
+          return `
+            <tr>
+              <td>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="driver-avatar-circle">${initials}</span>
+                  <div>
+                    <strong>${d.fullName}</strong>
+                    <div style="font-size:0.75rem; color:#64748B;">@${d.username}</div>
+                  </div>
+                </div>
+              </td>
+              <td><strong>${d.licenseNumber || '-'}</strong></td>
+              <td>${d.phone || '-'}</td>
+              <td><a href="mailto:${d.email}" style="color:var(--primary); text-decoration:none;">${d.email}</a></td>
+              <td>${assignedVehHtml}</td>
+              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // 2. Cards Feed (Default View)
+    if (cardsFeed) {
+      if (drivers.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = drivers.map(d => {
+          const assignedVeh = vehicles.find(v => v.assignedDriverId === d.id);
+          const initials = d.fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+          const statusClass = d.active ? 'active' : 'out';
+          const statusLabel = d.active ? LanguageManager.t('status_active') : LanguageManager.t('status_out_of_service');
+
+          return `
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="driver-avatar-circle">${initials}</span>
+                  <div>
+                    <div class="detail-card-title" style="margin-bottom:0;">${d.fullName}</div>
+                    <span style="font-size:0.72rem; color:#64748B;">@${d.username}</span>
+                  </div>
+                </div>
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+              <div class="detail-card-grid">
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colLicenseNumber')}</span>
+                  <span class="detail-value">${d.licenseNumber || '-'}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colPhone')}</span>
+                  <span class="detail-value">${d.phone || '-'}</span>
+                </div>
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colEmail')}</span>
+                  <span class="detail-value">${d.email}</span>
+                </div>
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colAssignedVehicle')}</span>
+                  <div style="margin-top:2px;">
+                    ${assignedVeh 
+                      ? `<span class="plate-badge">${assignedVeh.licensePlate}</span> <strong>${assignedVeh.make}</strong> ${assignedVeh.model}`
+                      : `<span style="color:#94A3B8; font-style:italic;">${LanguageManager.t('driverUnassigned')}</span>`}
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  // 5. GESTIÓ DE MULTES (FINES CARDS & TABLE)
+  private renderFines(fines: TrafficFine[], vehicles: Vehicle[], drivers: SafeUser[]): void {
+    const tbody = document.getElementById('fines-table-body');
+    const cardsFeed = document.getElementById('fines-cards-feed');
+    const kpiTotal = document.getElementById('kpi-total-fines');
+    const kpiPending = document.getElementById('kpi-pending-fines');
+    const kpiAmount = document.getElementById('kpi-total-fines-amount');
+
+    const pendingCount = fines.filter(f => f.status === 'PENDING').length;
+    const totalAmount = fines.reduce((sum, f) => sum + f.amountEur, 0);
+
+    if (kpiTotal) kpiTotal.textContent = String(fines.length);
+    if (kpiPending) kpiPending.textContent = String(pendingCount);
+    if (kpiAmount) kpiAmount.textContent = `${totalAmount.toFixed(2)} €`;
+
+    // 1. Table View
+    if (tbody) {
+      if (fines.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = fines.map(f => {
+          const veh = vehicles.find(v => v.id === f.vehicleId);
+          const driver = drivers.find(d => d.id === f.driverId);
+          const statusClass = f.status === 'PAID' ? 'active' : f.status === 'PENDING' ? 'out' : 'maintenance';
+          const statusLabel = LanguageManager.t('fine_status_' + f.status.toLowerCase());
+          const translatedReason = LanguageManager.translateObservation(f.reason);
+
+          return `
+            <tr>
+              <td><strong>${f.date}</strong></td>
+              <td>${veh ? `<span class="plate-badge">${veh.licensePlate}</span> ${veh.make} ${veh.model}` : f.vehicleId}</td>
+              <td><strong>${driver ? driver.fullName : LanguageManager.t('optNoDriver')}</strong></td>
+              <td style="max-width:260px;">${translatedReason}</td>
+              <td><span class="fine-amount-badge ${f.status === 'PAID' ? 'paid' : ''}">${f.amountEur.toFixed(2)} €</span></td>
+              <td>${f.organism || 'DGT'}</td>
+              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+              <td>
+                ${f.status === 'PENDING' 
+                  ? `<button type="button" class="btn-secondary btn-pay-fine" data-fine-id="${f.id}" style="padding:4px 10px; font-size:0.78rem;">
+                       <span>💳</span> <span>${LanguageManager.t('btnMarkFinePaid')}</span>
+                     </button>`
+                  : `<span style="color:#059669; font-weight:700; font-size:0.8rem;">✓ ${LanguageManager.t('fine_status_paid')}</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    // 2. Cards Feed (Default View - Cards for Cars and Drivers as requested)
+    if (cardsFeed) {
+      if (fines.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = fines.map(f => {
+          const veh = vehicles.find(v => v.id === f.vehicleId);
+          const driver = drivers.find(d => d.id === f.driverId);
+          const statusClass = f.status === 'PAID' ? 'active' : f.status === 'PENDING' ? 'out' : 'maintenance';
+          const statusLabel = LanguageManager.t('fine_status_' + f.status.toLowerCase());
+          const translatedReason = LanguageManager.translateObservation(f.reason);
+
+          return `
+            <div class="detail-card" style="border-left: 4px solid ${f.status === 'PAID' ? '#10B981' : '#EF4444'};">
+              <div class="detail-card-header">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  ${veh ? `<span class="plate-badge">${veh.licensePlate}</span>` : ''}
+                  <strong style="color:var(--slate-800);">${veh ? `${veh.make} ${veh.model}` : f.vehicleId}</strong>
+                </div>
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:4px;">
+                <div class="detail-card-title" style="font-size:1rem; color:var(--slate-900); flex:1; padding-right:10px;">
+                  ${translatedReason}
+                </div>
+                <span class="fine-amount-badge ${f.status === 'PAID' ? 'paid' : ''}">${f.amountEur.toFixed(2)} €</span>
+              </div>
+              <div class="detail-card-grid">
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colDriver')}</span>
+                  <span class="detail-value" style="display:flex; align-items:center; gap:6px;">
+                    👤 <strong>${driver ? driver.fullName : LanguageManager.t('optNoDriver')}</strong>
+                  </span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colDate')}</span>
+                  <span class="detail-value">📅 ${f.date}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colFineOrganism')}</span>
+                  <span class="detail-value">🏛️ ${f.organism || 'DGT'}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colStatus')}</span>
+                  <span class="detail-value">${statusLabel}</span>
+                </div>
+                ${f.notes ? `
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colObservations')}</span>
+                  <span class="detail-value" style="color:#475569; font-weight:500;">
+                    ${LanguageManager.translateObservation(f.notes)}
+                  </span>
+                </div>
+                ` : ''}
+              </div>
+              <div class="detail-card-footer" style="padding-top:4px;">
+                ${f.status === 'PENDING' 
+                  ? `<button type="button" class="btn-primary btn-pay-fine" data-fine-id="${f.id}" style="padding:6px 12px; font-size:0.8rem; background:#0F766E;">
+                       <span>💳</span> <span>${LanguageManager.t('btnMarkFinePaid')}</span>
+                     </button>`
+                  : `<span style="color:#059669; font-weight:700;">✓ ${LanguageManager.t('fine_status_paid')}</span>`}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Wire pay fine click handler
+        cardsFeed.querySelectorAll<HTMLButtonElement>('.btn-pay-fine').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const fineId = btn.getAttribute('data-fine-id');
+            if (fineId) await this.handleFineStatusChange(fineId, 'PAID');
+          });
+        });
+      }
+    }
+
+    // Also wire pay fine in table
+    tbody?.querySelectorAll<HTMLButtonElement>('.btn-pay-fine').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const fineId = btn.getAttribute('data-fine-id');
+        if (fineId) await this.handleFineStatusChange(fineId, 'PAID');
+      });
+    });
+  }
+
+  private async handleFineStatusChange(fineId: string, newStatus: 'PAID' | 'PENDING' | 'APPEALED'): Promise<void> {
+    try {
+      const res = await fetch(`/api/fines/${fineId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.authToken}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+
+      this.showToast(LanguageManager.t('successFinePaid'), 'success');
+      await this.loadData();
+    } catch (err: any) {
+      this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+    }
+  }
+
+  private renderDriverPortalBanner(): void {
+    const banner = document.getElementById('driver-portal-banner');
+    if (!banner) return;
+
+    if (this.currentUser?.role === 'DRIVER') {
+      banner.style.display = 'flex';
+      const nameEl = document.getElementById('driver-portal-name');
+      const plateEl = document.getElementById('driver-portal-plate');
+      const modelEl = document.getElementById('driver-portal-veh-model');
+
+      if (nameEl) nameEl.textContent = this.currentUser.fullName;
+
+      // Find assigned vehicle
+      const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
+      if (assignedVeh) {
+        if (plateEl) {
+          plateEl.style.display = 'inline-block';
+          plateEl.textContent = assignedVeh.licensePlate;
+        }
+        if (modelEl) modelEl.textContent = `${assignedVeh.make} ${assignedVeh.model}`;
+      } else {
+        if (plateEl) plateEl.style.display = 'none';
+        if (modelEl) modelEl.textContent = LanguageManager.t('driverUnassigned');
+      }
+
+      // Quick fuel button
+      const quickFuelBtn = document.getElementById('btn-driver-quick-fuel');
+      if (quickFuelBtn) {
+        quickFuelBtn.onclick = () => {
+          this.populateModalVehicleDropdowns();
+          if (assignedVeh) {
+            const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+            if (fuelVehSelect) {
+              fuelVehSelect.value = assignedVeh.id;
+              this.updateFuelFormHints();
+            }
+          }
+          const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
+          if (dateInput && !dateInput.value) {
+            dateInput.value = new Date().toISOString().split('T')[0];
+          }
+          this.openModal('modal-fuel');
+        };
+      }
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  private populateModalDriverDropdowns(): void {
+    const vehDriverSelect = document.getElementById('veh-driver') as HTMLSelectElement;
+    const driverAssignedVehSelect = document.getElementById('driver-assigned-veh') as HTMLSelectElement;
+    const fineVehSelect = document.getElementById('fine-veh') as HTMLSelectElement;
+    const fineDriverSelect = document.getElementById('fine-driver') as HTMLSelectElement;
+
+    const noDriverOpt = `<option value="">${LanguageManager.t('optNoDriver')}</option>`;
+    const driverOptions = this.cachedDrivers.map(d => 
+      `<option value="${d.id}">${d.fullName} (${d.licenseNumber || d.username})</option>`
+    ).join('');
+
+    if (vehDriverSelect) {
+      vehDriverSelect.innerHTML = noDriverOpt + driverOptions;
+    }
+
+    if (driverAssignedVehSelect) {
+      const noVehOpt = `<option value="">${LanguageManager.t('optNoVehicle')}</option>`;
+      const vehOpts = this.cachedVehicles.map(v => 
+        `<option value="${v.id}">${v.licensePlate} - ${v.make} ${v.model}</option>`
+      ).join('');
+      driverAssignedVehSelect.innerHTML = noVehOpt + vehOpts;
+    }
+
+    if (fineVehSelect) {
+      fineVehSelect.innerHTML = this.cachedVehicles.map(v => 
+        `<option value="${v.id}">${v.licensePlate} - ${v.make} ${v.model}</option>`
+      ).join('');
+    }
+
+    if (fineDriverSelect) {
+      fineDriverSelect.innerHTML = driverOptions;
+    }
+
+    // Auto-select assigned driver when vehicle changes in fine modal
+    fineVehSelect?.addEventListener('change', () => {
+      const selectedVehId = fineVehSelect.value;
+      const veh = this.cachedVehicles.find(v => v.id === selectedVehId);
+      if (veh?.assignedDriverId && fineDriverSelect) {
+        fineDriverSelect.value = veh.assignedDriverId;
+      }
+    });
   }
 
   // SUB-SECTION 1: SEPARATE ITV CONTROL AND EXPIRATION WITH OBSERVATIONS
@@ -1213,7 +1604,23 @@ class AppController {
   private setupModals(): void {
     // Open modal buttons
     document.getElementById('btn-add-vehicle')?.addEventListener('click', () => {
+      this.populateModalDriverDropdowns();
       this.openModal('modal-vehicle');
+    });
+
+    document.getElementById('btn-add-driver')?.addEventListener('click', () => {
+      this.populateModalDriverDropdowns();
+      this.openModal('modal-driver');
+    });
+
+    document.getElementById('btn-add-fine')?.addEventListener('click', () => {
+      this.populateModalVehicleDropdowns();
+      this.populateModalDriverDropdowns();
+      const dateInput = document.getElementById('fine-date') as HTMLInputElement;
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+      this.openModal('modal-fine');
     });
 
     document.getElementById('btn-add-maintenance')?.addEventListener('click', () => {
@@ -1223,6 +1630,17 @@ class AppController {
 
     document.getElementById('btn-add-fuel')?.addEventListener('click', () => {
       this.populateModalVehicleDropdowns();
+      // If driver is logged in, auto pre-select their assigned vehicle!
+      if (this.currentUser?.role === 'DRIVER') {
+        const assignedVeh = this.cachedVehicles.find(v => v.assignedDriverId === this.currentUser?.id);
+        if (assignedVeh) {
+          const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+          if (fuelVehSelect) {
+            fuelVehSelect.value = assignedVeh.id;
+            this.updateFuelFormHints();
+          }
+        }
+      }
       const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
       if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
@@ -1357,6 +1775,7 @@ class AppController {
           nextMaintenanceKm: Number((document.getElementById('veh-next-km') as HTMLInputElement).value),
           itvExpirationDate: (document.getElementById('veh-itv') as HTMLInputElement).value,
           status: (document.getElementById('veh-status') as HTMLSelectElement).value,
+          assignedDriverId: (document.getElementById('veh-driver') as HTMLSelectElement).value || null,
           notes: (document.getElementById('veh-notes') as HTMLTextAreaElement).value
         };
 
@@ -1459,6 +1878,91 @@ class AppController {
         fuelForm.reset();
         document.getElementById('modal-fuel')?.classList.remove('open');
         this.showToast(LanguageManager.t('successFuelLogged'), 'success');
+        await this.loadData();
+      } catch (err: any) {
+        this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+      }
+    });
+
+    // 4. New Driver Form
+    const driverForm = document.getElementById('form-new-driver') as HTMLFormElement;
+    driverForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          tenantId: this.currentTenant,
+          fullName: (document.getElementById('driver-name') as HTMLInputElement).value.trim(),
+          username: (document.getElementById('driver-username') as HTMLInputElement).value.trim(),
+          email: (document.getElementById('driver-email') as HTMLInputElement).value.trim(),
+          phone: (document.getElementById('driver-phone') as HTMLInputElement).value.trim() || null,
+          licenseNumber: (document.getElementById('driver-license') as HTMLInputElement).value.trim() || null
+        };
+
+        const res = await fetch('/api/drivers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+        const createdDriver = await res.json();
+
+        // If assigned vehicle selected, update vehicle assignment
+        const assignedVehId = (document.getElementById('driver-assigned-veh') as HTMLSelectElement)?.value;
+        if (assignedVehId && createdDriver?.id) {
+          await fetch(`/api/vehicles/${assignedVehId}/driver`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.authToken}`
+            },
+            body: JSON.stringify({ driverId: createdDriver.id })
+          }).catch(() => null);
+        }
+
+        driverForm.reset();
+        document.getElementById('modal-driver')?.classList.remove('open');
+        this.showToast(LanguageManager.t('successDriverCreated'), 'success');
+        await this.loadData();
+      } catch (err: any) {
+        this.showToast(err.message || LanguageManager.t('error_internal'), 'error');
+      }
+    });
+
+    // 5. New Fine Form
+    const fineForm = document.getElementById('form-new-fine') as HTMLFormElement;
+    fineForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const payload = {
+          tenantId: this.currentTenant,
+          vehicleId: (document.getElementById('fine-veh') as HTMLSelectElement).value,
+          driverId: (document.getElementById('fine-driver') as HTMLSelectElement).value || null,
+          date: (document.getElementById('fine-date') as HTMLInputElement).value,
+          amountEur: Number((document.getElementById('fine-amount') as HTMLInputElement).value),
+          reason: (document.getElementById('fine-reason') as HTMLInputElement).value.trim(),
+          organism: (document.getElementById('fine-organism') as HTMLInputElement).value.trim() || 'DGT',
+          status: (document.getElementById('fine-status') as HTMLSelectElement).value || 'PENDING',
+          notes: (document.getElementById('fine-notes') as HTMLTextAreaElement).value.trim() || null
+        };
+
+        const res = await fetch('/api/fines', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.authToken}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(LanguageManager.t('error_internal'));
+
+        fineForm.reset();
+        document.getElementById('modal-fine')?.classList.remove('open');
+        this.showToast(LanguageManager.t('successFineCreated'), 'success');
         await this.loadData();
       } catch (err: any) {
         this.showToast(err.message || LanguageManager.t('error_internal'), 'error');

@@ -1281,6 +1281,96 @@
       gap: 6px;
     }
 
+    /* Driver Portal Banner */
+    .driver-portal-banner {
+      background: linear-gradient(135deg, #0F766E 0%, #0D9488 100%);
+      color: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.35);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .driver-banner-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .driver-banner-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .driver-banner-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .driver-banner-title strong {
+      font-weight: 800;
+      color: #CCFBF1;
+    }
+
+    .driver-banner-subtitle {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .driver-banner-subtitle .plate-badge {
+      background: #FFFFFF;
+      color: var(--slate-900);
+      font-size: 0.8rem;
+      padding: 2px 7px;
+    }
+
+    .driver-avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0F766E, #14B8A6);
+      color: white;
+      font-weight: 700;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .fine-amount-badge {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #991B1B;
+      background: #FEE2E2;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      letter-spacing: -0.2px;
+    }
+
+    .fine-amount-badge.paid {
+      color: #065F46;
+      background: #D1FAE5;
+    }
+
     /* -------------------------------------------------------------
        MOBILE RESPONSIVE (STAFF-INCIDENTS-MANAGER ARCHITECTURE)
        ------------------------------------------------------------- */
@@ -1356,7 +1446,7 @@
         display: block !important;
       }
 
-      /* Mobile 4-Column Visual Navigation App-Bar (Zero Horizontal Scroll, 100% Visual) */
+      /* Mobile 6-Tab Visual Navigation App-Bar (2 Clean Rows of 3, Zero Scroll, 100% Visual) */
       nav.app-nav {
         background: #FFFFFF !important;
         position: sticky !important;
@@ -1369,7 +1459,7 @@
 
       .nav-container {
         display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
+        grid-template-columns: repeat(3, 1fr) !important;
         gap: 6px !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -1830,6 +1920,11 @@
           <span class="tab-label desktop-only" data-i18n="tabVehicles">Parc de Vehicles</span>
           <span class="tab-label mobile-only" data-i18n="tabVehiclesShort">Vehicles</span>
         </button>
+        <button class="nav-tab" data-tab="drivers">
+          <span class="tab-icon">👤</span>
+          <span class="tab-label desktop-only" data-i18n="tabDrivers">Conductores</span>
+          <span class="tab-label mobile-only" data-i18n="tabDriversShort">Conductores</span>
+        </button>
         <button class="nav-tab" data-tab="maintenance">
           <span class="tab-icon">🔧</span>
           <span class="tab-label desktop-only" data-i18n="tabMaintenance">ITV i Manteniment</span>
@@ -1840,11 +1935,34 @@
           <span class="tab-label desktop-only" data-i18n="tabFuel">Combustible i Quilometratge</span>
           <span class="tab-label mobile-only" data-i18n="tabFuelShort">Combustible</span>
         </button>
+        <button class="nav-tab" data-tab="fines">
+          <span class="tab-icon">🚨</span>
+          <span class="tab-label desktop-only" data-i18n="tabFines">Multas de Trànsit</span>
+          <span class="tab-label mobile-only" data-i18n="tabFinesShort">Multes</span>
+        </button>
       </div>
     </nav>
 
     <!-- Main Content Area -->
     <main class="app-main">
+
+      <!-- Driver Quick Portal Banner (Shown if current user has DRIVER role) -->
+      <div class="driver-portal-banner" id="driver-portal-banner" style="display: none;">
+        <div class="driver-banner-content">
+          <div class="driver-banner-icon">🚗</div>
+          <div class="driver-banner-info">
+            <div class="driver-banner-title">
+              <span data-i18n="driverPortalWelcome">Hola, Conductor</span> <strong id="driver-portal-name">Joan Martí</strong>
+            </div>
+            <div class="driver-banner-subtitle">
+              <span data-i18n="driverAssignedVehicle">Vehicle assignat:</span> <span class="plate-badge" id="driver-portal-plate">4589-LDR</span> - <span id="driver-portal-veh-model">Renault Trafic 2.0 dCi</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-primary" id="btn-driver-quick-fuel" style="background: #FFFFFF; color: var(--primary-dark); font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <span>⛽</span> <span data-i18n="btnDriverQuickFuel">Reportar Repostatge d'avui</span>
+        </button>
+      </div>
 
       <!-- 1. DASHBOARD VIEW -->
       <section class="tab-content active" id="view-dashboard">
@@ -1929,6 +2047,7 @@
               <tr>
                 <th data-i18n="colLicensePlate">Matrícula</th>
                 <th data-i18n="colVehicle">Vehicle (Marca i Model)</th>
+                <th data-i18n="colAssignedDriver">Conductor Assignat</th>
                 <th data-i18n="colFuelType">Combustible</th>
                 <th data-i18n="colOdometer">Quilòmetres (km)</th>
                 <th data-i18n="colItvDate">Venciment ITV</th>
@@ -1937,6 +2056,83 @@
               </tr>
             </thead>
             <tbody id="vehicles-table-body">
+              <!-- Rendered dynamically after login -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2B. DRIVERS VIEW (GESTIÓ DE CONDUCTORS) -->
+      <section class="tab-content" id="view-drivers">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="tabDrivers">Conductores de la Flota</h2>
+          </div>
+          <button class="btn-primary" id="btn-add-driver">
+            <span>+</span> <span data-i18n="btnNewDriver">Nou Conductor</span>
+          </button>
+        </div>
+
+        <!-- Drivers KPI Cards -->
+        <div class="kpi-grid" id="drivers-kpi-grid" style="margin-bottom: 1.25rem;">
+          <div class="kpi-card success">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiTotalDrivers">Conductores Totals</span>
+              <span class="kpi-icon">👥</span>
+            </div>
+            <div class="kpi-value" id="kpi-total-drivers">0</div>
+            <p data-i18n="kpiTotalDriversDesc">Personal de conducció registrat a la flota</p>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiAssignedDrivers">Amb Vehicle Assignat</span>
+              <span class="kpi-icon">🚗</span>
+            </div>
+            <div class="kpi-value" id="kpi-assigned-drivers">0</div>
+            <p data-i18n="kpiAssignedDriversDesc">Conductores vinculats actualment a un vehicle</p>
+          </div>
+
+          <div class="kpi-card warning">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiUnassignedDrivers">Sense Vehicle Assignat</span>
+              <span class="kpi-icon">📋</span>
+            </div>
+            <div class="kpi-value" id="kpi-unassigned-drivers">0</div>
+            <p data-i18n="kpiUnassignedDriversDesc">Conductores disponibles per a assignació</p>
+          </div>
+        </div>
+
+        <!-- View mode switcher for Drivers (Cards Default) -->
+        <div class="view-mode-bar">
+          <div class="view-mode-switcher" data-target="drivers">
+            <button type="button" class="view-mode-btn active" data-mode="cards">
+              <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+            </button>
+            <button type="button" class="view-mode-btn" data-mode="table">
+              <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards Feed for Drivers (Default) -->
+        <div class="mobile-cards-feed" id="drivers-cards-feed"></div>
+
+        <!-- Table View for Drivers -->
+        <div class="table-container" id="drivers-table-container" style="display: none;">
+          <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="colDriver">Conductor</th>
+                <th data-i18n="colLicenseNumber">Permís de Conduir</th>
+                <th data-i18n="colPhone">Telèfon</th>
+                <th data-i18n="colEmail">Correu Electrònic</th>
+                <th data-i18n="colAssignedVehicle">Vehicle Assignat</th>
+                <th data-i18n="colStatus">Estat</th>
+              </tr>
+            </thead>
+            <tbody id="drivers-table-body">
               <!-- Rendered dynamically after login -->
             </tbody>
           </table>
@@ -2133,6 +2329,85 @@
         </div>
       </section>
 
+      <!-- 5. TRAFFIC FINES VIEW (GESTIÓ DE MULTES I SANCIONS) -->
+      <section class="tab-content" id="view-fines">
+        <div class="section-header">
+          <div>
+            <h2 data-i18n="tabFines">Multes i Sancions de Trànsit</h2>
+          </div>
+          <button class="btn-primary" id="btn-add-fine">
+            <span>+</span> <span data-i18n="btnNewFine">Registrar Nova Multa</span>
+          </button>
+        </div>
+
+        <!-- Fines KPI Cards -->
+        <div class="kpi-grid" id="fines-kpi-grid" style="margin-bottom: 1.25rem;">
+          <div class="kpi-card danger">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiTotalFines">Multes Totals</span>
+              <span class="kpi-icon">🚨</span>
+            </div>
+            <div class="kpi-value" id="kpi-total-fines">0</div>
+            <p data-i18n="kpiTotalFinesDesc">Expedients sancionadors registrats</p>
+          </div>
+
+          <div class="kpi-card warning">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiPendingFines">Pendents de Pagament</span>
+              <span class="kpi-icon">⏳</span>
+            </div>
+            <div class="kpi-value" id="kpi-pending-fines">0</div>
+            <p data-i18n="kpiPendingFinesDesc">Sancions pendents d'abonar o recórrer</p>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span class="kpi-title" data-i18n="kpiTotalFinesAmount">Import Total Sancions</span>
+              <span class="kpi-icon">💶</span>
+            </div>
+            <div class="kpi-value" id="kpi-total-fines-amount">0,00 €</div>
+            <p data-i18n="kpiTotalFinesAmountDesc">Volum econòmic total de multes</p>
+          </div>
+        </div>
+
+        <!-- View mode switcher for Fines (Cards Default) -->
+        <div class="view-mode-bar">
+          <div class="view-mode-switcher" data-target="fines">
+            <button type="button" class="view-mode-btn active" data-mode="cards">
+              <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+            </button>
+            <button type="button" class="view-mode-btn" data-mode="table">
+              <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards Feed for Fines (Default) -->
+        <div class="mobile-cards-feed" id="fines-cards-feed"></div>
+
+        <!-- Table View for Fines -->
+        <div class="table-container" id="fines-table-container" style="display: none;">
+          <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th data-i18n="colDate">Data</th>
+                <th data-i18n="colVehicle">Vehicle</th>
+                <th data-i18n="colDriver">Conductor</th>
+                <th data-i18n="colFineReason">Motiu de la Infracció</th>
+                <th data-i18n="colFineAmount">Import (€)</th>
+                <th data-i18n="colFineOrganism">Organisme Emissor</th>
+                <th data-i18n="colStatus">Estat</th>
+                <th data-i18n="colActions">Accions</th>
+              </tr>
+            </thead>
+            <tbody id="fines-table-body">
+              <!-- Rendered dynamically after login -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -2213,6 +2488,14 @@
                 <option value="OUT_OF_SERVICE" data-i18n="status_out_of_service">Fora de Servei</option>
               </select>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-driver" data-i18n="colAssignedDriver">Conductor Assignat</label>
+            <select id="veh-driver">
+              <option value="" data-i18n="optNoDriver">-- Sense conductor assignat --</option>
+              <!-- Filled dynamically with drivers -->
+            </select>
           </div>
 
           <div class="form-group">
@@ -2346,6 +2629,127 @@
           <div class="form-group">
             <label for="fuel-notes" data-i18n="inputNotesLabel">Observacions addicionals</label>
             <input type="text" id="fuel-notes" placeholder="Ex: Proveïment retorn centre logístic..." />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close-modal data-i18n="modalCancelBtn">Cancel·lar</button>
+          <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Nou Conductor -->
+  <div class="modal-backdrop" id="modal-driver">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalNewDriverTitle">Registrar Nou Conductor</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <form id="form-new-driver">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="driver-name" data-i18n="inputDriverNameLabel">Nom i Cognoms</label>
+              <input type="text" id="driver-name" placeholder="Ex: Joan Martí Ferrer" required />
+            </div>
+            <div class="form-group">
+              <label for="driver-username" data-i18n="inputUsernameLabel">Nom d'usuari per a login</label>
+              <input type="text" id="driver-username" placeholder="Ex: driver_joan" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="driver-email" data-i18n="colEmail">Correu Electrònic</label>
+              <input type="email" id="driver-email" placeholder="joan.marti@empresa.com" required />
+            </div>
+            <div class="form-group">
+              <label for="driver-phone" data-i18n="colPhone">Telèfon de Contacte</label>
+              <input type="tel" id="driver-phone" placeholder="+34 612 345 678" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="driver-license" data-i18n="inputLicenseLabel">Permís de Conduir / Llicència</label>
+              <input type="text" id="driver-license" placeholder="B-12345678" required />
+            </div>
+            <div class="form-group">
+              <label for="driver-assigned-veh" data-i18n="inputAssignedVehicleLabel">Vehicle Assignat (Opcional)</label>
+              <select id="driver-assigned-veh">
+                <option value="" data-i18n="optNoVehicle">-- Sense vehicle assignat inicialment --</option>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-close-modal data-i18n="modalCancelBtn">Cancel·lar</button>
+          <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Nova Multa / Sanció -->
+  <div class="modal-backdrop" id="modal-fine">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalNewFineTitle">Registrar Nova Multa de Trànsit</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <form id="form-new-fine">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fine-veh" data-i18n="colVehicle">Vehicle Involucrat</label>
+              <select id="fine-veh" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fine-driver" data-i18n="colDriver">Conductor Responsable</label>
+              <select id="fine-driver" required>
+                <!-- Populated dynamically with drivers -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fine-date" data-i18n="colDate">Data de la Infracció</label>
+              <input type="date" id="fine-date" required />
+            </div>
+            <div class="form-group">
+              <label for="fine-amount" data-i18n="inputFineAmountLabel">Import de la Multa (€)</label>
+              <input type="number" id="fine-amount" step="0.01" min="1" placeholder="100.00" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fine-reason" data-i18n="inputFineReasonLabel">Motiu de la Infracció</label>
+            <input type="text" id="fine-reason" placeholder="Ex: Excés de velocitat (radar fix A-7 km 342)" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fine-organism" data-i18n="inputFineOrganismLabel">Organisme Emissor</label>
+              <input type="text" id="fine-organism" placeholder="Ex: DGT / Ajuntament de València" required />
+            </div>
+            <div class="form-group">
+              <label for="fine-status" data-i18n="colStatus">Estat del Pagament</label>
+              <select id="fine-status" required>
+                <option value="PENDING" data-i18n="fine_status_pending">Pendent</option>
+                <option value="PAID" data-i18n="fine_status_paid">Pagada</option>
+                <option value="APPEALED" data-i18n="fine_status_appealed">Recorreguda</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fine-notes" data-i18n="inputNotesLabel">Observacions o Núm. Expedient</label>
+            <textarea id="fine-notes" rows="2" placeholder="Núm. expedient sancionador, al·legacions..."></textarea>
           </div>
         </div>
         <div class="modal-footer">

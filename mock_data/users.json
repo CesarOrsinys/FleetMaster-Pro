@@ -34,13 +34,41 @@
     "username": "conductor_joan",
     "email": "joan@valenciatrans.es",
     "passwordHash": "$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2",
-    "fullName": "Joan Fuster (Conductor)",
+    "fullName": "Joan Fuster",
     "role": "DRIVER",
     "phone": "+34622334455",
     "licenseNumber": "B-87654321",
     "active": true,
     "createdAt": "2026-01-12T10:00:00.000Z",
     "updatedAt": "2026-01-12T10:00:00.000Z"
+  },
+  {
+    "id": "usr_driver_marta",
+    "tenantId": "tenant_valencia",
+    "username": "conductora_marta",
+    "email": "marta@valenciatrans.es",
+    "passwordHash": "$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2",
+    "fullName": "Marta Navarro",
+    "role": "DRIVER",
+    "phone": "+34655443322",
+    "licenseNumber": "B-55443322",
+    "active": true,
+    "createdAt": "2026-02-01T09:00:00.000Z",
+    "updatedAt": "2026-02-01T09:00:00.000Z"
+  },
+  {
+    "id": "usr_driver_pau",
+    "tenantId": "tenant_valencia",
+    "username": "conductor_pau",
+    "email": "pau@valenciatrans.es",
+    "passwordHash": "$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2",
+    "fullName": "Pau Beltran",
+    "role": "DRIVER",
+    "phone": "+34699887766",
+    "licenseNumber": "B-99887766",
+    "active": true,
+    "createdAt": "2026-03-05T11:00:00.000Z",
+    "updatedAt": "2026-03-05T11:00:00.000Z"
   },
   {
     "id": "usr_admin_med",
@@ -55,5 +83,19 @@
     "active": true,
     "createdAt": "2026-02-15T11:00:00.000Z",
     "updatedAt": "2026-02-15T11:00:00.000Z"
+  },
+  {
+    "id": "usr_driver_sergi",
+    "tenantId": "tenant_med",
+    "username": "conductor_sergi",
+    "email": "sergi@medfleet.com",
+    "passwordHash": "$2b$10$5LC9PvTJeOeHSEZws.yXzOcvE3gLy32rDo3S.1ONQ/SanRVe86Xh2",
+    "fullName": "Sergi Puig",
+    "role": "DRIVER",
+    "phone": "+34677889900",
+    "licenseNumber": "B-77889900",
+    "active": true,
+    "createdAt": "2026-02-20T10:00:00.000Z",
+    "updatedAt": "2026-02-20T10:00:00.000Z"
   }
 ]

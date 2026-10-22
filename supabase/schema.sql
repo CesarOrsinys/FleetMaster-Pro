@@ -157,6 +157,26 @@ CREATE TABLE fuel_mileage_logs (
 );
 
 -- ============================================================================
+-- 7B. TABLE: TRAFFIC_FINES (Multas y Sanciones de Tráfico)
+-- ============================================================================
+CREATE TYPE fine_status_enum AS ENUM ('PENDING', 'PAID', 'APPEALED');
+
+CREATE TABLE traffic_fines (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  tenant_id TEXT NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  vehicle_id TEXT NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
+  driver_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  date DATE NOT NULL,
+  reason TEXT NOT NULL,
+  amount_eur NUMERIC(10, 2) NOT NULL CHECK (amount_eur > 0),
+  status fine_status_enum NOT NULL DEFAULT 'PENDING',
+  fine_reference VARCHAR(100),
+  organism VARCHAR(150),
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- ============================================================================
 -- 8. INDEXES FOR HIGH-PERFORMANCE MULTI-TENANCY
 -- ============================================================================
 CREATE INDEX idx_users_tenant ON users(tenant_id);
@@ -167,6 +187,9 @@ CREATE INDEX idx_maintenance_tenant ON maintenance_records(tenant_id);
 CREATE INDEX idx_maintenance_vehicle ON maintenance_records(vehicle_id);
 CREATE INDEX idx_fuel_tenant ON fuel_mileage_logs(tenant_id);
 CREATE INDEX idx_fuel_vehicle ON fuel_mileage_logs(vehicle_id);
+CREATE INDEX idx_fines_tenant ON traffic_fines(tenant_id);
+CREATE INDEX idx_fines_vehicle ON traffic_fines(vehicle_id);
+CREATE INDEX idx_fines_driver ON traffic_fines(driver_id);
 
 -- ============================================================================
 -- 9. ROW LEVEL SECURITY (RLS) POLICIES
@@ -176,6 +199,7 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE vehicles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE maintenance_records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE fuel_mileage_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE traffic_fines ENABLE ROW LEVEL SECURITY;
 
 -- Helper function to extract tenant_id from auth claim or session variable
 CREATE OR REPLACE FUNCTION get_current_tenant_id() RETURNS TEXT AS $$
@@ -203,6 +227,9 @@ CREATE POLICY "Maintenance tenant isolation" ON maintenance_records
 CREATE POLICY "Fuel logs tenant isolation" ON fuel_mileage_logs
   FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin');
 
+CREATE POLICY "Traffic fines tenant isolation" ON traffic_fines
+  FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin');
+
 -- ============================================================================
 -- 10. SEED DATA (ENTORNOS DE PRUEBA Y DEMOSTRACIÓN)
 -- ============================================================================
@@ -218,15 +245,18 @@ INSERT INTO tenants (id, code, name, cif, primary_color, active) VALUES
 INSERT INTO users (id, tenant_id, username, email, password_hash, full_name, role, phone, license_number, active) VALUES
   ('usr_super', NULL, 'superadmin', 'superadmin@fleetmaster.pro', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Super Administrador Global', 'SUPERADMIN', '+34600000000', 'B-00000000', true),
   ('usr_admin_val', 'tenant_valencia', 'admin_valencia', 'admin@valenciatrans.es', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Yris Orsinys (Cap de Flota)', 'TENANT_ADMIN', '+34611223344', 'B-12345678', true),
-  ('usr_driver_joan', 'tenant_valencia', 'conductor_joan', 'joan@valenciatrans.es', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Joan Fuster (Conductor)', 'DRIVER', '+34622334455', 'B-87654321', true),
-  ('usr_admin_med', 'tenant_med', 'admin_med', 'admin@medfleet.com', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Carles Gómez (Director Flota Med)', 'TENANT_ADMIN', '+34633445566', 'B-33445566', true);
+  ('usr_driver_joan', 'tenant_valencia', 'conductor_joan', 'joan@valenciatrans.es', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Joan Martí (Conductor)', 'DRIVER', '+34622334455', 'B-87654321', true),
+  ('usr_driver_marta', 'tenant_valencia', 'marta_soler', 'marta.soler@valenciatrans.es', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Marta Soler (Conductora)', 'DRIVER', '+34644556677', 'B-44556677', true),
+  ('usr_driver_pau', 'tenant_valencia', 'pau_ribes', 'pau.ribes@valenciatrans.es', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Pau Ribes (Conductor)', 'DRIVER', '+34655667788', 'B-55667788', true),
+  ('usr_admin_med', 'tenant_med', 'admin_med', 'admin@medfleet.com', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Carles Gómez (Director Flota Med)', 'TENANT_ADMIN', '+34633445566', 'B-33445566', true),
+  ('usr_driver_sergi', 'tenant_med', 'sergi_llopis', 'sergi@medfleet.com', '$2b$10$o.cT9e4s9Z609/J8F550mep.gS.zPj.Vw3jXW5M/y8sN4vP5N1/yW', 'Sergi Llopis (Conductor)', 'DRIVER', '+34666778899', 'B-66778899', true);
 
--- Vehículos Iniciales
+-- Vehículos Iniciales (con Conductor Asignado por Vehículo)
 INSERT INTO vehicles (id, tenant_id, license_plate, make, model, year, vin, fuel_type, current_odometer_km, status, assigned_driver_id, itv_expiration_date, next_maintenance_km, next_maintenance_date, notes) VALUES
   ('veh_101', 'tenant_valencia', '4589-LDR', 'Renault', 'Trafic 2.0 dCi', 2022, 'VF1FL000012345678', 'DIESEL', 84500, 'ACTIVE', 'usr_driver_joan', '2026-11-15', 90000, '2026-12-01', 'Furgoneta principal de repartiment València - Castelló'),
-  ('veh_102', 'tenant_valencia', '7812-MMK', 'Toyota', 'Proace Electric', 2023, 'VNKFL123498765432', 'ELECTRIC', 32400, 'ACTIVE', NULL, '2027-03-20', 45000, '2027-01-15', 'Vehicle 100% elèctric urbà per al centre històric'),
-  ('veh_103', 'tenant_valencia', '1945-KBC', 'Peugeot', 'Partner 1.5 BlueHDi', 2020, 'VF37J000055443322', 'DIESEL', 142100, 'MAINTENANCE', NULL, '2026-10-30', 150000, '2026-11-05', 'En taller per canvi de pastilles i revisió ITV urgent'),
-  ('veh_201', 'tenant_med', '6523-MTR', 'Mercedes-Benz', 'Sprinter 314 CDI', 2023, 'WDB9061234123456', 'DIESEL', 56200, 'ACTIVE', NULL, '2027-05-10', 60000, '2027-06-01', 'Flota Mediterrània - Rutes llargues');
+  ('veh_102', 'tenant_valencia', '7812-MMK', 'Toyota', 'Proace Electric', 2023, 'VNKFL123498765432', 'ELECTRIC', 32400, 'ACTIVE', 'usr_driver_marta', '2027-03-20', 45000, '2027-01-15', 'Vehicle 100% elèctric urbà per al centre històric'),
+  ('veh_103', 'tenant_valencia', '1945-KBC', 'Peugeot', 'Partner 1.5 BlueHDi', 2020, 'VF37J000055443322', 'DIESEL', 142100, 'MAINTENANCE', 'usr_driver_pau', '2026-10-30', 150000, '2026-11-05', 'En taller per canvi de pastilles i revisió ITV urgent'),
+  ('veh_201', 'tenant_med', '6523-MTR', 'Mercedes-Benz', 'Sprinter 314 CDI', 2023, 'WDB9061234123456', 'DIESEL', 56200, 'ACTIVE', 'usr_driver_sergi', '2027-05-10', 60000, '2027-06-01', 'Flota Mediterrània - Rutes llargues');
 
 -- Mantenimientos Iniciales
 INSERT INTO maintenance_records (id, tenant_id, vehicle_id, type, status, scheduled_date, completed_date, odometer_at_service_km, cost_eur, workshop_name, notes, created_by) VALUES
@@ -238,3 +268,10 @@ INSERT INTO maintenance_records (id, tenant_id, vehicle_id, type, status, schedu
 INSERT INTO fuel_mileage_logs (id, tenant_id, vehicle_id, driver_id, date, odometer_km, liters, cost_eur, fuel_station, notes) VALUES
   ('fuel_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-02', 83800, 62.40, 93.60, 'Repsol Viver / Segorbe', 'Proveïment complet dièsel ruta A-23'),
   ('fuel_002', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-14', 84500, 58.10, 87.15, 'Cepsa Castelló Sud', 'Proveïment retorn centre logístic');
+
+-- Sanciones y Multas de Tráfico Iniciales
+INSERT INTO traffic_fines (id, tenant_id, vehicle_id, driver_id, date, reason, amount_eur, status, fine_reference, organism, notes) VALUES
+  ('fine_001', 'tenant_valencia', 'veh_101', 'usr_driver_joan', '2026-10-05', 'Excés de velocitat en tram interurbà (88 km/h en zona 70 km/h)', 100.00, 'PENDING', 'DGT-2026-98124', 'DGT Trànsit València', 'Notificació rebuda per correu certificat. Descompte del 50% disponible per pagament ràpid.'),
+  ('fine_002', 'tenant_valencia', 'veh_103', 'usr_driver_pau', '2026-09-18', 'Estacionament indegut en zona de càrrega i descàrrega fora d horari', 90.00, 'PAID', 'AJV-2026-44120', 'Policia Local de València', 'Abonada via passarel·la telemàtica amb targeta d empresa amb el 50% de reducció (45,00 €).'),
+  ('fine_003', 'tenant_valencia', 'veh_102', 'usr_driver_marta', '2026-10-12', 'Accés no autoritzat a zona de baixes emissions (ZBE)', 200.00, 'APPEALED', 'AJV-2026-55901', 'Ajuntament de València (Mobilitat)', 'Al·legació presentada presentant distintiu ambiental 0 Emissions del vehicle elèctric.'),
+  ('fine_004', 'tenant_med', 'veh_201', 'usr_driver_sergi', '2026-09-25', 'No respectar senyal d obligació en intersecció', 80.00, 'PAID', 'DGT-2026-11234', 'DGT Alacant', 'Pagada per l empresa sense recàrrec.');

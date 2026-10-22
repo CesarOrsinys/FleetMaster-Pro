@@ -1,0 +1,58 @@
+[
+  {
+    "id": "fine_val_001",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_101",
+    "driverId": "usr_driver_joan",
+    "date": "2026-10-08",
+    "reason": "Excedir límit de velocitat (68 km/h en tram limitat a 50 km/h).",
+    "amountEur": 100.00,
+    "status": "PENDING",
+    "fineReference": "EXP-2026-8841-DGT",
+    "organism": "DGT - Direcció General de Trànsit",
+    "notes": "Notificada via DEHú. Descompte 50% per pagament ràpid en 20 dies.",
+    "createdAt": "2026-10-09T08:30:00.000Z"
+  },
+  {
+    "id": "fine_val_002",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_101",
+    "driverId": "usr_driver_joan",
+    "date": "2026-09-18",
+    "reason": "Estacionament indegut en carril reservat per a bus i taxi.",
+    "amountEur": 200.00,
+    "status": "PAID",
+    "fineReference": "PLV-77412-2026",
+    "organism": "Policia Local de València",
+    "notes": "Pagada el 25/09/2026 amb bonificació del 50% (100 € abonats pel departament d'administració).",
+    "createdAt": "2026-09-19T10:15:00.000Z"
+  },
+  {
+    "id": "fine_val_003",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_103",
+    "driverId": "usr_driver_pau",
+    "date": "2026-10-04",
+    "reason": "Accés no autoritzat a Zona de Baixes Emissions (ZBE) sense distintiu ambiental adequat.",
+    "amountEur": 200.00,
+    "status": "APPEALED",
+    "fineReference": "ZBE-VLC-2026-0914",
+    "organism": "Ajuntament de València - Mobilitat",
+    "notes": "Recurs presentat demostrant autorització temporal de càrrega i descàrrega.",
+    "createdAt": "2026-10-05T12:00:00.000Z"
+  },
+  {
+    "id": "fine_med_001",
+    "tenantId": "tenant_med",
+    "vehicleId": "veh_201",
+    "driverId": "usr_driver_sergi",
+    "date": "2026-09-22",
+    "reason": "No respectar la distància de seguretat entre vehicles pesants.",
+    "amountEur": 150.00,
+    "status": "PAID",
+    "fineReference": "MED-SANC-2026-102",
+    "organism": "Servei Català de Trànsit",
+    "notes": "Tram AP-7 km 241.",
+    "createdAt": "2026-09-23T14:00:00.000Z"
+  }
+]
