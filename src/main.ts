@@ -1,4 +1,5 @@
 import { LanguageManager } from './ui/i18n/LanguageManager.js';
+import { LoadingService } from './ui/services/LoadingService.js';
 import { Vehicle } from './core/domain/Vehicle.js';
 import { MaintenanceRecord } from './core/domain/MaintenanceRecord.js';
 import { FuelLog } from './core/domain/FuelLog.js';
@@ -22,6 +23,9 @@ class AppController {
   private cachedFuelLogs: FuelLog[] = [];
 
   public init(): void {
+    // 0. Initialize Global HTTP Service Loader (Car Spinner)
+    LoadingService.init();
+
     // 1. Initialize Strict i18n and Custom Language Selector
     LanguageManager.init();
 

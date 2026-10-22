@@ -255,7 +255,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblItvInfo: "Dades de la Inspecció Tècnica (ITV)",
     lblTechnicalNotes: "Observacions Tècniques del Vehicle",
     btnScheduleService: "Programar Intervenció",
-    btnClose: "Tancar"
+    btnClose: "Tancar",
+
+    // Global Service Loader
+    loadingServiceText: "Carregant dades del servei..."
   },
 
   es: {
@@ -492,7 +495,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblItvInfo: "Datos de la Inspección Técnica (ITV)",
     lblTechnicalNotes: "Observaciones Técnicas del Vehículo",
     btnScheduleService: "Programar Intervención",
-    btnClose: "Cerrar"
+    btnClose: "Cerrar",
+
+    // Global Service Loader
+    loadingServiceText: "Cargando datos del servicio..."
   },
 
   en: {
@@ -729,7 +735,10 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     lblItvInfo: "Technical Inspection (MOT) Data",
     lblTechnicalNotes: "Vehicle Technical Observations",
     btnScheduleService: "Schedule Service",
-    btnClose: "Close"
+    btnClose: "Close",
+
+    // Global Service Loader
+    loadingServiceText: "Loading service data..."
   }
 };
 
