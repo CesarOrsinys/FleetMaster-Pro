@@ -225,15 +225,19 @@
 
     .login-top-bar {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 1rem;
+      gap: 0.75rem;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .login-brand {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex: 1;
+      min-width: 0;
     }
 
     .login-badge {
@@ -247,6 +251,12 @@
       justify-content: center;
       font-size: 1.4rem;
       box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+      flex-shrink: 0;
+    }
+
+    .login-title-group {
+      flex: 1;
+      min-width: 0;
     }
 
     .login-title-group h1 {
@@ -257,12 +267,18 @@
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      flex-wrap: wrap;
     }
 
     .login-title-group p {
       font-size: 0.8rem;
       color: var(--slate-500);
       margin-top: 2px;
+      word-break: break-word;
+    }
+
+    #login-lang-selector {
+      flex-shrink: 0;
     }
 
     .login-error-banner {
@@ -1557,6 +1573,56 @@
        MOBILE RESPONSIVE (STAFF-INCIDENTS-MANAGER ARCHITECTURE)
        ------------------------------------------------------------- */
     @media (max-width: 768px) {
+      /* LOGIN VIEW MOBILE RESPONSIVE */
+      #view-login {
+        padding: 1rem 0.75rem !important;
+      }
+
+      .login-card {
+        padding: 1.5rem 1.25rem !important;
+        gap: 1.25rem !important;
+        max-width: 100% !important;
+        border-radius: var(--radius-md) !important;
+        box-sizing: border-box !important;
+      }
+
+      .login-top-bar {
+        gap: 0.5rem !important;
+      }
+
+      .login-brand {
+        gap: 0.6rem !important;
+      }
+
+      .login-badge {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 1.2rem !important;
+      }
+
+      .login-title-group h1 {
+        font-size: 1.05rem !important;
+      }
+
+      .login-title-group p {
+        font-size: 0.72rem !important;
+        line-height: 1.3 !important;
+      }
+
+      #login-lang-selector .lang-select-btn {
+        height: 34px !important;
+        padding: 0 8px !important;
+        font-size: 0.78rem !important;
+        gap: 5px !important;
+      }
+
+      #login-lang-selector .lang-dropdown-panel {
+        right: 0 !important;
+        left: auto !important;
+        min-width: 155px !important;
+        max-width: calc(100vw - 32px) !important;
+      }
+
       /* HEADER: 2 CLEAN ROWS (LOGO ON TOP, ACTIONS BELOW) */
       header.app-header {
         height: auto !important;
@@ -1746,6 +1812,24 @@
 
       .sub-section-card {
         padding: 1rem 0.85rem;
+      }
+
+      /* Micro-mobile (< 400px) login alignment */
+      @media (max-width: 400px) {
+        .login-card {
+          padding: 1.25rem 1rem !important;
+        }
+
+        .login-top-bar {
+          flex-direction: column !important;
+          align-items: stretch !important;
+          gap: 0.65rem !important;
+        }
+
+        .login-top-bar #login-lang-selector {
+          align-self: flex-end !important;
+          order: -1 !important;
+        }
       }
     }
 
