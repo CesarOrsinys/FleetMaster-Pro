@@ -230,4 +230,32 @@ describe('FleetMaster-Pro - Domain, Security & i18n Test Suite', () => {
     });
   });
 
+  describe('5. Passport Authentication & Credential Security', () => {
+    it('Should encrypt username and password into an opaque Passport without exposing credentials', async () => {
+      const { PassportCrypto } = await import('../../src/core/security/PassportCrypto.js');
+      const credentials = { username: 'admin_valencia', password: 'SuperSecretPassword2026!' };
+
+      const passport = await PassportCrypto.createAuthPassport(credentials);
+
+      assert.strictEqual(typeof passport, 'string');
+      assert.strictEqual(passport.startsWith('FM_PASS_v1_'), true);
+      assert.strictEqual(passport.includes('admin_valencia'), false, 'Username must NOT appear in encrypted passport');
+      assert.strictEqual(passport.includes('SuperSecretPassword2026!'), false, 'Password must NOT appear in encrypted passport');
+
+      const decrypted = await PassportCrypto.decryptAuthPassport(passport);
+      assert.ok(decrypted, 'Valid passport must decrypt successfully');
+      assert.strictEqual(decrypted?.username, 'admin_valencia');
+      assert.strictEqual(decrypted?.password, 'SuperSecretPassword2026!');
+      assert.strictEqual(typeof decrypted?.timestamp, 'number');
+    });
+
+    it('Should reject tampered or corrupted passport tokens', async () => {
+      const { PassportCrypto } = await import('../../src/core/security/PassportCrypto.js');
+      const forged = 'FM_PASS_v1_dGFtcGVyZWRfaW52YWxpZF9kYXRh';
+      const result = await PassportCrypto.decryptAuthPassport(forged);
+      assert.strictEqual(result, null, 'Tampered passport must be safely rejected with null');
+    });
+  });
+
 });
+

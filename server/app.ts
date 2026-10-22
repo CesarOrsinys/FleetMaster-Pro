@@ -1,8 +1,12 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { RepositoryContainer } from '../src/adapters/infrastructure/di/RepositoryContainer.js';
+import { PassportCrypto } from '../src/core/security/PassportCrypto.js';
 import { VehicleSchema } from '../src/core/domain/Vehicle.js';
 import { MaintenanceRecordSchema } from '../src/core/domain/MaintenanceRecord.js';
 import { FuelLogSchema } from '../src/core/domain/FuelLog.js';
@@ -45,10 +49,21 @@ app.get('/api/keepalive', async (_req: Request, res: Response) => {
 });
 
 
-// Authentication endpoint
+// Authentication endpoint with Passport Encryption & Resilient Serverless Execution
 app.post('/api/auth/login', async (req: Request, res: Response) => {
   try {
-    const { username, password } = req.body;
+    let { username, password, passport } = req.body;
+
+    // 1. Decrypt Passport if provided (protecting credentials from network inspection)
+    if (passport) {
+      const decrypted = await PassportCrypto.decryptAuthPassport(passport);
+      if (!decrypted) {
+        return res.status(401).json({ error: 'Pasaporte de autenticación inválido o caducado', code: 'loginErrorInvalid' });
+      }
+      username = decrypted.username;
+      password = decrypted.password;
+    }
+
     if (!username || !password) {
       return res.status(400).json({ error: 'Username and password required', code: 'error_required_fields' });
     }
@@ -65,7 +80,12 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials', code: 'loginErrorInvalid' });
     }
 
-    await userRepo.updateLastLogin(user.id);
+    // Safely attempt last login update (does not crash on read-only serverless filesystems)
+    try {
+      await userRepo.updateLastLogin(user.id);
+    } catch (updateErr) {
+      console.warn('[Auth] Non-fatal: could not persist last_login timestamp:', (updateErr as Error).message);
+    }
 
     const token = jwt.sign(
       {
@@ -81,6 +101,7 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
     const { passwordHash, ...safeUser } = user;
     return res.json({ token, user: safeUser });
   } catch (err: any) {
+    console.error('[Auth Error 500 caught]:', err);
     return res.status(500).json({ error: err.message || 'Internal server error', code: 'error_internal' });
   }
 });

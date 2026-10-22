@@ -10,20 +10,29 @@ export class JsonMaintenanceRepository implements IMaintenanceRepository {
     this.filePath = filePath || path.join(process.cwd(), 'mock_data', 'maintenance_records.json');
   }
 
+  private inMemoryRecords: MaintenanceRecord[] | null = null;
+
   private readData(): MaintenanceRecord[] {
+    if (this.inMemoryRecords) return this.inMemoryRecords;
     try {
       if (!fs.existsSync(this.filePath)) return [];
       const content = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(content);
+      this.inMemoryRecords = JSON.parse(content);
+      return this.inMemoryRecords || [];
     } catch {
       return [];
     }
   }
 
   private writeData(data: MaintenanceRecord[]): void {
-    const dir = path.dirname(this.filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    this.inMemoryRecords = data;
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[JsonMaintenanceRepository] Filesystem read-only, updated in-memory state:', (e as Error).message);
+    }
   }
 
   async findByTenant(tenantId: string): Promise<MaintenanceRecord[]> {

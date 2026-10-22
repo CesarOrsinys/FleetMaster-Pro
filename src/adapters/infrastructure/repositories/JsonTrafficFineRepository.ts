@@ -10,20 +10,29 @@ export class JsonTrafficFineRepository implements ITrafficFineRepository {
     this.filePath = filePath || path.join(process.cwd(), 'mock_data', 'traffic_fines.json');
   }
 
+  private inMemoryFines: TrafficFine[] | null = null;
+
   private readData(): TrafficFine[] {
+    if (this.inMemoryFines) return this.inMemoryFines;
     try {
       if (!fs.existsSync(this.filePath)) return [];
       const content = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(content);
+      this.inMemoryFines = JSON.parse(content);
+      return this.inMemoryFines || [];
     } catch {
       return [];
     }
   }
 
   private writeData(data: TrafficFine[]): void {
-    const dir = path.dirname(this.filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    this.inMemoryFines = data;
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[JsonTrafficFineRepository] Filesystem read-only, updated in-memory state:', (e as Error).message);
+    }
   }
 
   async findByTenant(tenantId: string): Promise<TrafficFine[]> {

@@ -10,20 +10,29 @@ export class JsonFuelLogRepository implements IFuelLogRepository {
     this.filePath = filePath || path.join(process.cwd(), 'mock_data', 'fuel_mileage_logs.json');
   }
 
+  private inMemoryLogs: FuelLog[] | null = null;
+
   private readData(): FuelLog[] {
+    if (this.inMemoryLogs) return this.inMemoryLogs;
     try {
       if (!fs.existsSync(this.filePath)) return [];
       const content = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(content);
+      this.inMemoryLogs = JSON.parse(content);
+      return this.inMemoryLogs || [];
     } catch {
       return [];
     }
   }
 
   private writeData(data: FuelLog[]): void {
-    const dir = path.dirname(this.filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    this.inMemoryLogs = data;
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[JsonFuelLogRepository] Filesystem read-only, updated in-memory state:', (e as Error).message);
+    }
   }
 
   async findByTenant(tenantId: string): Promise<FuelLog[]> {

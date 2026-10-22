@@ -218,6 +218,14 @@ CREATE POLICY "Tenants isolation" ON tenants
 CREATE POLICY "Users tenant isolation" ON users
   FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin');
 
+-- Allow anon client to query active users for login verification
+CREATE POLICY "Users anon login lookup" ON users
+  FOR SELECT TO anon USING (active = true);
+
+-- Allow anon client to read active tenants for login company selection
+CREATE POLICY "Tenants anon selection" ON tenants
+  FOR SELECT TO anon USING (active = true);
+
 CREATE POLICY "Vehicles tenant isolation" ON vehicles
   FOR ALL USING (tenant_id = get_current_tenant_id() OR get_current_tenant_id() = 'superadmin');
 

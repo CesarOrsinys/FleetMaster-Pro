@@ -10,20 +10,29 @@ export class JsonTenantRepository implements ITenantRepository {
     this.filePath = filePath || path.join(process.cwd(), 'mock_data', 'tenants.json');
   }
 
+  private inMemoryTenants: Tenant[] | null = null;
+
   private readData(): Tenant[] {
+    if (this.inMemoryTenants) return this.inMemoryTenants;
     try {
       if (!fs.existsSync(this.filePath)) return [];
       const content = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(content);
+      this.inMemoryTenants = JSON.parse(content);
+      return this.inMemoryTenants || [];
     } catch {
       return [];
     }
   }
 
   private writeData(data: Tenant[]): void {
-    const dir = path.dirname(this.filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    this.inMemoryTenants = data;
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[JsonTenantRepository] Filesystem read-only, updated in-memory state:', (e as Error).message);
+    }
   }
 
   async findAll(): Promise<Tenant[]> {

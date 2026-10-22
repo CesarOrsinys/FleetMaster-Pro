@@ -1,5 +1,6 @@
 import { LanguageManager } from './ui/i18n/LanguageManager.js';
 import { LoadingService } from './ui/services/LoadingService.js';
+import { PassportCrypto } from './core/security/PassportCrypto.js';
 import { Vehicle } from './core/domain/Vehicle.js';
 import { MaintenanceRecord } from './core/domain/MaintenanceRecord.js';
 import { FuelLog } from './core/domain/FuelLog.js';
@@ -344,10 +345,14 @@ class AppController {
     }
 
     try {
+      // 1. Generate encrypted Auth Passport (AES-256-GCM envelope)
+      // Cleartext username and password are NEVER transmitted in the request payload
+      const passport = await PassportCrypto.createAuthPassport({ username, password });
+
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ passport })
       });
 
       const data = await res.json().catch(() => null);

@@ -10,20 +10,29 @@ export class JsonVehicleRepository implements IVehicleRepository {
     this.filePath = filePath || path.join(process.cwd(), 'mock_data', 'vehicles.json');
   }
 
+  private inMemoryVehicles: Vehicle[] | null = null;
+
   private readData(): Vehicle[] {
+    if (this.inMemoryVehicles) return this.inMemoryVehicles;
     try {
       if (!fs.existsSync(this.filePath)) return [];
       const content = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(content);
+      this.inMemoryVehicles = JSON.parse(content);
+      return this.inMemoryVehicles || [];
     } catch {
       return [];
     }
   }
 
   private writeData(data: Vehicle[]): void {
-    const dir = path.dirname(this.filePath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    this.inMemoryVehicles = data;
+    try {
+      const dir = path.dirname(this.filePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (e) {
+      console.warn('[JsonVehicleRepository] Filesystem read-only, updated in-memory state:', (e as Error).message);
+    }
   }
 
   async findByTenant(tenantId: string): Promise<Vehicle[]> {
