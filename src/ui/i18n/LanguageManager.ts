@@ -197,7 +197,41 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     error_unauthorized: "Sessió caducada o credencials no vàlides.",
     error_required_fields: "Si us plau, ompli tots els camps obligatoris.",
     error_vehicle_not_found: "No s'ha trobat el vehicle especificat.",
-    error_internal: "S'ha produït un error intern en el servidor."
+    error_internal: "S'ha produït un error intern en el servidor.",
+
+    // ITV & Maintenance Split Sections & Mobile Views
+    sectionItvExpiration: "Control i Venciment d'ITV per Vehicle",
+    sectionItvSubtitle: "Supervisió de dates límit d'inspecció periòdica i observacions tècniques per unitat",
+    sectionMaintenanceRecords: "Historial d'Intervencions i Manteniments Programats",
+    sectionMaintSubtitle: "Registre detallat de reparacions, costos i tallers proveïdors",
+
+    // ITV Columns & Attributes
+    colItvRemaining: "Dies Restants",
+    colItvStatus: "Estat ITV",
+    colObservations: "Observacions i Estat Tècnic",
+
+    // ITV Status Tags
+    itv_status_valid: "Vigent",
+    itv_status_expiring: "Pròxima ({days} dies)",
+    itv_status_urgent: "Urgent ({days} dies)",
+    itv_status_expired: "Caducada fa {days} dies",
+
+    // Mobile Table / Cards Switcher
+    viewModeTable: "Taula",
+    viewModeCards: "Targetes",
+    mobileScrollHint: "👈 Desplaça horitzontalment per a veure la taula completa 👉",
+    viewDetailsBtn: "Veure Detalls",
+    clickForDetailsHint: "Clica per a consultar els detalls complets",
+
+    // Modals for ITV and Maintenance Details
+    modalItvDetailsTitle: "Fitxa Tècnica i Estat d'ITV",
+    modalMaintDetailsTitle: "Detalls de la Intervenció de Manteniment",
+    lblPendingMaint: "Manteniments Pendents o Programats",
+    lblNoPendingMaint: "Sense manteniments pendents programats per a este vehicle.",
+    lblItvInfo: "Dades de la Inspecció Tècnica (ITV)",
+    lblTechnicalNotes: "Observacions Tècniques del Vehicle",
+    btnScheduleService: "Programar Intervenció",
+    btnClose: "Tancar"
   },
 
   es: {
@@ -376,7 +410,41 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     error_unauthorized: "Sesión caducada o credenciales no válidas.",
     error_required_fields: "Por favor, completa todos los campos requeridos.",
     error_vehicle_not_found: "No se ha encontrado el vehículo especificado.",
-    error_internal: "Se ha producido un error interno en el servidor."
+    error_internal: "Se ha producido un error interno en el servidor.",
+
+    // ITV & Maintenance Split Sections & Mobile Views
+    sectionItvExpiration: "Control y Vencimiento de ITV por Vehículo",
+    sectionItvSubtitle: "Supervisión de fechas límite de inspección periódica y observaciones técnicas por unidad",
+    sectionMaintenanceRecords: "Historial de Intervenciones y Mantenimientos Programados",
+    sectionMaintSubtitle: "Registro detallado de reparaciones, costes y talleres proveedores",
+
+    // ITV Columns & Attributes
+    colItvRemaining: "Días Restantes",
+    colItvStatus: "Estado ITV",
+    colObservations: "Observaciones y Estado Técnico",
+
+    // ITV Status Tags
+    itv_status_valid: "Vigente",
+    itv_status_expiring: "Próxima ({days} días)",
+    itv_status_urgent: "Urgente ({days} días)",
+    itv_status_expired: "Caducada hace {days} días",
+
+    // Mobile Table / Cards Switcher
+    viewModeTable: "Tabla",
+    viewModeCards: "Tarjetas",
+    mobileScrollHint: "👈 Desplaza horizontalmente para ver la tabla completa 👉",
+    viewDetailsBtn: "Ver Detalles",
+    clickForDetailsHint: "Clica para consultar los detalles completos",
+
+    // Modals for ITV and Maintenance Details
+    modalItvDetailsTitle: "Ficha Técnica y Estado de ITV",
+    modalMaintDetailsTitle: "Detalles de la Intervención de Mantenimiento",
+    lblPendingMaint: "Mantenimientos Pendientes o Programados",
+    lblNoPendingMaint: "Sin mantenimientos pendientes programados para este vehículo.",
+    lblItvInfo: "Datos de la Inspección Técnica (ITV)",
+    lblTechnicalNotes: "Observaciones Técnicas del Vehículo",
+    btnScheduleService: "Programar Intervención",
+    btnClose: "Cerrar"
   },
 
   en: {
@@ -555,7 +623,41 @@ export const TRANSLATIONS: Record<SupportedLanguage, Record<string, string>> = {
     error_unauthorized: "Session expired or invalid credentials.",
     error_required_fields: "Please fill in all required fields.",
     error_vehicle_not_found: "The specified vehicle was not found.",
-    error_internal: "An internal server error occurred."
+    error_internal: "An internal server error occurred.",
+
+    // ITV & Maintenance Split Sections & Mobile Views
+    sectionItvExpiration: "Vehicle MOT & ITV Expiration Control",
+    sectionItvSubtitle: "Periodic technical inspection deadlines and technical notes per unit",
+    sectionMaintenanceRecords: "Intervention History & Scheduled Maintenance",
+    sectionMaintSubtitle: "Detailed record of repairs, costs, and service workshops",
+
+    // ITV Columns & Attributes
+    colItvRemaining: "Remaining Days",
+    colItvStatus: "MOT Status",
+    colObservations: "Observations & Technical Condition",
+
+    // ITV Status Tags
+    itv_status_valid: "Valid",
+    itv_status_expiring: "Expiring Soon ({days} days)",
+    itv_status_urgent: "Urgent ({days} days)",
+    itv_status_expired: "Expired {days} days ago",
+
+    // Mobile Table / Cards Switcher
+    viewModeTable: "Table",
+    viewModeCards: "Cards",
+    mobileScrollHint: "👈 Swipe horizontally to view full table 👉",
+    viewDetailsBtn: "View Details",
+    clickForDetailsHint: "Click to view full details",
+
+    // Modals for ITV and Maintenance Details
+    modalItvDetailsTitle: "Technical Sheet & MOT Status",
+    modalMaintDetailsTitle: "Maintenance Intervention Details",
+    lblPendingMaint: "Pending or Scheduled Maintenance",
+    lblNoPendingMaint: "No pending maintenance scheduled for this vehicle.",
+    lblItvInfo: "Technical Inspection (MOT) Data",
+    lblTechnicalNotes: "Vehicle Technical Observations",
+    btnScheduleService: "Schedule Service",
+    btnClose: "Close"
   }
 };
 

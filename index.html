@@ -463,22 +463,29 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.65rem;
     }
 
     /* Tenant Selector */
     .tenant-pill {
-      display: flex;
+      height: 38px;
+      display: inline-flex;
       align-items: center;
       gap: 0.4rem;
       background: var(--slate-50);
       border: 1px solid var(--slate-300);
-      padding: 0.4rem 0.75rem;
+      padding: 0 0.75rem;
       border-radius: var(--radius-md);
       font-size: 0.82rem;
       font-weight: 600;
       color: var(--slate-700);
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    .tenant-pill:hover {
+      border-color: var(--primary);
+      background: #FFFFFF;
     }
 
     .tenant-select {
@@ -487,72 +494,165 @@
       font-weight: 700;
       color: var(--primary-dark);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       outline: none;
+      font-family: inherit;
     }
 
-    /* User Profile Badge */
-    .user-profile-badge {
+    /* User Profile Dropdown (Staff-Incidents-Manager Architecture) */
+    .user-menu-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-user-avatar {
+      height: 38px;
+      padding: 0 10px;
+      border-radius: var(--radius-md);
+      background: var(--slate-50);
+      border: 1px solid var(--slate-300);
+      color: var(--slate-800);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-user-avatar:hover {
+      background: #FFFFFF;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(15, 118, 110, 0.2);
+    }
+
+    .user-avatar-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.72rem;
+    }
+
+    .user-btn-name {
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--slate-800);
+      max-width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-btn-arrow {
+      font-size: 0.65rem;
+      color: var(--slate-400);
+      transition: transform 0.2s ease;
+    }
+
+    .user-menu-wrapper.open .user-btn-arrow {
+      transform: rotate(180deg);
+    }
+
+    .user-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 240px;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+      padding: 12px;
+      z-index: 1000;
+      display: none;
+      animation: dropdownFadeIn 0.16s ease-out;
+    }
+
+    .user-menu-wrapper.open .user-dropdown-menu {
+      display: block;
+    }
+
+    @keyframes dropdownFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-dropdown-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0.75rem;
-      background: var(--slate-50);
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-md);
-      font-size: 0.82rem;
+      gap: 10px;
+      padding-bottom: 10px;
     }
 
-    .user-avatar {
-      width: 28px;
-      height: 28px;
+    .user-dropdown-avatar {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--primary-light);
-      color: var(--primary-dark);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #FFFFFF;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 0.75rem;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
     }
 
-    .user-info {
+    .user-dropdown-info {
       display: flex;
       flex-direction: column;
-      line-height: 1.1;
+      overflow: hidden;
+      text-align: left;
     }
 
-    .user-name {
-      font-weight: 700;
-      color: var(--slate-800);
-      font-size: 0.8rem;
+    .user-dropdown-info strong {
+      font-size: 0.86rem;
+      color: var(--slate-900);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .user-role-tag {
-      font-size: 0.65rem;
+    .user-dropdown-role {
+      font-size: 0.72rem;
       color: var(--primary-dark);
       font-weight: 600;
     }
 
-    /* Logout Button */
-    .btn-logout {
-      background: #FFFFFF;
-      border: 1px solid var(--slate-300);
-      color: var(--slate-700);
-      padding: 0.4rem 0.75rem;
-      border-radius: var(--radius-md);
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      transition: all 0.2s ease;
+    .user-dropdown-divider {
+      height: 1px;
+      background: var(--slate-200);
+      margin: 6px 0 8px;
     }
 
-    .btn-logout:hover {
+    .user-dropdown-item {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      color: var(--slate-700);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .user-dropdown-item:hover {
       background: var(--danger-light);
-      border-color: #FCA5A5;
       color: #991B1B;
     }
 
@@ -969,22 +1069,293 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Mobile Responsive */
+    /* -------------------------------------------------------------
+       MOBILE VIEW SWITCHERS, CARDS FEED & SUB-SECTIONS
+       ------------------------------------------------------------- */
+    .view-mode-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .view-mode-switcher {
+      display: inline-flex;
+      background: var(--slate-200);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      gap: 3px;
+    }
+
+    .view-mode-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-600);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .view-mode-btn.active {
+      background: #FFFFFF;
+      color: var(--primary-dark);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .mobile-scroll-hint {
+      display: none;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--slate-500);
+      text-align: center;
+      margin-bottom: 8px;
+      padding: 5px 10px;
+      background: var(--slate-50);
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--slate-300);
+    }
+
+    /* Mobile Cards Feed */
+    .mobile-cards-feed {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .detail-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+
+    .detail-card:hover, .detail-card:active {
+      border-color: var(--primary);
+      box-shadow: 0 6px 16px rgba(15, 118, 110, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .detail-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .detail-card-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .detail-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      padding: 8px 0;
+      border-top: 1px solid var(--slate-100);
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .detail-card-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .detail-card-item.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .detail-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--slate-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--slate-800);
+      word-break: break-word;
+    }
+
+    .detail-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Section Subheaders for Split Tab */
+    .section-subhead {
+      margin-bottom: 14px;
+    }
+
+    .section-subhead h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-subhead p {
+      font-size: 0.82rem;
+      color: var(--slate-500);
+      margin-top: 2px;
+    }
+
+    .sub-section-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Modal Details View Specifics */
+    .detail-modal-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .detail-modal-box h4 {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--slate-800);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* -------------------------------------------------------------
+       MOBILE RESPONSIVE (STAFF-INCIDENTS-MANAGER ARCHITECTURE)
+       ------------------------------------------------------------- */
     @media (max-width: 768px) {
+      /* HEADER: 2 CLEAN ROWS (LOGO ON TOP, ACTIONS BELOW) */
+      header.app-header {
+        height: auto !important;
+        min-height: 84px;
+        padding: 10px 14px !important;
+      }
+
       .header-container {
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 0 !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        width: 100% !important;
       }
+
+      /* Row 1: Centered Logo Only */
+      .brand-section {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+      }
+
+      .brand-text {
+        display: none !important;
+      }
+
+      .brand-logo-badge {
+        width: 38px;
+        height: 38px;
+        font-size: 1.25rem;
+      }
+
+      /* Row 2: Actions centered with equal height (36px) */
       .header-actions {
-        width: 100%;
-        justify-content: space-between;
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
       }
+
+      .tenant-pill,
+      .lang-select-btn,
+      .btn-user-avatar {
+        height: 36px !important;
+        font-size: 0.8rem !important;
+        padding: 0 10px !important;
+      }
+
+      .user-btn-name {
+        display: none !important;
+      }
+
+      .user-dropdown-menu {
+        right: 0 !important;
+        left: auto !important;
+        width: 230px !important;
+        max-width: calc(100vw - 24px) !important;
+      }
+
+      /* Navigation Tabs Scroll */
+      .nav-container {
+        padding: 0 0.75rem;
+      }
+
+      .nav-tab {
+        padding: 0.75rem 0.85rem;
+        font-size: 0.8rem;
+      }
+
+      /* Mobile Scroll Hint & Tables */
+      .mobile-scroll-hint {
+        display: block !important;
+      }
+
       .data-table {
-        display: block;
-        overflow-x: auto;
+        display: table;
+        width: 100%;
+        min-width: 620px;
       }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
       .form-row {
         grid-template-columns: 1fr;
+      }
+
+      .sub-section-card {
+        padding: 1rem 0.85rem;
       }
     }
   </style>
@@ -1102,15 +1473,6 @@
             </select>
           </div>
 
-          <!-- User Badge -->
-          <div class="user-profile-badge" id="header-user-badge">
-            <div class="user-avatar" id="header-user-avatar">AD</div>
-            <div class="user-info">
-              <span class="user-name" id="header-user-name">Yris Orsinys</span>
-              <span class="user-role-tag" id="header-user-role" data-i18n="profileRoleTenantAdmin">Cap de Flota</span>
-            </div>
-          </div>
-
           <!-- Header Custom Language Selector (Matching Dine-Done) -->
           <div class="custom-lang-selector" id="header-lang-selector">
             <button class="lang-select-btn" type="button" aria-haspopup="listbox" aria-expanded="false" title="Canviar idioma">
@@ -1123,11 +1485,28 @@
             </div>
           </div>
 
-          <!-- Logout Button -->
-          <button class="btn-logout" id="btn-logout" type="button">
-            <span>🚪</span>
-            <span data-i18n="btnLogout">Tancar sessió</span>
-          </button>
+          <!-- User Profile Dropdown Button & Menu (Staff-Incidents-Manager Architecture) -->
+          <div class="user-menu-wrapper" id="user-menu-wrapper">
+            <button class="btn-user-avatar" id="btn-user-avatar" type="button" title="Perfil d'usuari" aria-haspopup="true" aria-expanded="false">
+              <span class="user-avatar-circle" id="header-user-avatar">AD</span>
+              <span class="user-btn-name" id="header-user-name">Yris Orsinys</span>
+              <span class="user-btn-arrow">▼</span>
+            </button>
+
+            <div class="user-dropdown-menu" id="user-dropdown-menu">
+              <div class="user-dropdown-header">
+                <div class="user-dropdown-avatar" id="dropdown-user-avatar">AD</div>
+                <div class="user-dropdown-info">
+                  <strong id="dropdown-user-name">Yris Orsinys</strong>
+                  <span class="user-dropdown-role" id="header-user-role" data-i18n="profileRoleTenantAdmin">Cap de Flota</span>
+                </div>
+              </div>
+              <div class="user-dropdown-divider"></div>
+              <button class="user-dropdown-item btn-logout-item" id="btn-logout" type="button">
+                <span>🚪</span> <span data-i18n="btnLogout">Tancar sessió</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -1205,13 +1584,32 @@
       <!-- 2. VEHICLES VIEW -->
       <section class="tab-content" id="view-vehicles">
         <div class="section-header">
-          <h2 data-i18n="tabVehicles">Parc de Vehicles</h2>
+          <div>
+            <h2 data-i18n="tabVehicles">Parc de Vehicles</h2>
+          </div>
           <button class="btn-primary" id="btn-add-vehicle">
             <span>+</span> <span data-i18n="btnNewVehicle">Nou Vehicle</span>
           </button>
         </div>
 
-        <div class="table-container">
+        <!-- View mode switcher for mobile (Cards vs Table) -->
+        <div class="view-mode-bar">
+          <div class="view-mode-switcher" data-target="vehicles">
+            <button type="button" class="view-mode-btn" data-mode="cards">
+              <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+            </button>
+            <button type="button" class="view-mode-btn active" data-mode="table">
+              <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Cards Feed -->
+        <div class="mobile-cards-feed" id="vehicles-cards-feed"></div>
+
+        <!-- Table View -->
+        <div class="table-container" id="vehicles-table-container">
+          <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
           <table class="data-table">
             <thead>
               <tr>
@@ -1231,44 +1629,135 @@
         </div>
       </section>
 
-      <!-- 3. MAINTENANCE VIEW -->
+      <!-- 3. MAINTENANCE & ITV VIEW (SPLIT SECTIONS PER REQUIREMENTS) -->
       <section class="tab-content" id="view-maintenance">
         <div class="section-header">
-          <h2 data-i18n="tabMaintenance">ITV i Manteniment</h2>
+          <div>
+            <h2 data-i18n="tabMaintenance">ITV i Manteniment</h2>
+          </div>
           <button class="btn-primary" id="btn-add-maintenance">
             <span>+</span> <span data-i18n="btnNewMaintenance">Programar Manteniment</span>
           </button>
         </div>
 
-        <div class="table-container">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th data-i18n="colLicensePlate">Matrícula</th>
-                <th data-i18n="colMaintenanceType">Tipus d'Intervenció</th>
-                <th data-i18n="colScheduledDate">Data Programada</th>
-                <th data-i18n="colWorkshop">Taller / Proveïdor</th>
-                <th data-i18n="colCost">Cost (€)</th>
-                <th data-i18n="colMaintenanceStatus">Estat</th>
-              </tr>
-            </thead>
-            <tbody id="maintenance-table-body">
-              <!-- Rendered dynamically after login -->
-            </tbody>
-          </table>
+        <!-- SUB-SECTION 1: CONTROL I VENCIMENT D'ITV PER VEHICLE -->
+        <div class="sub-section-card" id="section-itv-control">
+          <div class="section-subhead">
+            <h3><span>📋</span> <span data-i18n="sectionItvExpiration">Control i Venciment d'ITV per Vehicle</span></h3>
+            <p data-i18n="sectionItvSubtitle">Supervisió de dates límit d'inspecció periòdica i observacions tècniques per unitat</p>
+          </div>
+
+          <!-- View mode switcher for ITV -->
+          <div class="view-mode-bar">
+            <div class="view-mode-switcher" data-target="itv">
+              <button type="button" class="view-mode-btn" data-mode="cards">
+                <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+              </button>
+              <button type="button" class="view-mode-btn active" data-mode="table">
+                <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Cards Feed for ITV -->
+          <div class="mobile-cards-feed" id="itv-cards-feed"></div>
+
+          <!-- Table View for ITV -->
+          <div class="table-container" id="itv-table-container">
+            <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="colLicensePlate">Matrícula</th>
+                  <th data-i18n="colVehicle">Vehicle (Marca i Model)</th>
+                  <th data-i18n="colItvDate">Data Caducitat ITV</th>
+                  <th data-i18n="colItvRemaining">Dies Restants</th>
+                  <th data-i18n="colItvStatus">Estat ITV</th>
+                  <th data-i18n="colObservations">Observacions i Estat Tècnic</th>
+                  <th data-i18n="colActions">Accions</th>
+                </tr>
+              </thead>
+              <tbody id="itv-table-body">
+                <!-- Rendered dynamically after login -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUB-SECTION 2: HISTORIAL D'INTERVENCIONS I MANTENIMENTS -->
+        <div class="sub-section-card" id="section-maint-history">
+          <div class="section-subhead">
+            <h3><span>🔧</span> <span data-i18n="sectionMaintenanceRecords">Historial d'Intervencions i Manteniments Programats</span></h3>
+            <p data-i18n="sectionMaintSubtitle">Registre detallat de reparacions, costos i tallers proveïdors</p>
+          </div>
+
+          <!-- View mode switcher for Maintenance -->
+          <div class="view-mode-bar">
+            <div class="view-mode-switcher" data-target="maintenance">
+              <button type="button" class="view-mode-btn" data-mode="cards">
+                <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+              </button>
+              <button type="button" class="view-mode-btn active" data-mode="table">
+                <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Cards Feed for Maintenance -->
+          <div class="mobile-cards-feed" id="maintenance-cards-feed"></div>
+
+          <!-- Table View for Maintenance -->
+          <div class="table-container" id="maintenance-table-container">
+            <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th data-i18n="colLicensePlate">Matrícula</th>
+                  <th data-i18n="colMaintenanceType">Tipus d'Intervenció</th>
+                  <th data-i18n="colScheduledDate">Data Programada</th>
+                  <th data-i18n="colWorkshop">Taller / Proveïdor</th>
+                  <th data-i18n="colCost">Cost (€)</th>
+                  <th data-i18n="colMaintenanceStatus">Estat</th>
+                  <th data-i18n="colActions">Accions</th>
+                </tr>
+              </thead>
+              <tbody id="maintenance-table-body">
+                <!-- Rendered dynamically after login -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
       <!-- 4. FUEL VIEW -->
       <section class="tab-content" id="view-fuel">
         <div class="section-header">
-          <h2 data-i18n="tabFuel">Combustible i Quilometratge</h2>
+          <div>
+            <h2 data-i18n="tabFuel">Combustible i Quilometratge</h2>
+          </div>
           <button class="btn-primary" id="btn-add-fuel">
             <span>+</span> <span data-i18n="btnNewFuelLog">Registrar Repostatge</span>
           </button>
         </div>
 
-        <div class="table-container">
+        <!-- View mode switcher for Fuel -->
+        <div class="view-mode-bar">
+          <div class="view-mode-switcher" data-target="fuel">
+            <button type="button" class="view-mode-btn" data-mode="cards">
+              <span>📇</span> <span data-i18n="viewModeCards">Targetes</span>
+            </button>
+            <button type="button" class="view-mode-btn active" data-mode="table">
+              <span>📋</span> <span data-i18n="viewModeTable">Taula</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Cards Feed for Fuel -->
+        <div class="mobile-cards-feed" id="fuel-cards-feed"></div>
+
+        <!-- Table View for Fuel -->
+        <div class="table-container" id="fuel-table-container">
+          <div class="mobile-scroll-hint" data-i18n="mobileScrollHint">👈 Desplaça horitzontalment per a veure la taula completa 👉</div>
           <table class="data-table">
             <thead>
               <tr>
@@ -1494,6 +1983,120 @@
           <button type="submit" class="btn-primary" data-i18n="modalSaveBtn">Guardar Registre</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal: Detalls d'ITV i Manteniment del Vehicle -->
+  <div class="modal-backdrop" id="modal-itv-details">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalItvDetailsTitle">Fitxa Tècnica i Estat d'ITV</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Vehicle identity header -->
+        <div class="detail-modal-box">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="plate-badge" id="modal-itv-plate" style="font-size:1rem; padding:4px 10px;">4589-LDR</span>
+            <span class="status-badge active" id="modal-itv-veh-status">Actiu</span>
+          </div>
+          <div style="margin-top:6px;">
+            <strong id="modal-itv-veh-title" style="font-size:1.05rem; color:var(--slate-900);">Renault Trafic 2.0 dCi</strong>
+            <div id="modal-itv-veh-meta" style="font-size:0.8rem; color:var(--slate-500); margin-top:2px;">Any 2022 • Dièsel • 84.500 km</div>
+          </div>
+        </div>
+
+        <!-- ITV Box -->
+        <div class="detail-modal-box">
+          <h4><span>📅</span> <span data-i18n="lblItvInfo">Dades de la Inspecció Tècnica (ITV)</span></h4>
+          <div class="detail-card-grid" style="border:none; padding:4px 0 0;">
+            <div class="detail-card-item">
+              <span class="detail-label" data-i18n="colItvDate">Data Caducitat ITV</span>
+              <span class="detail-value" id="modal-itv-date" style="font-size:0.95rem;">15/11/2026</span>
+            </div>
+            <div class="detail-card-item">
+              <span class="detail-label" data-i18n="colItvRemaining">Dies Restants</span>
+              <span class="detail-value" id="modal-itv-remaining">24 dies</span>
+            </div>
+            <div class="detail-card-item full-width">
+              <span class="detail-label" data-i18n="colItvStatus">Estat ITV</span>
+              <div id="modal-itv-status-badge" style="margin-top:4px;">
+                <span class="status-badge maintenance">Pròxima (&lt; 30 dies)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Observations Box -->
+        <div class="detail-modal-box">
+          <h4><span>🔍</span> <span data-i18n="lblTechnicalNotes">Observacions Tècniques del Vehicle</span></h4>
+          <p id="modal-itv-notes" style="font-size:0.88rem; color:var(--slate-700); line-height:1.45; margin-top:4px; background:#FFFFFF; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--slate-200);">
+            Requereix canviar pneumàtics davanters abans d'ITV.
+          </p>
+        </div>
+
+        <!-- Pending / Scheduled Maintenance for this vehicle -->
+        <div class="detail-modal-box">
+          <h4><span>🛠️</span> <span data-i18n="lblPendingMaint">Manteniments Pendents o Programats</span></h4>
+          <div id="modal-itv-pending-maint" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-primary" id="btn-itv-quick-schedule">
+          <span>+</span> <span data-i18n="btnScheduleService">Programar Intervenció</span>
+        </button>
+        <button type="button" class="btn-secondary" data-close-modal data-i18n="btnClose">Tancar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalls d'una Intervenció de Manteniment -->
+  <div class="modal-backdrop" id="modal-maint-details">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 data-i18n="modalMaintDetailsTitle">Detalls de la Intervenció de Manteniment</h3>
+        <button type="button" class="btn-close-modal" data-close-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-modal-box">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="plate-badge" id="modal-maint-plate" style="font-size:1rem; padding:4px 10px;">4589-LDR</span>
+            <span class="status-badge maintenance" id="modal-maint-status">Programada</span>
+          </div>
+          <div style="margin-top:6px;">
+            <strong id="modal-maint-type-title" style="font-size:1.05rem; color:var(--slate-900);">Pastilles i Discos de Fre</strong>
+          </div>
+        </div>
+
+        <div class="detail-modal-box">
+          <div class="detail-card-grid" style="border:none; padding:0;">
+            <div class="detail-card-item">
+              <span class="detail-label" data-i18n="colScheduledDate">Data Programada</span>
+              <span class="detail-value" id="modal-maint-date">25/10/2026</span>
+            </div>
+            <div class="detail-card-item">
+              <span class="detail-label" data-i18n="colCost">Cost (€)</span>
+              <span class="detail-value" id="modal-maint-cost" style="color:var(--primary-dark); font-size:1rem;">240,00 €</span>
+            </div>
+            <div class="detail-card-item full-width">
+              <span class="detail-label" data-i18n="colWorkshop">Taller / Proveïdor</span>
+              <span class="detail-value" id="modal-maint-workshop">Frens i Mecànica Borrull</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-modal-box">
+          <h4><span>📝</span> <span data-i18n="colObservations">Observacions i Estat Tècnic</span></h4>
+          <p id="modal-maint-notes" style="font-size:0.86rem; color:var(--slate-700); line-height:1.45; margin-top:4px; background:#FFFFFF; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--slate-200);">
+            Substitució pastilles davanteres i revisió líquid de frens.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" data-close-modal data-i18n="btnClose">Tancar</button>
+      </div>
     </div>
   </div>
 

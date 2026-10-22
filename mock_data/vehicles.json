@@ -14,7 +14,7 @@
     "itvExpirationDate": "2026-11-15",
     "nextMaintenanceKm": 90000,
     "nextMaintenanceDate": "2026-12-01",
-    "notes": "Furgoneta principal de repartiment València - Castelló",
+    "notes": "Requereix canviar pneumàtics davanters abans d'ITV. Rutes de repartiment València - Sagunt.",
     "createdAt": "2026-01-15T09:00:00.000Z",
     "updatedAt": "2026-10-14T17:00:00.000Z"
   },
@@ -33,7 +33,7 @@
     "itvExpirationDate": "2027-03-20",
     "nextMaintenanceKm": 45000,
     "nextMaintenanceDate": "2027-01-15",
-    "notes": "Vehicle 100% elèctric urbà per al centre històric",
+    "notes": "Revisió pre-ITV favorable. Estat de càrrega i bateries òptim per al centre històric.",
     "createdAt": "2026-03-01T10:00:00.000Z",
     "updatedAt": "2026-10-10T12:00:00.000Z"
   },
@@ -52,7 +52,7 @@
     "itvExpirationDate": "2026-10-30",
     "nextMaintenanceKm": 150000,
     "nextMaintenanceDate": "2026-11-05",
-    "notes": "En taller per canvi de pastilles i revisió ITV urgent",
+    "notes": "En taller per desgast de pastilles de fre i revisió ITV urgent (cita 30/10/2026).",
     "createdAt": "2026-01-20T11:00:00.000Z",
     "updatedAt": "2026-10-20T08:00:00.000Z"
   },

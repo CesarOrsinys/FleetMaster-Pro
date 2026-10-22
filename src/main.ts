@@ -73,13 +73,20 @@ class AppController {
     this.cachedMaintenance = [];
     this.cachedFuelLogs = [];
 
-    // Clear any table data
+    // Clear any table and feed data
     const vehiclesTbody = document.getElementById('vehicles-table-body');
     if (vehiclesTbody) vehiclesTbody.innerHTML = '';
+    const itvTbody = document.getElementById('itv-table-body');
+    if (itvTbody) itvTbody.innerHTML = '';
     const maintTbody = document.getElementById('maintenance-table-body');
     if (maintTbody) maintTbody.innerHTML = '';
     const fuelTbody = document.getElementById('fuel-table-body');
     if (fuelTbody) fuelTbody.innerHTML = '';
+
+    ['vehicles', 'itv', 'maintenance', 'fuel'].forEach(key => {
+      const feed = document.getElementById(`${key}-cards-feed`);
+      if (feed) feed.innerHTML = '';
+    });
   }
 
   private showApplicationShell(): void {
@@ -97,22 +104,22 @@ class AppController {
     if (!this.currentUser) return;
 
     const avatarEl = document.getElementById('header-user-avatar');
+    const dropdownAvatarEl = document.getElementById('dropdown-user-avatar');
     const nameEl = document.getElementById('header-user-name');
+    const dropdownNameEl = document.getElementById('dropdown-user-name');
     const roleEl = document.getElementById('header-user-role');
 
-    if (avatarEl) {
-      const initials = this.currentUser.fullName
-        .split(' ')
-        .map(n => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
-      avatarEl.textContent = initials || 'US';
-    }
+    const initials = this.currentUser.fullName
+      .split(' ')
+      .map(n => n[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase();
 
-    if (nameEl) {
-      nameEl.textContent = this.currentUser.fullName;
-    }
+    if (avatarEl) avatarEl.textContent = initials || 'US';
+    if (dropdownAvatarEl) dropdownAvatarEl.textContent = initials || 'US';
+    if (nameEl) nameEl.textContent = this.currentUser.fullName;
+    if (dropdownNameEl) dropdownNameEl.textContent = this.currentUser.fullName;
 
     if (roleEl) {
       const roleKey = this.currentUser.role === 'SUPERADMIN'
@@ -146,15 +153,31 @@ class AppController {
     // 2. Demo Credentials Quick Fill Buttons
     this.setupDemoCredentials();
 
-    // 3. Logout Handler
+    // 3. User Avatar Menu Dropdown Toggle (Staff-Incidents-Manager Architecture)
+    const userMenuWrapper = document.getElementById('user-menu-wrapper');
+    const btnUserAvatar = document.getElementById('btn-user-avatar');
+
+    btnUserAvatar?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenuWrapper?.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (userMenuWrapper && !userMenuWrapper.contains(e.target as Node)) {
+        userMenuWrapper.classList.remove('open');
+      }
+    });
+
+    // 4. Logout Handler
     const logoutBtn = document.getElementById('btn-logout');
     logoutBtn?.addEventListener('click', () => {
+      userMenuWrapper?.classList.remove('open');
       this.clearSession();
       this.showLoginView();
       this.showToast(LanguageManager.t('btnLogout'), 'success');
     });
 
-    // 4. Tenant Switcher
+    // 5. Tenant Switcher
     const tenantSelect = document.getElementById('tenant-select') as HTMLSelectElement;
     tenantSelect?.addEventListener('change', () => {
       this.currentTenant = tenantSelect.value;
@@ -162,7 +185,7 @@ class AppController {
       this.loadData();
     });
 
-    // 5. Tab Navigation
+    // 6. Tab Navigation
     document.querySelectorAll<HTMLButtonElement>('.nav-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         const tabName = tab.getAttribute('data-tab');
@@ -177,18 +200,51 @@ class AppController {
       });
     });
 
-    // 6. Comprehensive Re-render on Language Changed Event
+    // 7. Mobile View Mode Switchers (Cards vs Table)
+    this.setupViewModeSwitchers();
+
+    // 8. Comprehensive Re-render on Language Changed Event
     document.addEventListener('app:language-changed', () => {
       this.updateHeaderUserInfo();
       this.syncTenantSelect();
 
       // Immediately re-render all tables, alerts, and KPIs with the active language
       this.renderVehicles(this.cachedVehicles);
+      this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
       this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
       this.renderAlerts();
       this.populateModalVehicleDropdowns();
+    });
+  }
+
+  private setupViewModeSwitchers(): void {
+    document.querySelectorAll<HTMLElement>('.view-mode-switcher').forEach(switcher => {
+      const target = switcher.getAttribute('data-target');
+      if (!target) return;
+
+      const buttons = switcher.querySelectorAll<HTMLButtonElement>('.view-mode-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-mode');
+          if (!mode) return;
+
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const cardsFeed = document.getElementById(`${target}-cards-feed`);
+          const tableContainer = document.getElementById(`${target}-table-container`);
+
+          if (mode === 'cards') {
+            if (cardsFeed) cardsFeed.style.display = 'flex';
+            if (tableContainer) tableContainer.style.display = 'none';
+          } else {
+            if (cardsFeed) cardsFeed.style.display = 'none';
+            if (tableContainer) tableContainer.style.display = 'block';
+          }
+        });
+      });
     });
   }
 
@@ -316,6 +372,7 @@ class AppController {
       this.cachedFuelLogs = fuelRes && fuelRes.ok ? await fuelRes.json() : [];
 
       this.renderVehicles(this.cachedVehicles);
+      this.renderItvControl(this.cachedVehicles);
       this.renderMaintenance(this.cachedMaintenance, this.cachedVehicles);
       this.renderFuelLogs(this.cachedFuelLogs);
       this.updateKpis(this.cachedVehicles, this.cachedMaintenance, this.cachedFuelLogs);
@@ -329,90 +386,511 @@ class AppController {
 
   private renderVehicles(vehicles: Vehicle[]): void {
     const tbody = document.getElementById('vehicles-table-body');
-    if (!tbody) return;
+    const cardsFeed = document.getElementById('vehicles-cards-feed');
 
-    if (vehicles.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
-      return;
+    if (tbody) {
+      if (vehicles.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = vehicles.map(v => {
+          const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
+          const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
+          const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
+
+          return `
+            <tr>
+              <td><span class="plate-badge">${v.licensePlate}</span></td>
+              <td><strong>${v.make}</strong> ${v.model} (${v.year})</td>
+              <td>${fuelLabel}</td>
+              <td><strong>${v.currentOdometerKm.toLocaleString()}</strong> km</td>
+              <td>${v.itvExpirationDate}</td>
+              <td>${v.nextMaintenanceKm.toLocaleString()} km</td>
+              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
 
-    tbody.innerHTML = vehicles.map(v => {
-      const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
-      
-      // Translated Status & Fuel Type
-      const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
-      const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
+    if (cardsFeed) {
+      if (vehicles.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = vehicles.map(v => {
+          const statusClass = v.status === 'ACTIVE' ? 'active' : v.status === 'MAINTENANCE' ? 'maintenance' : 'out';
+          const statusLabel = LanguageManager.t('status_' + v.status.toLowerCase());
+          const fuelLabel = LanguageManager.t('fuel_' + v.fuelType.toLowerCase());
 
-      return `
-        <tr>
-          <td><span class="plate-badge">${v.licensePlate}</span></td>
-          <td><strong>${v.make}</strong> ${v.model} (${v.year})</td>
-          <td>${fuelLabel}</td>
-          <td><strong>${v.currentOdometerKm.toLocaleString()}</strong> km</td>
-          <td>${v.itvExpirationDate}</td>
-          <td>${v.nextMaintenanceKm.toLocaleString()} km</td>
-          <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-        </tr>
-      `;
-    }).join('');
+          return `
+            <div class="detail-card" data-vehicle-id="${v.id}">
+              <div class="detail-card-header">
+                <span class="plate-badge">${v.licensePlate}</span>
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+              <div class="detail-card-title">${v.make} ${v.model} (${v.year})</div>
+              <div class="detail-card-grid">
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colFuelType')}</span>
+                  <span class="detail-value">${fuelLabel}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colOdometer')}</span>
+                  <span class="detail-value">${v.currentOdometerKm.toLocaleString()} km</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colItvDate')}</span>
+                  <span class="detail-value">${v.itvExpirationDate}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colNextService')}</span>
+                  <span class="detail-value">${v.nextMaintenanceKm.toLocaleString()} km</span>
+                </div>
+              </div>
+              <div class="detail-card-footer">
+                <span>👁️ ${LanguageManager.t('viewDetailsBtn')}</span>
+                <span>👉</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Wire mobile cards clicks
+        cardsFeed.querySelectorAll<HTMLElement>('.detail-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const vehId = card.getAttribute('data-vehicle-id');
+            const vehicle = this.cachedVehicles.find(v => v.id === vehId);
+            if (vehicle) this.openItvDetails(vehicle);
+          });
+        });
+      }
+    }
   }
 
-  private renderMaintenance(maintenance: MaintenanceRecord[], vehicles: Vehicle[]): void {
-    const tbody = document.getElementById('maintenance-table-body');
-    if (!tbody) return;
+  // SUB-SECTION 1: SEPARATE ITV CONTROL AND EXPIRATION WITH OBSERVATIONS
+  private renderItvControl(vehicles: Vehicle[]): void {
+    const tbody = document.getElementById('itv-table-body');
+    const cardsFeed = document.getElementById('itv-cards-feed');
+    const now = new Date();
 
-    if (maintenance.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
-      return;
+    const itvData = vehicles.map(v => {
+      const expDate = new Date(v.itvExpirationDate);
+      const diffMs = expDate.getTime() - now.getTime();
+      const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+      let statusKey = 'itv_status_valid';
+      let statusClass = 'active';
+
+      if (daysRemaining < 0) {
+        statusKey = 'itv_status_expired';
+        statusClass = 'out';
+      } else if (daysRemaining <= 7) {
+        statusKey = 'itv_status_urgent';
+        statusClass = 'out';
+      } else if (daysRemaining <= 30) {
+        statusKey = 'itv_status_expiring';
+        statusClass = 'maintenance';
+      }
+
+      const statusBadgeText = LanguageManager.t(statusKey, { days: Math.abs(daysRemaining) });
+      const observations = v.notes || 'Revisió periòdica estàndard sense anomalies reportades.';
+
+      return {
+        vehicle: v,
+        expDateStr: v.itvExpirationDate,
+        daysRemaining,
+        statusBadgeText,
+        statusClass,
+        observations
+      };
+    });
+
+    // 1. Table View
+    if (tbody) {
+      if (itvData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = itvData.map(item => `
+          <tr>
+            <td><span class="plate-badge">${item.vehicle.licensePlate}</span></td>
+            <td><strong>${item.vehicle.make}</strong> ${item.vehicle.model}</td>
+            <td><strong>${item.expDateStr}</strong></td>
+            <td>${item.daysRemaining > 0 ? `${item.daysRemaining} dies` : `<span style="color:#EF4444; font-weight:700;">-${Math.abs(item.daysRemaining)} dies</span>`}</td>
+            <td><span class="status-badge ${item.statusClass}">${item.statusBadgeText}</span></td>
+            <td style="max-width: 280px; font-size: 0.82rem; color: #475569;">
+              <span title="${item.observations}">${item.observations}</span>
+            </td>
+            <td>
+              <button type="button" class="btn-secondary btn-itv-row-details" data-veh-id="${item.vehicle.id}" style="padding: 4px 10px; font-size: 0.78rem;">
+                <span>👁️</span> <span>${LanguageManager.t('viewDetailsBtn')}</span>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        tbody.querySelectorAll<HTMLButtonElement>('.btn-itv-row-details').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-veh-id');
+            const veh = this.cachedVehicles.find(v => v.id === id);
+            if (veh) this.openItvDetails(veh);
+          });
+        });
+      }
     }
 
-    const vehicleMap = new Map(vehicles.map(v => [v.id, v.licensePlate]));
+    // 2. Mobile Cards Feed
+    if (cardsFeed) {
+      if (itvData.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = itvData.map(item => `
+          <div class="detail-card" data-veh-id="${item.vehicle.id}">
+            <div class="detail-card-header">
+              <span class="plate-badge">${item.vehicle.licensePlate}</span>
+              <span class="status-badge ${item.statusClass}">${item.statusBadgeText}</span>
+            </div>
+            <div class="detail-card-title">${item.vehicle.make} ${item.vehicle.model}</div>
+            <div class="detail-card-grid">
+              <div class="detail-card-item">
+                <span class="detail-label">${LanguageManager.t('colItvDate')}</span>
+                <span class="detail-value">${item.expDateStr}</span>
+              </div>
+              <div class="detail-card-item">
+                <span class="detail-label">${LanguageManager.t('colItvRemaining')}</span>
+                <span class="detail-value">${item.daysRemaining > 0 ? `${item.daysRemaining} dies` : `Caducada`}</span>
+              </div>
+              <div class="detail-card-item full-width">
+                <span class="detail-label">${LanguageManager.t('colObservations')}</span>
+                <span class="detail-value" style="color: #475569; font-weight:500;">${item.observations}</span>
+              </div>
+            </div>
+            <div class="detail-card-footer">
+              <span>👁️ ${LanguageManager.t('clickForDetailsHint')}</span>
+              <span>👉</span>
+            </div>
+          </div>
+        `).join('');
 
-    tbody.innerHTML = maintenance.map(m => {
-      const plate = vehicleMap.get(m.vehicleId) || m.vehicleId;
-      
-      // Translated Maintenance Type & Status
-      const typeLabel = LanguageManager.t('maint_type_' + m.type.toLowerCase());
-      const statusLabel = LanguageManager.t('maint_status_' + m.status.toLowerCase());
-      const statusClass = m.status === 'COMPLETED' ? 'active' : m.status === 'SCHEDULED' ? 'maintenance' : 'out';
+        cardsFeed.querySelectorAll<HTMLElement>('.detail-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const id = card.getAttribute('data-veh-id');
+            const veh = this.cachedVehicles.find(v => v.id === id);
+            if (veh) this.openItvDetails(veh);
+          });
+        });
+      }
+    }
+  }
 
-      return `
-        <tr>
-          <td><span class="plate-badge">${plate}</span></td>
-          <td><strong>${typeLabel}</strong></td>
-          <td>${m.scheduledDate}</td>
-          <td>${m.workshopName || '-'}</td>
-          <td><strong>${m.costEur.toFixed(2)} €</strong></td>
-          <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-        </tr>
-      `;
-    }).join('');
+  // SUB-SECTION 2: MAINTENANCE HISTORY & INTERVENTIONS
+  private renderMaintenance(maintenance: MaintenanceRecord[], vehicles: Vehicle[]): void {
+    const tbody = document.getElementById('maintenance-table-body');
+    const cardsFeed = document.getElementById('maintenance-cards-feed');
+    const vehicleMap = new Map(vehicles.map(v => [v.id, v]));
+
+    // 1. Table View
+    if (tbody) {
+      if (maintenance.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = maintenance.map(m => {
+          const veh = vehicleMap.get(m.vehicleId);
+          const plate = veh ? veh.licensePlate : m.vehicleId;
+          const typeLabel = LanguageManager.t('maint_type_' + m.type.toLowerCase());
+          const statusLabel = LanguageManager.t('maint_status_' + m.status.toLowerCase());
+          const statusClass = m.status === 'COMPLETED' ? 'active' : m.status === 'SCHEDULED' ? 'maintenance' : 'out';
+
+          return `
+            <tr>
+              <td><span class="plate-badge">${plate}</span></td>
+              <td><strong>${typeLabel}</strong></td>
+              <td>${m.scheduledDate}</td>
+              <td>${m.workshopName || '-'}</td>
+              <td><strong>${m.costEur.toFixed(2)} €</strong></td>
+              <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+              <td>
+                <button type="button" class="btn-secondary btn-maint-row-details" data-maint-id="${m.id}" style="padding: 4px 10px; font-size: 0.78rem;">
+                  <span>👁️</span> <span>${LanguageManager.t('viewDetailsBtn')}</span>
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        tbody.querySelectorAll<HTMLButtonElement>('.btn-maint-row-details').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-maint-id');
+            const maint = this.cachedMaintenance.find(m => m.id === id);
+            if (maint) {
+              const veh = vehicleMap.get(maint.vehicleId);
+              this.openMaintDetails(maint, veh);
+            }
+          });
+        });
+      }
+    }
+
+    // 2. Mobile Cards Feed
+    if (cardsFeed) {
+      if (maintenance.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = maintenance.map(m => {
+          const veh = vehicleMap.get(m.vehicleId);
+          const plate = veh ? veh.licensePlate : m.vehicleId;
+          const vehName = veh ? `${veh.make} ${veh.model}` : '';
+          const typeLabel = LanguageManager.t('maint_type_' + m.type.toLowerCase());
+          const statusLabel = LanguageManager.t('maint_status_' + m.status.toLowerCase());
+          const statusClass = m.status === 'COMPLETED' ? 'active' : m.status === 'SCHEDULED' ? 'maintenance' : 'out';
+
+          return `
+            <div class="detail-card" data-maint-id="${m.id}">
+              <div class="detail-card-header">
+                <span class="plate-badge">${plate}</span>
+                <span class="status-badge ${statusClass}">${statusLabel}</span>
+              </div>
+              <div class="detail-card-title">${typeLabel} ${vehName ? `(${vehName})` : ''}</div>
+              <div class="detail-card-grid">
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colScheduledDate')}</span>
+                  <span class="detail-value">${m.scheduledDate}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colCost')}</span>
+                  <span class="detail-value" style="color:var(--primary-dark);">${m.costEur.toFixed(2)} €</span>
+                </div>
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colWorkshop')}</span>
+                  <span class="detail-value">${m.workshopName || '-'}</span>
+                </div>
+              </div>
+              <div class="detail-card-footer">
+                <span>👁️ ${LanguageManager.t('viewDetailsBtn')}</span>
+                <span>👉</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        cardsFeed.querySelectorAll<HTMLElement>('.detail-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const id = card.getAttribute('data-maint-id');
+            const maint = this.cachedMaintenance.find(m => m.id === id);
+            if (maint) {
+              const veh = vehicleMap.get(maint.vehicleId);
+              this.openMaintDetails(maint, veh);
+            }
+          });
+        });
+      }
+    }
   }
 
   private renderFuelLogs(logs: FuelLog[]): void {
     const tbody = document.getElementById('fuel-table-body');
-    if (!tbody) return;
-
-    if (logs.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
-      return;
-    }
-
+    const cardsFeed = document.getElementById('fuel-cards-feed');
     const vehicleMap = new Map(this.cachedVehicles.map(v => [v.id, v.licensePlate]));
 
-    tbody.innerHTML = logs.map(f => {
-      const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
-      return `
-        <tr>
-          <td>${f.date}</td>
-          <td><span class="plate-badge">${plate}</span></td>
-          <td><strong>${f.odometerKm.toLocaleString()}</strong> km</td>
-          <td>${f.liters.toFixed(2)} L</td>
-          <td><strong>${f.costEur.toFixed(2)} €</strong></td>
-          <td>${f.fuelStation || '-'}</td>
-        </tr>
-      `;
-    }).join('');
+    if (tbody) {
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      } else {
+        tbody.innerHTML = logs.map(f => {
+          const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
+          return `
+            <tr>
+              <td>${f.date}</td>
+              <td><span class="plate-badge">${plate}</span></td>
+              <td><strong>${f.odometerKm.toLocaleString()}</strong> km</td>
+              <td>${f.liters.toFixed(2)} L</td>
+              <td><strong>${f.costEur.toFixed(2)} €</strong></td>
+              <td>${f.fuelStation || '-'}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    if (cardsFeed) {
+      if (logs.length === 0) {
+        cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
+      } else {
+        cardsFeed.innerHTML = logs.map(f => {
+          const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
+          return `
+            <div class="detail-card">
+              <div class="detail-card-header">
+                <span class="plate-badge">${plate}</span>
+                <span style="font-weight:700; color:var(--primary-dark); font-size:1rem;">${f.costEur.toFixed(2)} €</span>
+              </div>
+              <div class="detail-card-title">${f.fuelStation || 'Estació de Servei'}</div>
+              <div class="detail-card-grid">
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colDate')}</span>
+                  <span class="detail-value">${f.date}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colOdometer')}</span>
+                  <span class="detail-value">${f.odometerKm.toLocaleString()} km</span>
+                </div>
+                <div class="detail-card-item full-width">
+                  <span class="detail-label">${LanguageManager.t('colLiters')}</span>
+                  <span class="detail-value">${f.liters.toFixed(2)} L</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  // DETAILED INSPECTION MODALS
+  private openItvDetails(vehicle: Vehicle): void {
+    const modal = document.getElementById('modal-itv-details');
+    if (!modal) return;
+
+    // 1. Vehicle Header
+    const plateEl = document.getElementById('modal-itv-plate');
+    const vehStatusEl = document.getElementById('modal-itv-veh-status');
+    const vehTitleEl = document.getElementById('modal-itv-veh-title');
+    const vehMetaEl = document.getElementById('modal-itv-veh-meta');
+
+    if (plateEl) plateEl.textContent = vehicle.licensePlate;
+    if (vehStatusEl) {
+      const statusClass = vehicle.status === 'ACTIVE' ? 'active' : vehicle.status === 'MAINTENANCE' ? 'maintenance' : 'out';
+      vehStatusEl.className = `status-badge ${statusClass}`;
+      vehStatusEl.textContent = LanguageManager.t('status_' + vehicle.status.toLowerCase());
+    }
+    if (vehTitleEl) vehTitleEl.textContent = `${vehicle.make} ${vehicle.model}`;
+    if (vehMetaEl) {
+      const fuelLabel = LanguageManager.t('fuel_' + vehicle.fuelType.toLowerCase());
+      vehMetaEl.textContent = `${LanguageManager.t('colYear')} ${vehicle.year} • ${fuelLabel} • ${vehicle.currentOdometerKm.toLocaleString()} km`;
+    }
+
+    // 2. ITV Status
+    const itvDateEl = document.getElementById('modal-itv-date');
+    const itvRemainingEl = document.getElementById('modal-itv-remaining');
+    const itvBadgeWrap = document.getElementById('modal-itv-status-badge');
+
+    const expDate = new Date(vehicle.itvExpirationDate);
+    const now = new Date();
+    const diffMs = expDate.getTime() - now.getTime();
+    const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+    let statusKey = 'itv_status_valid';
+    let statusClass = 'active';
+
+    if (daysRemaining < 0) {
+      statusKey = 'itv_status_expired';
+      statusClass = 'out';
+    } else if (daysRemaining <= 7) {
+      statusKey = 'itv_status_urgent';
+      statusClass = 'out';
+    } else if (daysRemaining <= 30) {
+      statusKey = 'itv_status_expiring';
+      statusClass = 'maintenance';
+    }
+
+    if (itvDateEl) itvDateEl.textContent = vehicle.itvExpirationDate;
+    if (itvRemainingEl) {
+      itvRemainingEl.textContent = daysRemaining > 0 
+        ? `${daysRemaining} dies restants` 
+        : `Caducada fa ${Math.abs(daysRemaining)} dies`;
+    }
+    if (itvBadgeWrap) {
+      const badgeText = LanguageManager.t(statusKey, { days: Math.abs(daysRemaining) });
+      itvBadgeWrap.innerHTML = `<span class="status-badge ${statusClass}">${badgeText}</span>`;
+    }
+
+    // 3. Technical Observations
+    const notesEl = document.getElementById('modal-itv-notes');
+    if (notesEl) {
+      notesEl.textContent = vehicle.notes || 'Sense observacions tècniques anòmales registrades per a este vehicle.';
+    }
+
+    // 4. Pending / Scheduled Maintenance for this specific vehicle
+    const pendingContainer = document.getElementById('modal-itv-pending-maint');
+    if (pendingContainer) {
+      const pendingList = this.cachedMaintenance.filter(m => 
+        m.vehicleId === vehicle.id && m.status === 'SCHEDULED'
+      );
+
+      if (pendingList.length === 0) {
+        pendingContainer.innerHTML = `
+          <div style="font-size:0.84rem; color:#64748B; font-style:italic; padding:6px 0;">
+            ✓ ${LanguageManager.t('lblNoPendingMaint')}
+          </div>
+        `;
+      } else {
+        pendingContainer.innerHTML = pendingList.map(m => {
+          const typeLabel = LanguageManager.t('maint_type_' + m.type.toLowerCase());
+          const statusLabel = LanguageManager.t('maint_status_' + m.status.toLowerCase());
+          const statusClass = m.status === 'COMPLETED' ? 'active' : 'maintenance';
+
+          return `
+            <div style="background:#FFFFFF; border:1px solid var(--slate-200); border-radius:var(--radius-sm); padding:8px 10px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="font-size:0.86rem; color:var(--slate-800);">${typeLabel}</strong>
+                <div style="font-size:0.75rem; color:var(--slate-500); margin-top:2px;">${m.scheduledDate} • ${m.workshopName || '-'}</div>
+              </div>
+              <div style="text-align:right;">
+                <span class="status-badge ${statusClass}" style="font-size:0.7rem;">${statusLabel}</span>
+                <div style="font-weight:700; font-size:0.82rem; color:var(--slate-800); margin-top:2px;">${m.costEur.toFixed(2)} €</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // 5. Quick Action Button: pre-select this vehicle in New Maintenance modal
+    const quickScheduleBtn = document.getElementById('btn-itv-quick-schedule');
+    if (quickScheduleBtn) {
+      quickScheduleBtn.onclick = () => {
+        modal.classList.remove('open');
+        this.populateModalVehicleDropdowns();
+        const maintVehSelect = document.getElementById('maint-veh') as HTMLSelectElement;
+        if (maintVehSelect) maintVehSelect.value = vehicle.id;
+        this.openModal('modal-maintenance');
+      };
+    }
+
+    modal.classList.add('open');
+  }
+
+  private openMaintDetails(maint: MaintenanceRecord, vehicle?: Vehicle): void {
+    const modal = document.getElementById('modal-maint-details');
+    if (!modal) return;
+
+    const plate = vehicle ? vehicle.licensePlate : maint.vehicleId;
+    const typeLabel = LanguageManager.t('maint_type_' + maint.type.toLowerCase());
+    const statusLabel = LanguageManager.t('maint_status_' + maint.status.toLowerCase());
+    const statusClass = maint.status === 'COMPLETED' ? 'active' : maint.status === 'SCHEDULED' ? 'maintenance' : 'out';
+
+    const plateEl = document.getElementById('modal-maint-plate');
+    const statusEl = document.getElementById('modal-maint-status');
+    const titleEl = document.getElementById('modal-maint-type-title');
+    const dateEl = document.getElementById('modal-maint-date');
+    const costEl = document.getElementById('modal-maint-cost');
+    const workshopEl = document.getElementById('modal-maint-workshop');
+    const notesEl = document.getElementById('modal-maint-notes');
+
+    if (plateEl) plateEl.textContent = plate;
+    if (statusEl) {
+      statusEl.className = `status-badge ${statusClass}`;
+      statusEl.textContent = statusLabel;
+    }
+    if (titleEl) {
+      titleEl.textContent = vehicle 
+        ? `${typeLabel} (${vehicle.make} ${vehicle.model})`
+        : typeLabel;
+    }
+    if (dateEl) dateEl.textContent = maint.scheduledDate;
+    if (costEl) costEl.textContent = `${maint.costEur.toFixed(2)} €`;
+    if (workshopEl) workshopEl.textContent = maint.workshopName || '-';
+    if (notesEl) notesEl.textContent = maint.notes || 'Sense observacions addicionals registrades.';
+
+    modal.classList.add('open');
   }
 
   private updateKpis(vehicles: Vehicle[], maintenance: MaintenanceRecord[], fuelLogs: FuelLog[]): void {
