@@ -4,6 +4,21 @@
     "tenantId": "tenant_valencia",
     "vehicleId": "veh_101",
     "driverId": "usr_driver_joan",
+    "date": "2026-09-20",
+    "odometerKm": 83100,
+    "liters": 60.50,
+    "costEur": 89.54,
+    "fuelStation": "Repsol Sagunt Port",
+    "receiptUrl": "",
+    "notes": "Proveïment inicial ruta logística",
+    "fullTank": true,
+    "createdAt": "2026-09-20T08:15:00.000Z"
+  },
+  {
+    "id": "fuel_002",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_101",
+    "driverId": "usr_driver_joan",
     "date": "2026-10-02",
     "odometerKm": 83800,
     "liters": 62.40,
@@ -11,10 +26,11 @@
     "fuelStation": "Repsol Viver / Segorbe",
     "receiptUrl": "",
     "notes": "Proveïment complet dièsel ruta A-23",
+    "fullTank": true,
     "createdAt": "2026-10-02T14:30:00.000Z"
   },
   {
-    "id": "fuel_002",
+    "id": "fuel_003",
     "tenantId": "tenant_valencia",
     "vehicleId": "veh_101",
     "driverId": "usr_driver_joan",
@@ -25,6 +41,37 @@
     "fuelStation": "Cepsa Castelló Sud",
     "receiptUrl": "",
     "notes": "Proveïment retorn centre logístic",
+    "fullTank": true,
     "createdAt": "2026-10-14T18:15:00.000Z"
+  },
+  {
+    "id": "fuel_004",
+    "tenantId": "tenant_valencia",
+    "vehicleId": "veh_103",
+    "driverId": "usr_driver_joan",
+    "date": "2026-10-08",
+    "odometerKm": 142100,
+    "liters": 48.00,
+    "costEur": 72.96,
+    "fuelStation": "Galp Paterna Parc Tecnològic",
+    "receiptUrl": "",
+    "notes": "Proveïment abans d'entrada a taller",
+    "fullTank": true,
+    "createdAt": "2026-10-08T11:20:00.000Z"
+  },
+  {
+    "id": "fuel_005",
+    "tenantId": "tenant_med",
+    "vehicleId": "veh_201",
+    "driverId": "usr_admin_med",
+    "date": "2026-10-10",
+    "odometerKm": 56200,
+    "liters": 65.00,
+    "costEur": 97.50,
+    "fuelStation": "Shell Benidorm Ponent",
+    "receiptUrl": "",
+    "notes": "Ruta Mediterrània Sud",
+    "fullTank": true,
+    "createdAt": "2026-10-10T16:40:00.000Z"
   }
 ]

@@ -32,7 +32,8 @@ export class SupabaseFuelLogRepository implements IFuelLogRepository {
       cost_eur: log.costEur,
       fuel_station: log.fuelStation,
       receipt_url: log.receiptUrl,
-      notes: log.notes
+      notes: log.notes,
+      full_tank: log.fullTank !== undefined && log.fullTank !== null ? log.fullTank : true
     }).select().single();
     if (error) throw error;
     return this.mapFromDb(data);
@@ -51,6 +52,7 @@ export class SupabaseFuelLogRepository implements IFuelLogRepository {
       fuelStation: row.fuel_station,
       receiptUrl: row.receipt_url,
       notes: row.notes,
+      fullTank: row.full_tank ?? true,
       createdAt: row.created_at
     };
   }

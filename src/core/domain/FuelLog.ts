@@ -12,6 +12,7 @@ export const FuelLogSchema = z.object({
   fuelStation: z.string().optional().nullable(),
   receiptUrl: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
+  fullTank: z.boolean().optional().nullable(),
   createdAt: z.string().optional()
 });
 

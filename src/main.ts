@@ -715,66 +715,255 @@ class AppController {
   private renderFuelLogs(logs: FuelLog[]): void {
     const tbody = document.getElementById('fuel-table-body');
     const cardsFeed = document.getElementById('fuel-cards-feed');
-    const vehicleMap = new Map(this.cachedVehicles.map(v => [v.id, v.licensePlate]));
+    const vehicleMap = new Map(this.cachedVehicles.map(v => [v.id, v]));
 
+    // Group logs by vehicle to calculate delta km, consumption, etc.
+    const logsByVehicle = new Map<string, FuelLog[]>();
+    logs.forEach(log => {
+      const arr = logsByVehicle.get(log.vehicleId) || [];
+      arr.push({ ...log });
+      logsByVehicle.set(log.vehicleId, arr);
+    });
+
+    interface EnrichedFuelLog extends FuelLog {
+      vehiclePlate: string;
+      vehicleName: string;
+      deltaKm: number | null;
+      pricePerLiter: number;
+      consumptionL100km: number | null;
+      costPerKm: number | null;
+    }
+
+    const enrichedList: EnrichedFuelLog[] = [];
+
+    logsByVehicle.forEach((vehLogs, vehId) => {
+      // Sort oldest to newest to compute delta km
+      vehLogs.sort((a, b) => {
+        const dateDiff = new Date(a.date).getTime() - new Date(b.date).getTime();
+        return dateDiff !== 0 ? dateDiff : a.odometerKm - b.odometerKm;
+      });
+
+      const veh = vehicleMap.get(vehId);
+      const vehiclePlate = veh ? veh.licensePlate : '4589-LDR';
+      const vehicleName = veh ? `${veh.make} ${veh.model}` : '';
+
+      for (let i = 0; i < vehLogs.length; i++) {
+        const cur = vehLogs[i];
+        const prev = i > 0 ? vehLogs[i - 1] : null;
+
+        let deltaKm: number | null = null;
+        if (prev && cur.odometerKm > prev.odometerKm) {
+          deltaKm = cur.odometerKm - prev.odometerKm;
+        }
+
+        const pricePerLiter = cur.liters > 0 ? cur.costEur / cur.liters : 0;
+        const consumptionL100km = (deltaKm && deltaKm > 0 && cur.liters > 0)
+          ? (cur.liters / deltaKm) * 100
+          : null;
+        const costPerKm = (deltaKm && deltaKm > 0)
+          ? cur.costEur / deltaKm
+          : null;
+
+        enrichedList.push({
+          ...cur,
+          vehiclePlate,
+          vehicleName,
+          deltaKm,
+          pricePerLiter,
+          consumptionL100km,
+          costPerKm
+        });
+      }
+    });
+
+    // Sort display list: newest first
+    enrichedList.sort((a, b) => {
+      const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+      return dateDiff !== 0 ? dateDiff : b.odometerKm - a.odometerKm;
+    });
+
+    // 1. Update Top Fuel KPI Cards
+    this.updateFuelKpiMetrics(enrichedList);
+
+    // 2. Render Table View
     if (tbody) {
-      if (logs.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
+      if (enrichedList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</td></tr>`;
       } else {
-        tbody.innerHTML = logs.map(f => {
-          const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
+        tbody.innerHTML = enrichedList.map(f => {
+          const deltaText = f.deltaKm !== null 
+            ? `<span style="color:#059669; font-weight:700;">+${f.deltaKm.toLocaleString()} km</span>`
+            : `<span style="color:#94A3B8; font-style:italic;">${LanguageManager.t('lblInitialFill')}</span>`;
+          
+          const consumText = f.consumptionL100km !== null
+            ? `<strong>${f.consumptionL100km.toFixed(2)}</strong> L/100km`
+            : `<span style="color:#94A3B8;">-</span>`;
+
+          const tankBadge = f.fullTank !== false 
+            ? `<span title="${LanguageManager.t('lblFullTank')}" style="color:#0D9488; font-size:0.75rem;">✓ Ple</span>`
+            : `<span title="${LanguageManager.t('lblPartialTank')}" style="color:#EAB308; font-size:0.75rem;">(Parcial)</span>`;
+
+          const translatedNotes = LanguageManager.translateObservation(f.notes || '');
+
           return `
             <tr>
-              <td>${f.date}</td>
-              <td><span class="plate-badge">${plate}</span></td>
+              <td><strong>${f.date}</strong></td>
+              <td><span class="plate-badge">${f.vehiclePlate}</span></td>
               <td><strong>${f.odometerKm.toLocaleString()}</strong> km</td>
-              <td>${f.liters.toFixed(2)} L</td>
-              <td><strong>${f.costEur.toFixed(2)} €</strong></td>
+              <td>${deltaText}</td>
+              <td>${f.liters.toFixed(2)} L ${tankBadge}</td>
+              <td>${f.pricePerLiter.toFixed(3)} €/L</td>
+              <td><strong style="color:var(--primary-dark); font-size:0.95rem;">${f.costEur.toFixed(2)} €</strong></td>
+              <td>${consumText}</td>
               <td>${f.fuelStation || '-'}</td>
+              <td style="max-width:240px; font-size:0.82rem; color:#475569;">
+                <span title="${translatedNotes}">${translatedNotes}</span>
+              </td>
             </tr>
           `;
         }).join('');
       }
     }
 
+    // 3. Render Cards Feed
     if (cardsFeed) {
-      if (logs.length === 0) {
+      if (enrichedList.length === 0) {
         cardsFeed.innerHTML = `<div style="text-align:center; padding: 2rem; color: #64748B;">${LanguageManager.t('emptyTableMessage')}</div>`;
       } else {
-        cardsFeed.innerHTML = logs.map(f => {
-          const plate = vehicleMap.get(f.vehicleId) || '4589-LDR';
+        cardsFeed.innerHTML = enrichedList.map(f => {
+          const deltaBadge = f.deltaKm !== null
+            ? `<span style="background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; font-weight:700; padding:3px 8px; border-radius:12px; font-size:0.75rem;">+${f.deltaKm.toLocaleString()} km des d'últim</span>`
+            : `<span style="background:#F1F5F9; color:#64748B; border:1px solid #CBD5E1; padding:3px 8px; border-radius:12px; font-size:0.72rem;">${LanguageManager.t('lblInitialFill')}</span>`;
+
+          const consumBadge = f.consumptionL100km !== null
+            ? `<span style="font-weight:700; color:var(--primary-dark); font-size:0.88rem;">${f.consumptionL100km.toFixed(2)} L/100km</span>`
+            : `<span style="color:#94A3B8; font-size:0.8rem;">--</span>`;
+
+          const costPerKmText = f.costPerKm !== null
+            ? `${f.costPerKm.toFixed(3)} €/km`
+            : `--`;
+
+          const tankStatusLabel = f.fullTank !== false 
+            ? `✓ ${LanguageManager.t('lblFullTank')}` 
+            : `⚠️ ${LanguageManager.t('lblPartialTank')}`;
+
+          const translatedNotes = LanguageManager.translateObservation(f.notes || '');
+
           return `
             <div class="detail-card">
               <div class="detail-card-header">
-                <span class="plate-badge">${plate}</span>
-                <span style="font-weight:700; color:var(--primary-dark); font-size:1rem;">${f.costEur.toFixed(2)} €</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="plate-badge">${f.vehiclePlate}</span>
+                  ${deltaBadge}
+                </div>
+                <div style="text-align:right;">
+                  <span style="font-weight:800; color:var(--primary-dark); font-size:1.1rem;">${f.costEur.toFixed(2)} €</span>
+                  <div style="font-size:0.72rem; color:#64748B;">${f.pricePerLiter.toFixed(3)} €/L</div>
+                </div>
               </div>
-              <div class="detail-card-title">${f.fuelStation || 'Estació de Servei'}</div>
+
+              <div class="detail-card-title">
+                <span>⛽ ${f.fuelStation || 'Estació de Servei'}</span>
+                <span style="font-size:0.78rem; font-weight:600; color:#64748B; float:right;">${f.date}</span>
+              </div>
+
               <div class="detail-card-grid">
                 <div class="detail-card-item">
-                  <span class="detail-label">${LanguageManager.t('colDate')}</span>
-                  <span class="detail-value">${f.date}</span>
+                  <span class="detail-label">${LanguageManager.t('colOdometerAtFill')}</span>
+                  <span class="detail-value" style="font-weight:700;">${f.odometerKm.toLocaleString()} km</span>
                 </div>
                 <div class="detail-card-item">
-                  <span class="detail-label">${LanguageManager.t('colOdometer')}</span>
-                  <span class="detail-value">${f.odometerKm.toLocaleString()} km</span>
+                  <span class="detail-label">${LanguageManager.t('colDeltaKm')}</span>
+                  <span class="detail-value" style="color:#059669; font-weight:700;">
+                    ${f.deltaKm !== null ? `+${f.deltaKm.toLocaleString()} km` : LanguageManager.t('lblInitialFill')}
+                  </span>
                 </div>
-                <div class="detail-card-item full-width">
+                <div class="detail-card-item">
                   <span class="detail-label">${LanguageManager.t('colLiters')}</span>
-                  <span class="detail-value">${f.liters.toFixed(2)} L</span>
+                  <span class="detail-value">${f.liters.toFixed(2)} L <small style="color:#0F766E;">(${tankStatusLabel})</small></span>
                 </div>
-                ${f.notes ? `
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colAvgConsumption')}</span>
+                  <span class="detail-value">${consumBadge}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colCostPerKm')}</span>
+                  <span class="detail-value">${costPerKmText}</span>
+                </div>
+                <div class="detail-card-item">
+                  <span class="detail-label">${LanguageManager.t('colPricePerLiter')}</span>
+                  <span class="detail-value">${f.pricePerLiter.toFixed(3)} €/L</span>
+                </div>
                 <div class="detail-card-item full-width">
                   <span class="detail-label">${LanguageManager.t('colObservations')}</span>
                   <span class="detail-value" style="color: #475569; font-weight:500;">
-                    ${LanguageManager.translateObservation(f.notes)}
+                    ${translatedNotes}
                   </span>
                 </div>
-                ` : ''}
               </div>
             </div>
           `;
         }).join('');
+      }
+    }
+  }
+
+  private updateFuelKpiMetrics(logs: any[]): void {
+    const lastFillEl = document.getElementById('kpi-fuel-last-fill');
+    const lastFillDescEl = document.getElementById('kpi-fuel-last-desc');
+    const avgConsumEl = document.getElementById('kpi-fuel-avg-consumption');
+    const avgDistanceEl = document.getElementById('kpi-fuel-avg-distance');
+    const avgPriceEl = document.getElementById('kpi-fuel-avg-price');
+
+    if (logs.length === 0) {
+      if (lastFillEl) lastFillEl.textContent = '--';
+      if (avgConsumEl) avgConsumEl.textContent = '0.0 L/100km';
+      if (avgDistanceEl) avgDistanceEl.textContent = '0 km';
+      if (avgPriceEl) avgPriceEl.textContent = '0.00 €/L';
+      return;
+    }
+
+    // 1. Last Fill-up
+    const latest = logs[0];
+    if (lastFillEl) {
+      lastFillEl.textContent = `${latest.vehiclePlate} (${latest.liters.toFixed(1)} L)`;
+    }
+    if (lastFillDescEl) {
+      lastFillDescEl.textContent = `${latest.date} • ${latest.fuelStation || '-'} • ${latest.costEur.toFixed(2)} €`;
+    }
+
+    // 2. Average Consumption
+    const validConsumptions = logs.filter(l => l.consumptionL100km !== null && l.consumptionL100km > 3 && l.consumptionL100km < 40);
+    if (avgConsumEl) {
+      if (validConsumptions.length > 0) {
+        const sum = validConsumptions.reduce((acc: number, curr: any) => acc + curr.consumptionL100km, 0);
+        const avg = sum / validConsumptions.length;
+        avgConsumEl.textContent = `${avg.toFixed(2)} L/100km`;
+      } else {
+        avgConsumEl.textContent = '--';
+      }
+    }
+
+    // 3. Average Distance between fills
+    const validDeltas = logs.filter(l => l.deltaKm !== null && l.deltaKm > 0);
+    if (avgDistanceEl) {
+      if (validDeltas.length > 0) {
+        const sum = validDeltas.reduce((acc: number, curr: any) => acc + curr.deltaKm, 0);
+        const avg = sum / validDeltas.length;
+        avgDistanceEl.textContent = `+${Math.round(avg).toLocaleString()} km`;
+      } else {
+        avgDistanceEl.textContent = '--';
+      }
+    }
+
+    // 4. Average Fuel Price
+    const totalCost = logs.reduce((acc: number, curr: any) => acc + curr.costEur, 0);
+    const totalLiters = logs.reduce((acc: number, curr: any) => acc + curr.liters, 0);
+    if (avgPriceEl) {
+      if (totalLiters > 0) {
+        avgPriceEl.textContent = `${(totalCost / totalLiters).toFixed(3)} €/L`;
+      } else {
+        avgPriceEl.textContent = '0.00 €/L';
       }
     }
   }
@@ -1030,6 +1219,10 @@ class AppController {
 
     document.getElementById('btn-add-fuel')?.addEventListener('click', () => {
       this.populateModalVehicleDropdowns();
+      const dateInput = document.getElementById('fuel-date') as HTMLInputElement;
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
       this.openModal('modal-fuel');
     });
 
@@ -1067,7 +1260,79 @@ class AppController {
     ).join('');
 
     if (maintVehSelect) maintVehSelect.innerHTML = optionsHtml;
-    if (fuelVehSelect) fuelVehSelect.innerHTML = optionsHtml;
+    if (fuelVehSelect) {
+      fuelVehSelect.innerHTML = optionsHtml;
+      this.updateFuelFormHints();
+    }
+  }
+
+  private updateFuelFormHints(): void {
+    const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+    const odoInput = document.getElementById('fuel-odometer') as HTMLInputElement;
+    const litersInput = document.getElementById('fuel-liters') as HTMLInputElement;
+    const priceInput = document.getElementById('fuel-price') as HTMLInputElement;
+
+    const lastOdoHintEl = document.getElementById('fuel-last-odometer-hint');
+    const deltaHintEl = document.getElementById('fuel-delta-km-hint');
+    const unitPriceHintEl = document.getElementById('fuel-unit-price-hint');
+
+    if (!fuelVehSelect) return;
+    const vehId = fuelVehSelect.value;
+    const veh = this.cachedVehicles.find(v => v.id === vehId);
+    if (!veh) return;
+
+    // Find the highest known odometer from either vehicle master or its logs
+    const vehFuelLogs = this.cachedFuelLogs.filter(f => f.vehicleId === vehId);
+    let lastOdometer = veh.currentOdometerKm || 0;
+    if (vehFuelLogs.length > 0) {
+      const highestLogOdo = Math.max(...vehFuelLogs.map(f => f.odometerKm));
+      lastOdometer = Math.max(lastOdometer, highestLogOdo);
+    }
+
+    if (lastOdoHintEl) {
+      lastOdoHintEl.textContent = `${LanguageManager.t('lblLastOdometerHint')}: ${lastOdometer.toLocaleString()} km`;
+    }
+
+    // Default current input if empty or 0
+    if (odoInput && (!odoInput.value || Number(odoInput.value) <= 0)) {
+      odoInput.value = String(lastOdometer);
+    }
+
+    const currentOdo = Number(odoInput?.value || 0);
+    const liters = Number(litersInput?.value || 0);
+    const price = Number(priceInput?.value || 0);
+
+    // Delta km & Estimated Consumption hint
+    if (deltaHintEl) {
+      if (currentOdo > lastOdometer) {
+        const delta = currentOdo - lastOdometer;
+        let deltaText = `+${delta.toLocaleString()} km ${LanguageManager.t('fuelKpiDistanceBetween')}`;
+        if (liters > 0) {
+          const estimatedConsum = ((liters / delta) * 100).toFixed(2);
+          deltaText += ` (~${estimatedConsum} L/100km)`;
+        }
+        deltaHintEl.textContent = deltaText;
+        deltaHintEl.style.color = '#059669';
+      } else if (currentOdo === lastOdometer && currentOdo > 0) {
+        deltaHintEl.textContent = `0 km (${LanguageManager.t('lblInitialFill')})`;
+        deltaHintEl.style.color = '#64748B';
+      } else if (currentOdo < lastOdometer) {
+        deltaHintEl.textContent = `⚠️ ${LanguageManager.t('colOdometer')} inferior al darrer conegut (${lastOdometer.toLocaleString()} km)`;
+        deltaHintEl.style.color = '#DC2626';
+      } else {
+        deltaHintEl.textContent = '';
+      }
+    }
+
+    // Unit price hint (€/L)
+    if (unitPriceHintEl) {
+      if (price > 0 && liters > 0) {
+        const unitPrice = (price / liters).toFixed(3);
+        unitPriceHintEl.textContent = `Preu aproximat: ${unitPrice} €/L`;
+      } else {
+        unitPriceHintEl.textContent = '';
+      }
+    }
   }
 
   private setupModalForms(): void {
@@ -1142,9 +1407,30 @@ class AppController {
 
     // 3. New Fuel Form
     const fuelForm = document.getElementById('form-new-fuel') as HTMLFormElement;
+
+    // Interactive listeners for live calculation of delta km, consumption and unit price
+    const fuelVehSelect = document.getElementById('fuel-veh') as HTMLSelectElement;
+    fuelVehSelect?.addEventListener('change', () => {
+      const odoInput = document.getElementById('fuel-odometer') as HTMLInputElement;
+      if (odoInput) odoInput.value = '';
+      this.updateFuelFormHints();
+    });
+
+    const fuelOdoInput = document.getElementById('fuel-odometer') as HTMLInputElement;
+    fuelOdoInput?.addEventListener('input', () => this.updateFuelFormHints());
+
+    const fuelLitersInput = document.getElementById('fuel-liters') as HTMLInputElement;
+    fuelLitersInput?.addEventListener('input', () => this.updateFuelFormHints());
+
+    const fuelPriceInput = document.getElementById('fuel-price') as HTMLInputElement;
+    fuelPriceInput?.addEventListener('input', () => this.updateFuelFormHints());
+
     fuelForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
       try {
+        const fullTankInput = document.getElementById('fuel-full-tank') as HTMLInputElement;
+        const notesInput = document.getElementById('fuel-notes') as HTMLInputElement;
+
         const payload = {
           tenantId: this.currentTenant,
           vehicleId: (document.getElementById('fuel-veh') as HTMLSelectElement).value,
@@ -1153,7 +1439,9 @@ class AppController {
           odometerKm: Number((document.getElementById('fuel-odometer') as HTMLInputElement).value),
           liters: Number((document.getElementById('fuel-liters') as HTMLInputElement).value),
           costEur: Number((document.getElementById('fuel-price') as HTMLInputElement).value),
-          fuelStation: (document.getElementById('fuel-station') as HTMLInputElement).value.trim()
+          fuelStation: (document.getElementById('fuel-station') as HTMLInputElement).value.trim(),
+          fullTank: fullTankInput ? fullTankInput.checked : true,
+          notes: notesInput ? notesInput.value.trim() : undefined
         };
 
         const res = await fetch('/api/fuel-logs', {

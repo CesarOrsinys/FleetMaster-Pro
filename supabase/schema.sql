@@ -152,6 +152,7 @@ CREATE TABLE fuel_mileage_logs (
   fuel_station VARCHAR(150),
   receipt_url TEXT,
   notes TEXT,
+  full_tank BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
